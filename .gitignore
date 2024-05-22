@@ -1,6 +1,8 @@
 .DS_Store
 
-data/*
+data/**/*
+data/raw/*
+data/processed/*
 
 !data/raw/
 !data/processed/
