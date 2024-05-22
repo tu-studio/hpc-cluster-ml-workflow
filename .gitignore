@@ -1,12 +1,12 @@
 .DS_Store
 
 data/*
-data/raw/*
-data/processed/*
 
-!data/.gitkeep
-!data/raw/.gitkeep
-!data/processed/.gitkeep
+!data/raw/
+!data/processed/
 
-!scripts/.gitkeep
-!docs/.gitkeep
+!scripts/
+!docs/
+
+!.gitkeep
+
