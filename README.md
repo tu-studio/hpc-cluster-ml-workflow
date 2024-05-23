@@ -8,7 +8,7 @@ The configurable dataset pipeline includes modules for the following operations:
 1. **Downloading:** Automates the download of raw audio data from various cloud storage solutions and then verifies the data's correctness. 
   
 2. **Preprocessing:** 
-Chains multiple audio data preprocessing steps to prepare data for neural network training. 
+Chains multiple preprocessing steps to prepare audio data for neural network training. 
   
   <!-- This includes
    - **Sample Rate Conversion**: Adjusts the sampling rate of audio files to a standard value that matches the input requirements of the neural network, ensuring consistency across all data.
