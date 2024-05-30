@@ -1,19 +1,23 @@
+# Ignore typical temporary and system files
 .DS_Store
-
-dpt
 __pycache__/
 
-data/**/*
-data/raw/*
-data/processed/*
+dpt
 
-!data/raw/
-!data/processed/
+data/** 
+
+!data/raw.dvc
+!data/processed.dvc
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
 
 !scripts/
 !docs/
 
 !.gitkeep
+!.dvc
 
 
 
+ 
