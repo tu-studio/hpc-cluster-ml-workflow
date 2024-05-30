@@ -1,5 +1,8 @@
 .DS_Store
 
+dpt
+__pycache__/
+
 data/**/*
 data/raw/*
 data/processed/*
@@ -11,4 +14,6 @@ data/processed/*
 !docs/
 
 !.gitkeep
+
+
 
