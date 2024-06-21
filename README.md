@@ -1,6 +1,6 @@
 # ml-training-pipeline
 
-This repository provides a comprehensive template for the management of reproducible ml training pipelines in the context of audio. 
+This repository provides a comprehensive template for the management of reproducible pipelines for machine learning training in the context of audio. 
 
 ## Features
 
