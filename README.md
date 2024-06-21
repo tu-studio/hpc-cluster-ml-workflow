@@ -1,4 +1,4 @@
-# dataset-pipeline-template
+# ml-training-pipeline
 
 This repository provides a comprehensive template for the management of reproducible data engineering pipelines in the context of audio neural network trainings. 
 
