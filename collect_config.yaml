@@ -1,4 +1,4 @@
-pipeline:
+collect:
   - module: download
     enabled: true  # This will enable or skip the module
     urls: 

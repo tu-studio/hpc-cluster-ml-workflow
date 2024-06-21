@@ -4,7 +4,7 @@ __pycache__/
 
 dpt
 
-data/** 
+data/**/* 
 
 !data/raw.dvc
 !data/processed.dvc
