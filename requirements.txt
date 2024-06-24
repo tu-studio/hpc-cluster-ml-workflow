@@ -2,4 +2,5 @@
 pyYAML
 dvc
 wget
-"dvc[gdrive]"
+pedalboard
+dvc-webdav
