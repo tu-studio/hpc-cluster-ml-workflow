@@ -3,6 +3,6 @@ collect:
     enabled: true  # This will enable or skip the module
     urls: 
       - "https://tubcloud.tu-berlin.de/s/F6Mm9ddicrP7aP3/download/Real%20Drums%20Vol.%201.zip"
-    output_directory: "../data/raw" # This should not be changed
+    output_directory: "data/raw" # This should not be changed
 
     
