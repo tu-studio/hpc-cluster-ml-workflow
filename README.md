@@ -1,55 +1,61 @@
 # ml-training-pipeline
 
-This repository provides a comprehensive template for the management of reproducible pipelines for machine learning training in the context of audio. 
+This repository provides a comprehensive template for the management of reproducible pipelines for machine learning training in the context of audio. The template is utilizing [DVC](https://dvc.org/) (data version control) and is adjusted for experiments on the Remote SLURM-Cluster [HPC cluster of the Technical University of Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc).
 
 ## Features
 
-The configurable dataset pipeline includes modules for the following operations:
-1. **Downloading:** Automates the download of raw audio data from various cloud storage solutions and then verifies the data's correctness. 
-  
-2. **Preprocessing:** 
-Chains multiple preprocessing steps to prepare audio data for neural network training. 
-  
-  <!-- This includes
-   - **Sample Rate Conversion**: Adjusts the sampling rate of audio files to a standard value that matches the input requirements of the neural network, ensuring consistency across all data.
-  
-   - **Bit-depth Conversion**: Modifies the bit depth of audio files to match the neural network's expected input format, which can help in reducing file size or aligning data quality.
-  
-   - **Gain Normalization**: Applies normalization of audio levels to ensure uniform loudness, which is crucial for maintaining model performance across varied inputs.
-  
-   - **Silence Trimming**: Removes periods of silence from the beginning and end of audio clips to minimize non-informative data and improve model training efficiency.
-  
-   - **Silence Addition**: Intentionally adds periods of silence to the audio data, which can help the neural network better handle pauses in speech or other audio signals during practical application.
-  
-  - **Trimming**:
 
-  - **Shuffle**:
-  
--->
-  
-3. **Augmentation:** Chains multiple data augmentation steps to increase the dataset size and introduce variability, essential for training robust neural network models.
-
-<!--
-  - **Stereo Split**
-  - **Time Stretching**
-  - **Pitch Shifting**
-  - **Noise Injection**
-  - **Reverberation**
- -->
-   
-4. **Analysis:** Provides tools for detailed analysis of audio data to assess quality and suitability for training purposes. 
-   
-5. **Database export:** Structures preprocessed and augmented data into a database format suitable for efficient querying and retrieval during model training.
-
-____________________________________
-
-The repository is used as a submodule in the repository [hpc-nn-template](https://github.com/tu-studio/hpc-nn-template), which is a main pipeline for the efficient and reproducible training of audio neural networks on the [HPC cluster of the Technical University of Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc).
-
-## Install
+## Install and Setup
 
 ```
 git clone https://github.com/tu-studio/dataset-pipeline-template
 ```
+
+
+Create and setup a virtual environment inside the repository. If you chose a different name than *myenv* make sure to add the directory name of your venv to the .gitignore.
+
+
+```
+cd ml-training-pipeline
+
+python3 -m venv myenv
+
+source myenv/bin/activate
+
+pip install -r requirements.txt
+```
+
+
+Initiliase a dvc repository.
+
+```
+dvc init
+```
+
+Add a WebDAV server as remote storage to your dvc repository. 
+
+```
+dvc remote add -d myremote webdavs://tubcloud.tu-berlin.de/remote.php/dav/files/cf531c5e-2043-103b-8745-111da40a61ee/DVC
+```
+
+Add your username and password for server acces to a private config file (will be ignored by git).
+
+```
+dvc remote modify --local myremote user 'yourusername'
+
+dvc remote modify --local myremote password 'yourpassword'
+
+dvc remote modify myremote ask_password true
+```
+
+Add the raw and processed data folders to the dvc repository.
+
+```
+dvc add data/raw
+
+dvc add data/processed
+```
+
 
 ## Usage
 
