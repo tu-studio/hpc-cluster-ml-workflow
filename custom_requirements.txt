@@ -1,0 +1,5 @@
+scipy==1.14.0
+numpy==1.26.4
+torch==2.2.2
+torchinfo==1.8.0
+onnx==1.16.1

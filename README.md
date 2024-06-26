@@ -48,12 +48,10 @@ dvc remote modify --local myremote password 'yourpassword'
 dvc remote modify myremote ask_password true
 ```
 
-Add the raw and processed data folders to the dvc repository.
+Add the raw data folder to the dvc repository.
 
 ```
 dvc add data/raw
-
-dvc add data/processed
 ```
 
 

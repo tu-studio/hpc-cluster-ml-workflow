@@ -1,0 +1,9 @@
+collect:
+  - module: download
+    enabled: true  # This will enable or skip the module
+    urls: 
+      - "https://github.com/faressc/GuitarLSTM/raw/main/data/ts9_test1_in_FP32.wav"
+      - "https://github.com/faressc/GuitarLSTM/raw/main/data/ts9_test1_out_FP32.wav"
+    output_directory: "data" # This should not be changed
+
+    

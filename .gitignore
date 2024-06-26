@@ -5,9 +5,10 @@ __pycache__/
 myenv
 
 data/**/* 
+models/
 
 !data/raw.dvc
-!data/processed.dvc
+#!data/processed.dvc
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
@@ -21,3 +22,4 @@ data/**/*
 
 
  
+/models

@@ -1,7 +1,6 @@
-# This script is used to collect files from the internet and save them to the data/raw directory.
+# This script is used to collect files from the internet and saves them to the data/raw directory.
 # It reads the configuration from collect_config.yaml file and executes the modules defined in the configuration.
-# It is handled as a pipeline, where each module is executed in sequence.
-# It could be extended to support more modules for data collection tasks.
+# It is handled as a pipeline, where each module is executed in sequence. It could be extended to support more modules for data collection tasks.
 
 import os
 import wget
@@ -62,7 +61,7 @@ class DownloadModule:
 
         
 def main():
-    config_manager = ConfigManager("collect_config.yaml")
+    config_manager = ConfigManager("collect.yaml")
     factory = ModuleFactory()
     
     modules = config_manager.get("collect")
