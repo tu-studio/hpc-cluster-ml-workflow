@@ -12,14 +12,8 @@ models/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
-
 !scripts/
 !docs/
 
 !.gitkeep
 !.dvc
-
-
-
- 
-/models

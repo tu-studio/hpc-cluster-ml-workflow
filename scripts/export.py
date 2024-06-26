@@ -2,7 +2,6 @@ import torch
 import numpy as np
 import scipy as sp
 import os
-from ruamel.yaml import YAML
 from source.config import load_params
 from train import get_train_mode_params
 from model import NeuralNetwork
