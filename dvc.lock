@@ -18,21 +18,19 @@ stages:
         preprocess.input_size: 150
         preprocess.output_dir: data/processed/
         preprocess.target_file: /../data/raw/ts9_test1_out_FP32.wav
-        preprocess.test_split: 0.2
+        preprocess.test_split: 0.3
     outs:
-    - path: data/processed/
+    - path: data/processed/processed_data.pt
       hash: md5
-      md5: afe1ad6d5c0038f49dd482050f554c53.dir
+      md5: 89c7061dff9c875de28df05c5e31bb79
       size: 4973692020
-      nfiles: 2
   train:
     cmd: python scripts/train.py
     deps:
-    - path: data/processed/
+    - path: data/processed/processed_data.pt
       hash: md5
-      md5: 1457eef78df6d36fb5e700e4dc143c95.dir
+      md5: 89c7061dff9c875de28df05c5e31bb79
       size: 4973692020
-      nfiles: 2
     - path: scripts/train.py
       hash: md5
       md5: 338ffb55c26c2f6f433c47c2b6527fcf
@@ -46,7 +44,7 @@ stages:
     outs:
     - path: models/checkpoints
       hash: md5
-      md5: e3816a079254e1e52b16b0c304f4557b.dir
+      md5: 46facca8d8815be8b93df94b6c98d778.dir
       size: 47580
       nfiles: 1
   export:
@@ -54,7 +52,7 @@ stages:
     deps:
     - path: models/checkpoints/
       hash: md5
-      md5: e3816a079254e1e52b16b0c304f4557b.dir
+      md5: 46facca8d8815be8b93df94b6c98d778.dir
       size: 47580
       nfiles: 1
     - path: scripts/export.py
@@ -69,6 +67,6 @@ stages:
     outs:
     - path: models/exports
       hash: md5
-      md5: dd3d074cb6444e2acea2f59d62343cd0.dir
+      md5: a4317ab67757c477a893bcd1a7d9f3c6.dir
       size: 50450
       nfiles: 1

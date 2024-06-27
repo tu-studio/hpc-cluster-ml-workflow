@@ -11,22 +11,21 @@ stages:
       - preprocess.test_split
       - preprocess.output_dir
     outs:
-      - data/processed/:
-          persist: true
+      - data/processed/processed_data.pt
 
   train:
     cmd: python scripts/train.py
     deps:
       - scripts/train.py
-      - data/processed/
+      - data/processed/processed_data.pt
     params:
       - train.name
       - train.batch_size
       - train.epochs
       - train.train_mode
     outs:
-      - models/checkpoints:
-          persist: true
+      - models/checkpoints
+
 
   export:
     cmd: python scripts/export.py
@@ -38,5 +37,5 @@ stages:
       - train.name
       - train.train_mode
     outs:
-      - models/exports:
-          persist: true
+      - models/exports
+
