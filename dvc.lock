@@ -20,19 +20,17 @@ stages:
         preprocess.target_file: /../data/raw/ts9_test1_out_FP32.wav
         preprocess.test_split: 0.3
     outs:
-    - path: data/processed/
+    - path: data/processed/processed_data.pt
       hash: md5
-      md5: 1457eef78df6d36fb5e700e4dc143c95.dir
+      md5: 89c7061dff9c875de28df05c5e31bb79
       size: 4973692020
-      nfiles: 2
   train:
     cmd: python scripts/train.py
     deps:
-    - path: data/processed/
+    - path: data/processed/processed_data.pt
       hash: md5
-      md5: 1457eef78df6d36fb5e700e4dc143c95.dir
+      md5: 89c7061dff9c875de28df05c5e31bb79
       size: 4973692020
-      nfiles: 2
     - path: scripts/train.py
       hash: md5
       md5: 9f7f047f3815b76f355fe1a2ba68f595
@@ -46,12 +44,16 @@ stages:
     outs:
     - path: dvclive/
       hash: md5
+<<<<<<< HEAD
       md5: 823bd8fcde5e4ef2a45579a1c08361bb.dir
       size: 428
       nfiles: 2
     - path: models/checkpoints/
       hash: md5
       md5: 91f4d5d2fb1b437fe49017e7a0340a68.dir
+=======
+      md5: 46facca8d8815be8b93df94b6c98d778.dir
+>>>>>>> 98ef8f9ecd04a82a97eeb7b2000b5f3d2080da50
       size: 47580
       nfiles: 1
     - path: tensorboard/
@@ -64,7 +66,11 @@ stages:
     deps:
     - path: models/checkpoints/
       hash: md5
+<<<<<<< HEAD
       md5: 91f4d5d2fb1b437fe49017e7a0340a68.dir
+=======
+      md5: 46facca8d8815be8b93df94b6c98d778.dir
+>>>>>>> 98ef8f9ecd04a82a97eeb7b2000b5f3d2080da50
       size: 47580
       nfiles: 1
     - path: scripts/export.py
@@ -79,6 +85,10 @@ stages:
     outs:
     - path: models/exports/
       hash: md5
+<<<<<<< HEAD
       md5: cee39caccdba3e2ffd6cae9855ff5fe9.dir
+=======
+      md5: a4317ab67757c477a893bcd1a7d9f3c6.dir
+>>>>>>> 98ef8f9ecd04a82a97eeb7b2000b5f3d2080da50
       size: 50450
       nfiles: 1
