@@ -17,3 +17,5 @@ models/
 
 !.gitkeep
 !.dvc
+/dvclive
+/tensorboard

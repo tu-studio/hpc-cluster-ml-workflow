@@ -5,9 +5,9 @@ stages:
     deps:
     - path: data/raw/
       hash: md5
-      md5: ab94a02e90f231c51c654642e730de82.dir
-      size: 65885308
-      nfiles: 4
+      md5: 258f409b9cb543c7cae3902ab7eb808f.dir
+      size: 65879160
+      nfiles: 2
     - path: scripts/preprocess.py
       hash: md5
       md5: 966fd62fcddf39410127760d299be310
@@ -35,26 +35,36 @@ stages:
       nfiles: 2
     - path: scripts/train.py
       hash: md5
-      md5: 338ffb55c26c2f6f433c47c2b6527fcf
-      size: 4210
+      md5: 9f7f047f3815b76f355fe1a2ba68f595
+      size: 5129
     params:
       params.yaml:
         train.batch_size: 4096
-        train.epochs: 2
+        train.epochs: 1
         train.name: model
         train.train_mode: 0
     outs:
-    - path: models/checkpoints
+    - path: dvclive/
       hash: md5
-      md5: 234b53dccc876f07b5a025c38db5e61e.dir
+      md5: 823bd8fcde5e4ef2a45579a1c08361bb.dir
+      size: 428
+      nfiles: 2
+    - path: models/checkpoints/
+      hash: md5
+      md5: 91f4d5d2fb1b437fe49017e7a0340a68.dir
       size: 47580
+      nfiles: 1
+    - path: tensorboard/
+      hash: md5
+      md5: 0d4433602528241ffaa52242a2996739.dir
+      size: 86583
       nfiles: 1
   export:
     cmd: python scripts/export.py
     deps:
     - path: models/checkpoints/
       hash: md5
-      md5: 234b53dccc876f07b5a025c38db5e61e.dir
+      md5: 91f4d5d2fb1b437fe49017e7a0340a68.dir
       size: 47580
       nfiles: 1
     - path: scripts/export.py
@@ -67,8 +77,8 @@ stages:
         train.name: model
         train.train_mode: 0
     outs:
-    - path: models/exports
+    - path: models/exports/
       hash: md5
-      md5: 6793579f2d11d43f91cf5d5a2d6c2794.dir
+      md5: cee39caccdba3e2ffd6cae9855ff5fe9.dir
       size: 50450
       nfiles: 1

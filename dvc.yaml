@@ -2,41 +2,43 @@ stages:
   preprocess:
     cmd: python scripts/preprocess.py
     deps:
-      - scripts/preprocess.py
-      - data/raw/
+    - scripts/preprocess.py
+    - data/raw/
     params:
-      - preprocess.input_file
-      - preprocess.target_file
-      - preprocess.input_size
-      - preprocess.test_split
-      - preprocess.output_dir
+    - preprocess.input_file
+    - preprocess.target_file
+    - preprocess.input_size
+    - preprocess.test_split
+    - preprocess.output_dir
     outs:
-      - data/processed/:
-          persist: true
-
+    - data/processed/
   train:
     cmd: python scripts/train.py
     deps:
-      - scripts/train.py
-      - data/processed/
+    - scripts/train.py
+    - data/processed/
     params:
-      - train.name
-      - train.batch_size
-      - train.epochs
-      - train.train_mode
+    - train.name
+    - train.batch_size
+    - train.epochs
+    - train.train_mode
     outs:
-      - models/checkpoints:
-          persist: true
-
+    - models/checkpoints/
+    - dvclive/
+    - tensorboard/
   export:
     cmd: python scripts/export.py
     deps:
-      - scripts/export.py
-      - models/checkpoints/
+    - scripts/export.py
+    - models/checkpoints/
     params:
-      - preprocess.input_size
-      - train.name
-      - train.train_mode
+    - preprocess.input_size
+    - train.name
+    - train.train_mode
     outs:
-      - models/exports:
-          persist: true
+    - models/exports/
+metrics:
+- dvclive/metrics.json
+plots:
+- dvclive/plots/metrics:
+    x: step

@@ -12,6 +12,7 @@
 # ruamel.yaml.clib==0.2.8
 # wget==3.2
 
+tensorboard
 aiohttp==3.9.5
 aiohttp-retry==2.8.3
 aiosignal==1.3.1
