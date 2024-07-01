@@ -4,6 +4,6 @@ collect:
     urls: 
       - "https://github.com/faressc/GuitarLSTM/raw/main/data/ts9_test1_in_FP32.wav"
       - "https://github.com/faressc/GuitarLSTM/raw/main/data/ts9_test1_out_FP32.wav"
-    output_directory: "data" # This should not be changed
+    output_directory: "data/raw" # This should not be changed
 
     
