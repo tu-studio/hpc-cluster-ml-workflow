@@ -144,3 +144,4 @@ webdav4==0.9.8
 wget==3.2
 yarl==1.9.4
 zc.lockfile==3.0.post1
+dvclive
