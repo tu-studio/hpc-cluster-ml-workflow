@@ -11,37 +11,21 @@ stages:
     - preprocess.test_split
     - preprocess.output_dir
     outs:
-<<<<<<< HEAD
     - data/processed/
   train:
     cmd: python scripts/train.py
     deps:
     - scripts/train.py
     - data/processed/
-=======
-      - data/processed/processed_data.pt
-
-  train:
-    cmd: python scripts/train.py
-    deps:
-      - scripts/train.py
-      - data/processed/processed_data.pt
->>>>>>> 98ef8f9ecd04a82a97eeb7b2000b5f3d2080da50
     params:
     - train.name
     - train.batch_size
     - train.epochs
     - train.train_mode
     outs:
-<<<<<<< HEAD
     - models/checkpoints/
     - dvclive/
     - tensorboard/
-=======
-      - models/checkpoints
-
-
->>>>>>> 98ef8f9ecd04a82a97eeb7b2000b5f3d2080da50
   export:
     cmd: python scripts/export.py
     deps:
@@ -52,14 +36,9 @@ stages:
     - train.name
     - train.train_mode
     outs:
-<<<<<<< HEAD
     - models/exports/
 metrics:
 - dvclive/metrics.json
 plots:
 - dvclive/plots/metrics:
     x: step
-=======
-      - models/exports
-
->>>>>>> 98ef8f9ecd04a82a97eeb7b2000b5f3d2080da50

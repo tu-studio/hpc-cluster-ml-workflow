@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 general:
   random_seed: 42
-=======
-global:
-  seed: 42
-
->>>>>>> 98ef8f9ecd04a82a97eeb7b2000b5f3d2080da50
 preprocess:
   input_file: '/../data/raw/ts9_test1_in_FP32.wav'
   target_file: '/../data/raw/ts9_test1_out_FP32.wav'
