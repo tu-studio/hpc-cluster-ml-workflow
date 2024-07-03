@@ -33,7 +33,8 @@ conda activate test_env
 module load nvidia/cuda/12.2
 
 ## Run Training
-STORAGE_DEFAULT_DIRECTORY="$PWD/storage/" dvc exp run
+mkdir -p logs
+STORAGE_DEFAULT_DIRECTORY="$PWD/logs/" dvc exp run
 
 ## if [ $? -ne 0 ]; then
 ##    echo "Error occurred during DVC experiment run; exiting."
