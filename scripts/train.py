@@ -116,7 +116,7 @@ def main():
     model = NeuralNetwork(conv1d_filters, conv1d_strides, hidden_units).to(device)
     summary = torchinfo.summary(model, (1, 1, input_size), device=device)
     print(summary)
-    sample_inputs = torch.randn(1, 1, input_size)  # Beispielinput anpassen
+    sample_inputs = torch.randn(1, 1, input_size) 
     writer.add_graph(model, sample_inputs.to(device))
 
     loss_fn = nn.MSELoss(reduction='mean')
@@ -127,7 +127,7 @@ def main():
     testing_dataset = torch.utils.data.TensorDataset(X_ordered_testing, y_ordered_testing)
     testing_dataloader = torch.utils.data.DataLoader(testing_dataset, batch_size=batch_size, shuffle=False)
 
-    live = Live()  # Initialize Live once for the entire training process
+    live = Live()  
 
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
