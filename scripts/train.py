@@ -27,18 +27,18 @@ def get_train_mode_params(train_mode):
         hidden_units = 96
     return learning_rate, conv1d_strides, conv1d_filters, hidden_units
 
-def prepare_device(device):
-    cpu_device = torch.device("cpu")
-    device = cpu_device
-    if device == "mps":
+def prepare_device(request):
+    if request == "mps":
         if torch.backends.mps.is_available():
             device = torch.device("mps")
             print("Using MPS device")
-    elif device == "cuda":
+    elif request == "cuda":
         if torch.cuda.is_available():
             device = torch.device("cuda")
             print("Using CUDA device")
-    print(f"Using {device} device")
+    else:
+        device = torch.device("cpu")
+        print ("Using CPU device")
     return device
 
 def train_epoch(dataloader, model, loss_fn, optimizer, device, live, writer, epoch):

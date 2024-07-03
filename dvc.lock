@@ -1,0 +1,84 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python scripts/preprocess.py
+    deps:
+    - path: data/raw/
+      hash: md5
+      md5: 258f409b9cb543c7cae3902ab7eb808f.dir
+      size: 65879160
+      nfiles: 2
+    - path: scripts/preprocess.py
+      hash: md5
+      md5: 966fd62fcddf39410127760d299be310
+      size: 2452
+    params:
+      params.yaml:
+        preprocess.input_file: /../data/raw/ts9_test1_in_FP32.wav
+        preprocess.input_size: 150
+        preprocess.output_dir: data/processed/
+        preprocess.target_file: /../data/raw/ts9_test1_out_FP32.wav
+        preprocess.test_split: 0.3
+    outs:
+    - path: data/processed/
+      hash: md5
+      md5: 56451b59eba92ef0bbc1012484782968.dir
+      size: 4973692020
+      nfiles: 2
+  train:
+    cmd: python scripts/train.py
+    deps:
+    - path: data/processed/
+      hash: md5
+      md5: 56451b59eba92ef0bbc1012484782968.dir
+      size: 4973692020
+      nfiles: 2
+    - path: scripts/train.py
+      hash: md5
+      md5: 1cff7c60bc94493df6eb64318ef742e5
+      size: 5247
+    params:
+      params.yaml:
+        train.batch_size: 4096
+        train.epochs: 1
+        train.name: model
+        train.train_mode: 0
+    outs:
+    - path: dvclive/
+      hash: md5
+      md5: c495bed76e9961c5f76919fd0ca686ff.dir
+      size: 448
+      nfiles: 2
+    - path: models/checkpoints/
+      hash: md5
+      md5: f0280bc123d7a9d0e692bba9190f8ebf.dir
+      size: 47278
+      nfiles: 1
+    - path: tensorboard/
+      hash: md5
+      md5: 9467f5370a31cce73c4d69894c63e7c1.dir
+      size: 86584
+      nfiles: 1
+  export:
+    cmd: python scripts/export.py
+    deps:
+    - path: models/checkpoints/
+      hash: md5
+      md5: f0280bc123d7a9d0e692bba9190f8ebf.dir
+      size: 47278
+      nfiles: 1
+    - path: scripts/export.py
+      hash: md5
+      md5: d6ab3d080da73e0eec9611aca7a765c3
+      size: 1458
+    params:
+      params.yaml:
+        preprocess.input_size: 150
+        train.name: model
+        train.train_mode: 0
+    outs:
+    - path: models/exports/
+      hash: md5
+      md5: 955fbaa5fa1255152090c0e227ba3b6d.dir
+      size: 50450
+      nfiles: 1

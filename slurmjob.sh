@@ -35,14 +35,9 @@ module load nvidia/cuda/12.2
 ## Run Training
 STORAGE_DEFAULT_DIRECTORY="$PWD/storage/" dvc exp run
 
-if [ $? -ne 0 ]; then
-    echo "Error occurred during DVC experiment run; exiting."
-    exit 1
-fi
+## if [ $? -ne 0 ]; then
+##    echo "Error occurred during DVC experiment run; exiting."
+##    exit 1
+## fi
 
-dvc push
-
-git add .
-git commit -m "Update experiment"
-git push
 

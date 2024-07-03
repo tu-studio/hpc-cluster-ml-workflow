@@ -1,0 +1,87 @@
+Reproducing experiment 'duple-rues'
+Stage 'preprocess' didn't change, skipping
+Running stage 'train':
+> python scripts/train.py
+DBG MSG: CUDA is Available.
+Using CUDA device
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+NeuralNetwork                            [1, 1]                    --
+├─ConstantPad1d: 1-1                     [1, 1, 174]               --
+├─Conv1d: 1-2                            [1, 16, 14]               208
+├─ConstantPad1d: 1-3                     [1, 16, 38]               --
+├─Conv1d: 1-4                            [1, 16, 3]                3,088
+├─LSTM: 1-5                              [1, 3, 36]                7,776
+├─Linear: 1-6                            [1, 1]                    37
+==========================================================================================
+Total params: 11,109
+Trainable params: 11,109
+Non-trainable params: 0
+Total mult-adds (Units.MEGABYTES): 0.04
+==========================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.00
+Params size (MB): 0.04
+Estimated Total Size (MB): 0.05
+==========================================================================================
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+NeuralNetwork                            [1, 1]                    --
+├─ConstantPad1d: 1-1                     [1, 1, 174]               --
+├─Conv1d: 1-2                            [1, 16, 14]               208
+├─ConstantPad1d: 1-3                     [1, 16, 38]               --
+├─Conv1d: 1-4                            [1, 16, 3]                3,088
+├─LSTM: 1-5                              [1, 3, 36]                7,776
+├─Linear: 1-6                            [1, 1]                    37
+==========================================================================================
+Total params: 11,109
+Trainable params: 11,109
+Non-trainable params: 0
+Total mult-adds (Units.MEGABYTES): 0.04
+==========================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.00
+Params size (MB): 0.04
+Estimated Total Size (MB): 0.05
+==========================================================================================
+Epoch 1
+-------------------------------
+loss: 0.029966  [ 4096/5764269]
+loss: 0.002268  [413696/5764269]
+loss: 0.000977  [823296/5764269]
+loss: 0.000751  [1232896/5764269]
+loss: 0.000652  [1642496/5764269]
+loss: 0.000597  [2052096/5764269]
+loss: 0.000543  [2461696/5764269]
+loss: 0.000526  [2871296/5764269]
+loss: 0.000466  [3280896/5764269]
+loss: 0.000441  [3690496/5764269]
+loss: 0.000425  [4100096/5764269]
+loss: 0.000408  [4509696/5764269]
+loss: 0.000388  [4919296/5764269]
+loss: 0.000340  [5328896/5764269]
+loss: 0.000360  [5738496/5764269]
+Test Error: 
+ Avg loss: 0.000337 
+
+Done!
+Saved PyTorch Model State to model.pth
+Updating lock file 'dvc.lock'
+
+Running stage 'export':
+> python scripts/export.py
+/home/users/m/motorik.michael/anaconda3/envs/test_env/lib/python3.12/site-packages/torch/onnx/_internal/jit_utils.py:307: UserWarning: Constant folding - Only steps=1 can be constant folded for opset >= 10 onnx::Slice op. Constant folding not applied. (Triggered internally at ../torch/csrc/jit/passes/onnx/constant_fold.cpp:179.)
+  _C._jit_pass_onnx_node_shape_type_inference(node, params_dict, opset_version)
+/home/users/m/motorik.michael/anaconda3/envs/test_env/lib/python3.12/site-packages/torch/onnx/symbolic_opset9.py:4662: UserWarning: Exporting a model to ONNX with a batch_size other than 1, with a variable length with LSTM can cause an error when running the ONNX model with a different batch size. Make sure to save the model with a batch size of 1, or define the initial states (h0/c0) as inputs of the model. 
+  warnings.warn(
+/home/users/m/motorik.michael/anaconda3/envs/test_env/lib/python3.12/site-packages/torch/onnx/utils.py:702: UserWarning: Constant folding - Only steps=1 can be constant folded for opset >= 10 onnx::Slice op. Constant folding not applied. (Triggered internally at ../torch/csrc/jit/passes/onnx/constant_fold.cpp:179.)
+  _C._jit_pass_onnx_graph_shape_type_inference(
+/home/users/m/motorik.michael/anaconda3/envs/test_env/lib/python3.12/site-packages/torch/onnx/utils.py:1209: UserWarning: Constant folding - Only steps=1 can be constant folded for opset >= 10 onnx::Slice op. Constant folding not applied. (Triggered internally at ../torch/csrc/jit/passes/onnx/constant_fold.cpp:179.)
+  _C._jit_pass_onnx_graph_shape_type_inference(
+Model exported to ONNX format.
+Updating lock file 'dvc.lock'
+
+Ran experiment(s): duple-rues
+Experiment results have been applied to your workspace.
