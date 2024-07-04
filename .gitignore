@@ -5,19 +5,20 @@ __pycache__/
 myenv
 
 data/**/* 
-models/
 
 !data/raw.dvc
 #!data/processed.dvc
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
-!scripts/
+!source/
 !docs/
 
 !.gitkeep
 !.dvc
 /dvclive
 /tensorboard
+/models
+/logs
 
 NOTES.md

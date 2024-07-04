@@ -4,7 +4,7 @@ preprocess:
   input_file: '/../data/raw/ts9_test1_in_FP32.wav'
   target_file: '/../data/raw/ts9_test1_out_FP32.wav'
   input_size: 150
-  test_split: 0.3
+  test_split: 0.2
   output_dir: 'data/processed/'
   file_name: 'processed_data.pt'
 train:
@@ -12,5 +12,6 @@ train:
   name: 'model'
   batch_size: 4096 
   epochs: 1
-  train_mode: 0     
+  train_mode: 0  
+  device: 'mps'   
 

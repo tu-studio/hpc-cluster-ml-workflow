@@ -1,8 +1,8 @@
 stages:
   preprocess:
-    cmd: python scripts/preprocess.py
+    cmd: python source/preprocess.py
     deps:
-    - scripts/preprocess.py
+    - source/preprocess.py
     - data/raw/
     params:
     - preprocess.input_file
@@ -13,9 +13,9 @@ stages:
     outs:
     - data/processed/
   train:
-    cmd: python scripts/train.py
+    cmd: python source/train.py
     deps:
-    - scripts/train.py
+    - source/train.py
     - data/processed/
     params:
     - train.name
@@ -26,10 +26,11 @@ stages:
     - models/checkpoints/
     - dvclive/
     - tensorboard/
+    - logs/
   export:
-    cmd: python scripts/export.py
+    cmd: python source/export.py
     deps:
-    - scripts/export.py
+    - source/export.py
     - models/checkpoints/
     params:
     - preprocess.input_size
@@ -42,3 +43,5 @@ metrics:
 plots:
 - dvclive/plots/metrics:
     x: step
+
+

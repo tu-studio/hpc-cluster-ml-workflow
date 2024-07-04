@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import os
-from source.config import load_params
+from utils.config import load_params
 from pedalboard.io import AudioFile
 
 def normalize(data):

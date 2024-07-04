@@ -1,17 +1,11 @@
 #!/bin/bash
 
-#  exp_job.sh
-#  
-#
-#  Created by Michael Witte on 01.07.2024
-#  
-
 #SBATCH -J exp_job      
 
 #SBATCH --ntasks=1                    
 #SBATCH --nodes=1                     
 #SBATCH --ntasks-per-core=1            
-#SBATCH --cpus-per-task=4            
+#SBATCH --cpus-per-task=1            
 #SBATCH --gres=gpu:tesla:1            
 
 #SBATCH --mem=100GB                  

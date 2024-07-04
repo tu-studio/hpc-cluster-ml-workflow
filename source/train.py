@@ -6,7 +6,7 @@ import torchinfo
 from torch.utils.tensorboard import SummaryWriter
 import os
 from dvclive import Live
-from source.config import load_params
+from utils.config import load_params
 from model import NeuralNetwork
 
 def get_train_mode_params(train_mode):
@@ -92,6 +92,7 @@ def main():
     batch_size = params.train.batch_size
     input_size = params.preprocess.input_size
     random_seed = params.general.random_seed
+    device_request = params.train.device
 
     random.seed(random_seed)
     np.random.seed(random_seed)
@@ -106,7 +107,7 @@ def main():
     X_ordered_testing = data['X_ordered_testing']
     y_ordered_testing = data['y_ordered_testing']
 
-    device = prepare_device("cuda")
+    device = prepare_device(device_request)
 
     if not os.path.exists('models/checkpoints/'):
         os.makedirs('models/checkpoints/')
