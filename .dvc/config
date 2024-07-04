@@ -1,0 +1,7 @@
+[core]
+    remote = myremote
+['remote "myremote"']
+    url = webdavs://tubcloud.tu-berlin.de/remote.php/dav/files/cf531c5e-2043-103b-8745-111da40a61ee/dvcR/ml-training-pipeline
+    ask_password = true
+    timeout = 600
+
