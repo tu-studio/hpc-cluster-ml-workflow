@@ -1,6 +1,6 @@
 stages:
   preprocess:
-    cmd: python source/preprocess.py
+    cmd: python3 source/preprocess.py
     deps:
     - source/preprocess.py
     - data/raw/
@@ -13,7 +13,7 @@ stages:
     outs:
     - data/processed/
   train:
-    cmd: python source/train.py
+    cmd: python3 source/train.py
     deps:
     - source/train.py
     - data/processed/
@@ -27,7 +27,7 @@ stages:
     - dvclive/
     - tensorboard/
   export:
-    cmd: python source/export.py
+    cmd: python3 source/export.py
     deps:
     - source/export.py
     - models/checkpoints/
@@ -42,5 +42,3 @@ metrics:
 plots:
 - dvclive/plots/metrics:
     x: step
-
-

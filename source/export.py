@@ -1,13 +1,9 @@
 import torch
 import numpy as np
-import scipy as sp
 import os
 from utils.config import load_params
 from train import get_train_mode_params
 from model import NeuralNetwork
-
-def save_wav(name, data):
-    sp.io.wavfile.write(name, 44100, data.flatten().astype(np.float32))
 
 def main():
     # Load parameters from params.yaml
