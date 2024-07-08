@@ -22,6 +22,7 @@ stages:
     - train.batch_size
     - train.epochs
     - train.train_mode
+    - train.device
     outs:
     - models/checkpoints/
     - dvclive/
