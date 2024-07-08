@@ -20,6 +20,8 @@ cd ml-training-pipeline
 
 python3 -m venv myenv
 
+echo myenv/ >> .gitignore
+
 source myenv/bin/activate
 
 pip install -r requirements.txt
