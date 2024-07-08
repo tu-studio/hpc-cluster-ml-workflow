@@ -31,6 +31,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends git
 # Install python3-pip
 RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
 
+# Install OpenSSH-Client 
+RUN apt-get update && apt-get install -y openssh-client
+
 # Set the working directory
 WORKDIR /usr/src/app
 
