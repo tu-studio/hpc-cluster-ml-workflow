@@ -35,19 +35,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
 RUN apt-get update && apt-get install -y openssh-client
 
 # Set the working directory
-WORKDIR /usr/src/app
+WORKDIR /usr/src
 
 # Create a virtual environment and install dependencies
-RUN python3 -m venv dvenv
+RUN python3 -m venv cntnrvenv
 COPY requirements.txt .
-RUN . dvenv/bin/activate && pip3 install -r requirements.txt
-RUN pip3 install dvc
-RUN pip3 install dvc_webdav
+RUN . cntnrvenv/bin/activate && pip3 install -r requirements.txt
 
 # Set the working directory
 WORKDIR /usr/src/app
 
-# Copy the current directory contents into the container at /usr/src/app
-COPY source/ .
-
-CMD ["source", "myenv/bin/activate"]
+CMD ["sh", "-c", ". /usr/src/cntnrvenv/bin/activate"]
