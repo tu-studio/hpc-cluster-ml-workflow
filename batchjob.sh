@@ -17,18 +17,14 @@
 
 ulimit -u 512
 
-## Source local Anaconda installation
-source /home/users/m/motorik.michael/anaconda3/etc/profile.d/conda.sh
-
-## Activate the conda environment
-conda activate test_env
-
 ## Load cuda module 
 module load nvidia/cuda/12.2
 
-## Run Training
-mkdir -p logs
-STORAGE_DEFAULT_DIRECTORY="$PWD/logs/" dvc exp run
+module load singularity/4.0.2
+
+singularity pull docker://michaelwitte/ml-training-pipeline:latest
+
+STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --bind $(pwd):/usr/src/app --bind $HOME/.ssh:/root/.ssh ml-training-pipeline.sif sh -c "ssh-keyscan github.com >> /root/.ssh/known_hosts && git config --global user.name 'michaelwitte' && git config --global user.email 'michael-witte@hotmail.de' && dvc exp run"
 
 ## if [ $? -ne 0 ]; then
 ##    echo "Error occurred during DVC experiment run; exiting."
