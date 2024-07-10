@@ -25,11 +25,8 @@ module load nvidia/cuda/12.2
 
 singularity pull docker://michaelwitte/ml-pipeline-image:latest
 
-STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --bind $(pwd):/usr/src/app --bind $HOME/.ssh:/root/.ssh ml-pipeline-image_latest.sif sh -c "ssh-keyscan github.com >> /root/.ssh/known_hosts && git config --global user.name 'michaelwitte' && git config --global user.email 'michael-witte@hotmail.de' && . /usr/src/cntnrvenv/bin/activate && dvc exp run"
+STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/app --bind $HOME/.ssh:/root/.ssh ml-pipeline-image_latest.sif sh -c "ssh-keyscan github.com >> /root/.ssh/known_hosts && git config --global user.name 'michaelwitte' && git config --global user.email 'michael-witte@hotmail.de' && . /usr/src/cntnrvenv/bin/activate && dvc exp run"
 
-## if [ $? -ne 0 ]; then
-##    echo "Error occurred during DVC experiment run; exiting."
-##    exit 1
-## fi
+
 
 

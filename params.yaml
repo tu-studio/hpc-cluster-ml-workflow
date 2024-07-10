@@ -12,6 +12,6 @@ train:
   name: 'model'
   batch_size: 4096 
   epochs: 15
-  train_mode: 2 
+  train_mode: 0 
   device: 'cuda'   
 
