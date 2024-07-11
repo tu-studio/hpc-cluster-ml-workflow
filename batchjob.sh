@@ -30,10 +30,11 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/ap
   git pull origin main &&
   dvc pull data/raw &&
   dvc exp run &&                                      # Run DVC experiment
-  EXP_ID=\$(dvc exp show --no-pager | grep '* Experiment' | awk '{print \$3}') &&  # Get the experiment ID
-  dvc exp branch \${EXP_ID} exp_\${EXP_ID} &&         # Use DVC to create and checkout a branch for the experiment
-  git stash &&                                       # Stash the changes
-  git checkout exp_\${EXP_ID} &&                      # Checkout the new branch
-  git push --set-upstream origin exp_\${EXP_ID}  &&      # Push the new branch to remote
+  experiment_name=$(tail -f slurm-${SLURM_JOB_ID}.out | grep -oP "Ran experiment\(s\): \K[\w\-]+") &&
+  echo "The current experiment is: $experiment_name" &&
+  dvc exp branch $experiment_name exp_${experiment_name} &&                    # Create a new branch for the experiment
+  git checkout exp_${experiment_name} &&                      # Checkout the new branch
+  dvc checkout &&                                    # Checkout the experiment
+  git push --set-upstream origin exp_${experiment_name}  &&      # Push the new branch to remote
   dvc push &&
 "
