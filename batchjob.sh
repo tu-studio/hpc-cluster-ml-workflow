@@ -19,7 +19,7 @@ module load singularity/4.0.2
 module load nvidia/cuda/12.2 
 
 ## Pull the latest container image
-singularity pull docker://michaelwitte/ml-pipeline-image:latest &&
+singularity pull docker://michaelwitte/ml-pipeline-image:latest 
 
 ## Execute inside the singularity container
 STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/app --bind $HOME/.ssh:/root/.ssh ml-pipeline-image_latest.sif sh -c "
@@ -27,10 +27,13 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/ap
   git config --global user.name 'michaelwitte' &&     # Set global Git config for user name
   git config --global user.email 'michael-witte@hotmail.de' &&  # Set global Git config for email
   . /usr/src/cntnrvenv/bin/activate &&                # Activate the environment
-  git pull &&
+  git pull origin main &&
   dvc pull data/raw &&
   dvc exp run &&                                      # Run DVC experiment
   EXP_ID=\$(dvc exp show --no-pager | grep '* Experiment' | awk '{print \$3}') &&  # Get the experiment ID
   dvc exp branch \${EXP_ID} exp_\${EXP_ID} &&         # Use DVC to create and checkout a branch for the experiment
-  git push --set-upstream origin exp_\${EXP_ID}       # Push the new branch to remote
+  git stash &&                                       # Stash the changes
+  git checkout exp_\${EXP_ID} &&                      # Checkout the new branch
+  git push --set-upstream origin exp_\${EXP_ID}  &&      # Push the new branch to remote
+  dvc push &&
 "
