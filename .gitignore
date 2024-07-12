@@ -19,7 +19,6 @@ data/**/*
 /dvclive
 /tensorboard
 /models
-/logs
 
 NOTES.md
 ml-pipeline-image_latest.sif
