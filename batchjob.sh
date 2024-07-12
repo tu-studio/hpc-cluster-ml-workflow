@@ -34,8 +34,13 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/ap
   sleep 5 &&
   experiment_name=$(grep -oP "Ran experiment\(s\): \K[\w\-]+" slurm-$SLURM_JOB_ID.out) &&
   dvc exp branch $experiment_name "exp_$experiment_name" &&
-  git checkout "exp_$experiment_name" --force &&
+  git checkout "exp_$experiment_name" --force &&                
   dvc checkout &&
-  git push --set-upstream origin "exp_$experiment_name"  &&      # Push the new branch to remote
-  dvc push
+  # Track the log file with DVC
+  dvc add ./logs/slurm-$SLURM_JOB_ID.out &&
+  git add ./logs/slurm-$SLURM_JOB_ID.out.dvc &&
+  git commit -m "Add experiment logs for $experiment_name" &&
+  git push --set-upstream origin "exp_$experiment_name" &&     
+  dvc push &&
+  git checkout main 						
   '
