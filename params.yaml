@@ -11,7 +11,7 @@ train:
   input_file: 'data/processed/processed_data.pt'
   name: 'model'
   batch_size: 4096 
-  epochs: 15
+  epochs: 1
   train_mode: 0 
   device: 'cuda'   
 
