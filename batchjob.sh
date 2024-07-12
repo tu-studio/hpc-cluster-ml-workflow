@@ -9,6 +9,7 @@
 #SBATCH --mem=100GB
 #SBATCH --time=1:00:00 
 #SBATCH --partition=gpu
+#SBATCH --output=./logs/slurm-%j.out
 
 ulimit -u 512
 
@@ -32,7 +33,7 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/ap
   dvc pull data/raw &&
   dvc exp run &&
   sleep 5 &&
-  experiment_name=$(grep -oP "Ran experiment\(s\): \K[\w\-]+" slurm-$SLURM_JOB_ID.out) &&
+  experiment_name=$(grep -oP "Ran experiment\(s\): \K[\w\-]+" logs/slurm-$SLURM_JOB_ID.out) &&
   dvc exp branch $experiment_name "exp_$experiment_name" &&
   git checkout "exp_$experiment_name" --force &&                
   dvc checkout &&
