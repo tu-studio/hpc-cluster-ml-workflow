@@ -36,7 +36,6 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/ap
   experiment_name=$(grep -oP "Ran experiment\(s\): \K[\w\-]+" logs/slurm-$SLURM_JOB_ID.out) &&
   dvc exp branch $experiment_name "exp_$experiment_name" &&
   git checkout "exp_$experiment_name" --force &&                
-  dvc checkout &&
   # Track the log file with DVC
   dvc add logs/slurm-$SLURM_JOB_ID.out &&
   git add logs/slurm-$SLURM_JOB_ID.out.dvc &&
