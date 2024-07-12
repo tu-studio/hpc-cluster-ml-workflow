@@ -38,8 +38,8 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/ap
   git checkout "exp_$experiment_name" --force &&                
   dvc checkout &&
   # Track the log file with DVC
-  dvc add ./logs/slurm-$SLURM_JOB_ID.out &&
-  git add ./logs/slurm-$SLURM_JOB_ID.out.dvc &&
+  dvc add logs/slurm-$SLURM_JOB_ID.out &&
+  git add logs/slurm-$SLURM_JOB_ID.out.dvc &&
   git commit -m "Add experiment logs for $experiment_name" &&
   git push --set-upstream origin "exp_$experiment_name" &&     
   dvc push &&
