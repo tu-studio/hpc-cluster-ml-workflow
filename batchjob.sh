@@ -32,7 +32,7 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/ap
   # Set the git user name and email
   git config --global user.name "michaelwitte" &&     
   git config --global user.email "michael-witte@hotmail.de" && 
-  # Activate the virtual environment, located at a different path than the container's working directory 
+  # Activate the virtual environment, located at a different path than the containers working directory 
   source /usr/src/cntnrvenv/bin/activate &&                
   # Pull the latest raw data for the pipeline and run the experiment
   dvc pull data/raw &&
