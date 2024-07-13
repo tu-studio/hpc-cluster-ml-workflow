@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libbz2-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Python 3.12.4
 RUN wget --no-check-certificate https://www.python.org/ftp/python/3.12.4/Python-3.12.4.tgz \
     && tar -xf Python-3.12.4.tgz \
     && cd Python-3.12.4 \
