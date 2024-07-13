@@ -2,26 +2,29 @@
 .DS_Store
 __pycache__/
 
+# Ignore Python virtual environments
 myenv
 
+# Ignore data files
 data/**/* 
-
-!data/raw.dvc
-#!data/processed.dvc
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-
-!source/
-!docs/
-
-!.gitkeep
-!.dvc
 /dvclive
 /tensorboard
 /models
+/logs/*
 
+# Not ignore dvc files and
+!data/raw.dvc
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!source/
+!docs/
+!.gitkeep
+!.dvc
+!/logs/*.dvc
+
+# Ignore personal notes
 NOTES.md
+
+# Ignore singularity image
 ml-pipeline-image_latest.sif
 
-/logs/*
-!/logs/*.dvc

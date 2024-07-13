@@ -1,15 +1,4 @@
-# .dvc
-# data/
-# tensorboard/
-# dvclive/
-# models/
-# myenv/
-# docs/
-# .DS_Store
-# __pycache__/
-# NOTES.md
-# params.yaml
-# dvc.yaml
+# Ignore all files in this directory
 **
-!source/
+# Except this file
 !requirements.txt
