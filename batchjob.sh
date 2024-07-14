@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ -d "./logs" ]; then
-    rm -rf ./logs
-fi
-mkdir -p ./logs
-
 #SBATCH -J exp_job
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
@@ -27,6 +22,9 @@ if [ -f ml-pipeline-image_latest.sif ]; then
     rm ml-pipeline-image_latest.sif
 fi
 singularity pull docker://michaelwitte/ml-pipeline-image:latest 
+
+echo "Cleaning up the logs directory..."
+find ./logs -type f ! -name "slurm-$SLURM_JOB_ID.out" -delete
 
 echo "Starting singularity execution..."
 
