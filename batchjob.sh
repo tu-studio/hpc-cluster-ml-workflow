@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -d "./logs" ]; then
+    rm -rf ./logs
+fi
+mkdir -p ./logs
+
 #SBATCH -J exp_job
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
