@@ -17,9 +17,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python Version
-RUN wget --no-check-certificate https://www.python.org/ftp/python/$TUSTU_PYTHON_VERSION/Python-$TUSTU_PYTHON_VERSION.tgz \
-    && tar -xf Python-$TUSTU_PYTHON_VERSION.tgz \
-    && cd Python-$TUSTU_PYTHON_VERSION\
+RUN wget --no-check-certificate https://www.python.org/ftp/python/${{ env.TUSTU_PYTHON_VERSION }}/Python-${{ env.TUSTU_PYTHON_VERSION }}.tgz \
+    && tar -xf Python-{{ env.TUSTU_PYTHON_VERSION }}.tgz \
+    && cd Python-{{ env.TUSTU_PYTHON_VERSION }}\
     && ./configure --enable-optimizations \
     && make -j$(nproc) \
     && make altinstall \
