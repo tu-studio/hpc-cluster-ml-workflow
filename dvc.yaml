@@ -16,6 +16,7 @@ stages:
     cmd: python3 source/train.py
     deps:
     - source/train.py
+    - source/model.py
     - data/processed/
     params:
     - train.name

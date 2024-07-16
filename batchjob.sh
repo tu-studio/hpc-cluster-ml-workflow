@@ -17,11 +17,14 @@ ulimit -u 512
 module load singularity/4.0.2 
 module load nvidia/cuda/12.2 
 
+chmod +x unix_set_env.sh
+source unix_set_env.sh
+
 # Check and pull the latest container image
-if [ -f ml-pipeline-image_latest.sif ]; then
-    rm ml-pipeline-image_latest.sif
+if [ -f $TUSTU_PROJECT_NAME-image_latest.sif ]; then
+    rm $TUSTU_PROJECT_NAME-image_latest.sif
 fi
-singularity pull docker://michaelwitte/ml-pipeline-image:latest 
+singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:latest 
 
 echo "Cleaning up the logs directory..."
 find ./logs -type f ! -name "slurm-$SLURM_JOB_ID.out" -delete
@@ -33,8 +36,8 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/ap
   # Add the github.com host key to the known hosts file
   ssh-keyscan github.com >> /root/.ssh/known_hosts &&
   # Set the git user name and email
-  git config --global user.name "michaelwitte" &&     
-  git config --global user.email "michael-witte@hotmail.de" && 
+  git config --global user.name $TUSTU_GITHUB_USERNAME &&     
+  git config --global user.email $TUSTU_GITHUB_EMAIL && 
   # Activate the virtual environment, located at a different path than the containers working directory 
   source /usr/src/cntnrvenv/bin/activate &&                
   # Pull the latest raw data for the pipeline and run the experiment
