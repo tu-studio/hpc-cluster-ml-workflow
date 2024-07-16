@@ -36,4 +36,4 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.TUSTU_PROJECT_NAME }}image:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.TUSTU_PROJECT_NAME }}-image:latest
