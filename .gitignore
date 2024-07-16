@@ -27,5 +27,3 @@ NOTES.md
 
 # Ignore singularity image
 ml-pipeline-image_latest.sif
-
-local.env
