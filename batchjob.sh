@@ -17,8 +17,9 @@ ulimit -u 512
 module load singularity/4.0.2 
 module load nvidia/cuda/12.2 
 
-chmod +x unix_set_env.sh
-source unix_set_env.sh
+# Set environment variables
+chmod +x set_env.sh
+source set_env.sh
 
 # Check and pull the latest container image
 if [ -f $TUSTU_PROJECT_NAME-image_latest.sif ]; then
