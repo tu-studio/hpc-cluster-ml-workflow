@@ -1,7 +1,7 @@
 # Use an official Debian runtime as a parent image
 FROM debian:11-slim
 
-# Install dependencies
+# Install necessary packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     build-essential \
@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsqlite3-dev \
     curl \
     libbz2-dev \
+    # Remove apt cache
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python 3.12.4
@@ -24,26 +25,25 @@ RUN wget --no-check-certificate https://www.python.org/ftp/python/3.12.4/Python-
     && make -j$(nproc) \
     && make altinstall \
     && cd .. \
+    # Create symlink for python3
     && ln -s /usr/local/bin/python3.12 /usr/local/bin/python3
 
 # Install git
-RUN apt-get update && apt-get install -y --no-install-recommends git
+RUN apt-get install -y --no-install-recommends git
 
 # Install python3-pip
-RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
+RUN apt-get install -y --no-install-recommends python3-pip
 
 # Install OpenSSH-Client 
-RUN apt-get update && apt-get install -y openssh-client
+RUN apt-get install -y openssh-client
 
 # Set the working directory
-WORKDIR /usr/src
+WORKDIR /home
 
-# Create a virtual environment and install dependencies
-RUN python3 -m venv cntnrvenv
 COPY requirements.txt .
-RUN . cntnrvenv/bin/activate && pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Set the working directory
-WORKDIR /usr/src/app
+WORKDIR /home/app
 
-CMD ["sh", "-c", ". /usr/src/cntnrvenv/bin/activate"]
+
