@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsqlite3-dev \
     curl \
     libbz2-dev \
+    git \
+    python3-pip \
+    openssh-client \
     # Remove apt cache
     && rm -rf /var/lib/apt/lists/*
 
@@ -25,21 +28,14 @@ RUN wget --no-check-certificate https://www.python.org/ftp/python/3.12.4/Python-
     && make -j$(nproc) \
     && make altinstall \
     && cd .. \
+    && rm -rf Python-3.12.4 Python-3.12.4.tgz \
     # Create symlink for python3
     && ln -s /usr/local/bin/python3.12 /usr/local/bin/python3
-
-# Install git
-RUN apt-get install -y --no-install-recommends git
-
-# Install python3-pip
-RUN apt-get install -y --no-install-recommends python3-pip
-
-# Install OpenSSH-Client 
-RUN apt-get install -y openssh-client
 
 # Set the working directory
 WORKDIR /home
 
+# Copy the current directory contents into the container at /home
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
