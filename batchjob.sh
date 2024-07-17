@@ -11,20 +11,17 @@
 #SBATCH --partition=gpu
 #SBATCH --output=./logs/slurm-%j.out
 
-ulimit -u 512
-
 # Load necessary modules
 module load singularity/4.0.2 
-module load nvidia/cuda/12.2 
 
-# Set environment variables
-chmod +x set_env.sh
+# Set environment variables defined in global.env
 source set_env.sh
 
-# Check and pull the latest container image
+# Remove the previous singularity image if it exists
 if [ -f $TUSTU_PROJECT_NAME-image_latest.sif ]; then
     rm $TUSTU_PROJECT_NAME-image_latest.sif
 fi
+# Pull the latest docker image from Docker Hub and convert it to a singularity image. Using cached singularity image if nothing changed
 singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:latest 
 
 echo "Cleaning up the logs directory..."
@@ -33,14 +30,12 @@ find ./logs -type f ! -name "slurm-$SLURM_JOB_ID.out" -delete
 echo "Starting singularity execution..."
 
 # Run the singularity container, bind the current directory to the container's working directory, bind ssh key for git
-STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/usr/src/app --bind $HOME/.ssh:/root/.ssh ml-pipeline-image_latest.sif bash -c '
+STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/home/app --bind $HOME/.ssh:/root/.ssh ml-pipeline-image_latest.sif bash -c '
   # Add the github.com host key to the known hosts file
   ssh-keyscan github.com >> /root/.ssh/known_hosts &&
   # Set the git user name and email
   git config --global user.name $TUSTU_GITHUB_USERNAME &&     
-  git config --global user.email $TUSTU_GITHUB_EMAIL && 
-  # Activate the virtual environment, located at a different path than the containers working directory 
-  source /usr/src/cntnrvenv/bin/activate &&                
+  git config --global user.email $TUSTU_GITHUB_EMAIL &&            
   # Pull the latest raw data for the pipeline and run the experiment
   dvc pull data/raw &&
   dvc exp run &&
