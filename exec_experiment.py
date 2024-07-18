@@ -22,8 +22,6 @@ def submit_batch_job(test_split, batch_size):
         **os.environ,
         "TEST_VARIABLE": str(1234),
     }
-    subprocess.Popen('/usr/bin/mybinary', env=env).wait()
-    subprocess.Popen()
     # Run sbatch command with the environment variables as bash! subprocess! command (otherwise module not found)
     subprocess.run(['/usr/bin/bash', '-c', 'sbatch batchjob.sh'], env=env)
 
