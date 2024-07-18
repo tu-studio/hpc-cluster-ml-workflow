@@ -21,7 +21,7 @@ def submit_batch_job(test_split, batch_size):
     # But dont forget to add the os.environ to the new environment variables otherwise the PATH is not found
     env = {
         **os.environ,
-        "EXP_PARAMS": f"-S preprocess.test_split=0.3 -S train.batchsize=10"
+        "EXP_PARAMS": f"-S preprocess.test_split={test_split} -S train.batchsize={batch_size}"
     }
     # Run sbatch command with the environment variables as bash! subprocess! command (otherwise module not found)
     subprocess.run(['/usr/bin/bash', '-c', 'sbatch batchjob.sh'], env=env)
