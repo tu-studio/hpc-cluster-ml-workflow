@@ -4,6 +4,7 @@ import numpy as np
 from torch import nn
 import torchinfo
 from torch.utils.tensorboard import SummaryWriter
+import shutil
 import os
 from dvclive import Live
 from utils.config import load_params
@@ -88,16 +89,22 @@ def test_epoch(dataloader, model, loss_fn, device, writer):
     return test_loss
 
 def main():
-    if not os.path.exists('tensorboard/'):
-        os.makedirs('tensorboard/')
+    # Get the path to the tensorboard directory
+    tustu_logs_path = os.environ.get('TUSTU_LOGS_PATH')
+    if tustu_logs_path is None:
+        raise EnvironmentError("The environment variable ‘TUSTU_LOGS_PATH’ is not set.")
+    tensorboard_path = os.path.join(tustu_logs_path, 'tensorboard')
+    if not os.path.exists(tensorboard_path):
+        os.makedirs(tensorboard_path)
 
-    # print(f"The hostname is {socket.gethostname()}.")
+    # Get the hostname and the current time to identify the tensorboard log file to copy to experiment branch
     hostname = socket.gethostname()
-    # print(f"The current unix time is {time.time()}.")
     time_now = time.time()
-    writer = SummaryWriter('$LOGS/tensorboard/')
-    writer.__dir__ = "tensorboard/final/"
 
+    # Create a SummaryWriter object to write the tensorboard logs
+    writer = SummaryWriter(tensorboard_path)
+
+    # Load the parameters from the config file
     params = load_params()
     input_file = params.train.input_file
     name = params.train.name
@@ -108,6 +115,7 @@ def main():
     random_seed = params.general.random_seed
     device_request = params.train.device
 
+    # Set random seed for reproducibility
     random.seed(random_seed)
     np.random.seed(random_seed)
     torch.manual_seed(random_seed)
@@ -157,9 +165,25 @@ def main():
     if not os.path.exists('tensorboard-final/'):
         os.makedirs('tensorboard-final/')
 
-    #TODO find the right log file and copy it to the final directory
-    #From the files in os.listdir('tensorboard/'), find the one where the hostname matches
-    #If these are multiple find the one with the closest timestamp to the current time above
+
+    # Check if there are log files for the current hostname and append them to a list
+    log_files = []
+    for f in os.listdir('tensorboard/'):
+        parts = f.split('.')
+        # Erzeugt eine temporäre Liste ohne die ersten 3 Elemente und die letzten 2 Elemente
+        # Annahme: Die ersten 3 Teile sind nicht Teil des Hostnamens und die letzten 2 Teile sind die ID und die Erweiterung
+        temp_parts = parts[3:-2]
+        # Wieder zusammensetzen und prüfen, ob der Hostname enthalten ist
+        temp_hostname = '.'.join(temp_parts)
+        if hostname in temp_hostname:
+            log_files.append(f)
+    # If there are log files for the current hostname, copy the log file with the closest timestamp to the current time
+    if len(log_files) > 0:
+        # Find the log file with the closest timestamp to the current time
+        closest_file = min(log_files, key=lambda x: abs(int(x.split('.')[3]) - int(time_now)))
+        shutil.copy(os.path.join('tensorboard/', closest_file), 'tensorboard-final/')
+    else:
+        print("No log files found for the current hostname.")
 
     print("Done!")
 
