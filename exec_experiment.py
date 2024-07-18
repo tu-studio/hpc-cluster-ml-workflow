@@ -30,7 +30,7 @@ for test_split, batch_size in itertools.product(test_split_list, batch_size_list
     # oder mit veränderung
 
     # Export the experiment parameters as an environment variable and submit the batch job in same shell to have access to the environment variable.
-    command = f"export EXP_PARAMS='-S preprocess.test_split={test_split} -S train.batchsize={batch_size}' && sbatch batchscript.sh"
+    command = f"export EXP_PARAMS='-S preprocess.test_split={test_split} -S train.batchsize={batch_size}' && sbatch batchjob.sh"
     subprocess.call(command, shell=True)
 
     
