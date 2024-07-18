@@ -8,13 +8,25 @@
 # 7. Add symlink to logs
 # 8. Submit batch job
 
+# 0. Params.yaml has default values
+# 1. Change some values and add them to queue
+    # Example
+    import itertools
+    import subprocess
 
-#Example shell commands
-timestamp=$(date +%s)
-experiment_name="exp_$timestamp"
+    # Automated grid search experiments
+    n_est_values = [250, 300, 350, 400, 450, 500]
+    min_split_values = [8, 16, 32, 64, 128, 256]
 
-#TODO exclude dirs
-rsync -Rr . tmp/$experiment_name
-ln -s ./logs tmp/$experiment_name/logs
-cd tmp/$experiment_name
-# ./batchjob.sh
+    # Iterate over all combinations of hyperparameter values.
+    for n_est, min_split in itertools.product(n_est_values, min_split_values):
+        # TODO: Funktion die default Batchscript nimmt in tmp ordner kopiert und flags "--set-param", f"train.n_est={n_est}", "--set-param", f"train.min_split={min_split}" added 
+        # entweder default params
+        submit_batch_job()
+        # oder mit veränderung
+        submit_batch_job(params={"n_est": n_est, "min_split": min_split})
+
+def submit_batch_job:
+    subprocess.call(["export", "EXP_PARAMS=--set-param", f"train.n_est={n_est}", "--set-param", f"train.min_split={min_split}"])
+    subprocess.call(["sbatch", "batchscript.sh"])
+# 2. 

@@ -95,7 +95,7 @@ def main():
     hostname = socket.gethostname()
     # print(f"The current unix time is {time.time()}.")
     time_now = time.time()
-    writer = SummaryWriter('tensorboard/')
+    writer = SummaryWriter('$LOGS/tensorboard/')
     writer.__dir__ = "tensorboard/final/"
 
     params = load_params()

@@ -35,11 +35,10 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/home/app -
   ssh-keyscan github.com >> /root/.ssh/known_hosts &&
   # Set the git user name and email
   git config --global user.name $TUSTU_GITHUB_USERNAME &&     
-  git config --global user.email $TUSTU_GITHUB_EMAIL &&
-  # TODO Add shared dvc cached dir.             
+  git config --global user.email $TUSTU_GITHUB_EMAIL &&           
   # Pull the latest raw data for the pipeline and run the experiment
   dvc pull data/raw &&
-  dvc exp run &&
+  dvc exp run --temp $EXP_PARAMS &&
   # Wait for the experiment to finish and parse the experiment name
   sleep 5 &&
   experiment_name=$(grep -oP "Ran experiment\(s\): \K[\w\-]+" logs/slurm/slurm-$SLURM_JOB_ID.out) &&
