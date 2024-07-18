@@ -24,8 +24,8 @@ fi
 # Pull the latest docker image from Docker Hub and convert it to a singularity image. Using cached singularity image if nothing changed
 singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:latest 
 
-echo "Cleaning up the logs directory..."
-find ./logs -type f ! -name "slurm-$SLURM_JOB_ID.out" -delete
+# echo "Cleaning up the logs directory..."
+# find ./logs -type f ! -name "slurm-$SLURM_JOB_ID.out" -delete
 
 echo "Starting singularity execution..."
 

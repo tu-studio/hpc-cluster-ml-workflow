@@ -13,25 +13,25 @@
     # Example
 import itertools
 import subprocess
+import os
 
 # def submit_batch_job(params):
 #     subprocess.call(["export", "EXP_PARAMS=--set-param", f"train.n_est={n_est}", "--set-param", f"train.min_split={min_split}"])
 #     subprocess.call(["sbatch", "batchscript.sh"])
 
 
-# Automated grid search experiments
+# Submit experiment for hyperparameter combination
+def submit_batch_job(test_split, batch_size):
+    # Set dynamic parameters for the batch job
+    os.environ['EXP_PARAMS'] = f'-S preprocess.test_split={test_split} -S train.batchsize={batch_size}'
+    
+    # Execute the command in a subprocess, using the modified environment
+    os.system("sbatch batchjob.sh")
+
+# Iterate over all combinations of hyperparameters
 test_split_list = [0.2, 0.3]
 batch_size_list = [2048, 4096]
-
-# Iterate over all combinations of hyperparameter values.
 for test_split, batch_size in itertools.product(test_split_list, batch_size_list):
-    # TODO: Funktion die default Batchscript nimmt in tmp ordner kopiert und flags "--set-param", f"train.n_est={n_est}", "--set-param", f"train.min_split={min_split}" added 
-    # entweder default params
-    # oder mit veränderung
-
-    # Export the experiment parameters as an environment variable and submit the batch job in same shell to have access to the environment variable.
-    command = f"export EXP_PARAMS='-S preprocess.test_split={test_split} -S train.batchsize={batch_size}' && sbatch batchjob.sh"
-    subprocess.call(command, shell=True)
-
+    submit_batch_job(test_split, batch_size)
     
 # 2. 
