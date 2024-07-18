@@ -13,12 +13,19 @@
     # Example
 import itertools
 import subprocess
+import os
 
 # Submit experiment for hyperparameter combination
 def submit_batch_job(test_split, batch_size):
     # Set dynamic parameters for the batch job as environment variables
+    env = {
+        **os.environ,
+        "TEST_VARIABLE": str(1234),
+    }
+    subprocess.Popen('/usr/bin/mybinary', env=env).wait()
+    subprocess.Popen()
     # Run sbatch command with the environment variables as bash! subprocess! command (otherwise module not found)
-    subprocess.run(['/usr/bin/bash', '-c', 'sbatch batchjob.sh'], env={'EXP_PARAMS': f'-S preprocess.test_split={test_split} -S train.batchsize={batch_size}'})
+    subprocess.run(['/usr/bin/bash', '-c', 'sbatch batchjob.sh'], env=env)
 
 # Iterate over all combinations of hyperparameters
 test_split_list = [0.2, 0.3]
