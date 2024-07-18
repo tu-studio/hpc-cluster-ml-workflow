@@ -8,6 +8,8 @@ import os
 from dvclive import Live
 from utils.config import load_params
 from model import NeuralNetwork
+import time
+import socket
 
 def get_train_mode_params(train_mode):
     if train_mode == 0:
@@ -89,7 +91,12 @@ def main():
     if not os.path.exists('tensorboard/'):
         os.makedirs('tensorboard/')
 
+    # print(f"The hostname is {socket.gethostname()}.")
+    hostname = socket.gethostname()
+    # print(f"The current unix time is {time.time()}.")
+    time_now = time.time()
     writer = SummaryWriter('tensorboard/')
+    writer.__dir__ = "tensorboard/final/"
 
     params = load_params()
     input_file = params.train.input_file
@@ -146,6 +153,13 @@ def main():
         # live.next_step()  # Indicate the end of an epoch
     
     writer.close()
+
+    if not os.path.exists('tensorboard-final/'):
+        os.makedirs('tensorboard-final/')
+
+    #TODO find the right log file and copy it to the final directory
+    #From the files in os.listdir('tensorboard/'), find the one where the hostname matches
+    #If these are multiple find the one with the closest timestamp to the current time above
 
     print("Done!")
 
