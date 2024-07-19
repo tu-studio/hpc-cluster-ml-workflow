@@ -42,22 +42,24 @@ if __name__ == '__main__':
     if not os.path.exists(destination_path):
         os.makedirs(destination_path)
 
-    current_slurm_job_id = os.environ.get('SLURM_JOB_ID')
-    if current_slurm_job_id is None:
-        raise EnvironmentError("The environment variable 'SLURM_JOB_ID' is not set.")
     tustu_logs_path = os.environ.get('TUSTU_LOGS_PATH')
     if tustu_logs_path is None: 
         raise EnvironmentError("The environment variable 'TUSTU_LOGS_PATH' is not set.")
+    default_dir = os.environ.get('DEFAULT_DIR')
+    if default_dir is None:
+        raise EnvironmentError("The environment variable 'DEFAULT_DIR' is not set.")
 
-    slurm_path = os.path.join(tustu_logs_path, 'slurm')
+    slurm_path = os.path.join(default_dir, os.path.join(tustu_logs_path, 'slurm'))
 
-    if not os.path.exists(destination_path):
-        os.makedirs(destination_path)
-
+    current_slurm_job_id = os.environ.get('SLURM_JOB_ID')
+    if current_slurm_job_id is None:
+        raise EnvironmentError("The environment variable 'SLURM_JOB_ID' is not set.")
+        
     for f in os.listdir(slurm_path):
         if f.startswith('slurm'):
             slurm_id = f.split('-')[1].split('.')[0]
             if slurm_id == current_slurm_job_id:
                 shutil.copy(os.path.join(slurm_path, f), destination_path)
+                break
 
     print(f"Slurm log {current_slurm_job_id} copied to {destination_path}")

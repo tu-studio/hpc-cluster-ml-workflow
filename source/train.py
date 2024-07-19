@@ -94,7 +94,12 @@ def main():
     tustu_logs_path = os.environ.get('TUSTU_LOGS_PATH')
     if tustu_logs_path is None:
         raise EnvironmentError("The environment variable ‘TUSTU_LOGS_PATH’ is not set.")
-    tensorboard_path = os.path.join(tustu_logs_path, 'tensorboard')
+    default_dir = os.environ.get('DEFAULT_DIR')
+    if default_dir is None: 
+        raise EnvironmentError("The environment variable 'DEFAULT_DIR' is not set.")
+
+    tensorboard_path = os.path.join(default_dir, os.path.join(tustu_logs_path, 'tensorboard'))
+
     if not os.path.exists(tensorboard_path):
         os.makedirs(tensorboard_path)
 

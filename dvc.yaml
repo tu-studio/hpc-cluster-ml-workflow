@@ -39,11 +39,11 @@ stages:
     - train.train_mode
     outs:
     - models/exports/
-  save_logs: 
+  save_logs:
     cmd: python3 source/utils/save_logs.py
-    outs: 
+    outs:
     - exp-logs/slurm
-  
+
 metrics:
 - dvclive/metrics.json
 plots:
