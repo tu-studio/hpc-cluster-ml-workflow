@@ -31,6 +31,8 @@ echo "Starting singularity execution..."
 
 # Run the singularity container, bind the current directory to the container's working directory, bind ssh key for git
 STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/home/app --bind $HOME/.ssh:/root/.ssh ml-pipeline-image_latest.sif bash -c '
+  # Set environment variables defined in global.env
+  source set_env.sh
   # Add the github.com host key to the known hosts file
   ssh-keyscan github.com >> /root/.ssh/known_hosts &&
   # Set the git user name and email
