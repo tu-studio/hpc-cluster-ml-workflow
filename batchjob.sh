@@ -15,7 +15,7 @@
 module load singularity/4.0.2 
 
 # Set environment variables defined in global.env
-source set_env.sh
+source ./global.env
 
 # Remove the previous singularity image if it exists
 if [ -f $TUSTU_PROJECT_NAME-image_latest.sif ]; then
@@ -32,7 +32,7 @@ echo "Starting singularity execution..."
 # Run the singularity container, bind the current directory to the container's working directory, bind ssh key for git
 STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/home/app --bind $HOME/.ssh:/root/.ssh ml-pipeline-image_latest.sif bash -c '
   # Set environment variables defined in global.env
-  source set_env.sh
+  source ./global.env
   # Add the github.com host key to the known hosts file
   ssh-keyscan github.com >> /root/.ssh/known_hosts &&       
   # Run the experiment with the specified parameters set by exec_experiment.py as an environment variable
