@@ -8,7 +8,7 @@ import shutil
 import os
 from dvclive import Live
 from utils.config import load_params
-import utils.helpers
+from utils.save_logs import copy_tensorboard_log
 from model import NeuralNetwork
 import time
 import socket
@@ -169,7 +169,7 @@ def main():
 
     # Copy the tensorboard log file with the closest timestamp into the a directory with exp-name-logs
 
-    utils.helpers.copy_tensorboard_log(tensorboard_path, hostname, time_now)
+    copy_tensorboard_log(tensorboard_path, hostname, time_now)
 
     print("Done!")
 
