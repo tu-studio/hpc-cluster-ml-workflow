@@ -26,6 +26,8 @@ def submit_batch_job(test_split, batch_size):
     # Run sbatch command with the environment variables as bash! subprocess! command (otherwise module not found)
     subprocess.run(['/usr/bin/bash', '-c', 'sbatch batchjob.sh'], env=env)
 
+subprocess.run(['/usr/bin/bash', '-c', 'source venv/bin/activate && dvc pull'], shell=True)
+
 # Iterate over all combinations of hyperparameters
 test_split_list = [0.2, 0.3]
 batch_size_list = [2048, 4096]

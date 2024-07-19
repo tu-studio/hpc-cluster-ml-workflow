@@ -36,8 +36,6 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/home/app -
   # Set the git user name and email
   git config --global user.name $TUSTU_GITHUB_USERNAME &&     
   git config --global user.email $TUSTU_GITHUB_EMAIL &&           
-  # Pull the latest raw data for the pipeline and run the experiment
-  dvc pull data/raw &&
   # Run the experiment with the specified parameters set by exec_experiment.py as an environment variable
   dvc exp run --temp $EXP_PARAMS &&
   # Wait for the experiment to finish and parse the experiment name
