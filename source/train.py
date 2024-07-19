@@ -8,10 +8,12 @@ import shutil
 import os
 from dvclive import Live
 from utils.config import load_params
-import utils
+import utils.helpers
 from model import NeuralNetwork
 import time
 import socket
+
+utils.helpers.copy_tensorboard_log(tensorboard_path, 'exp-logs', hostname, time_now)
 
 def get_train_mode_params(train_mode):
     if train_mode == 0:
