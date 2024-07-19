@@ -167,8 +167,9 @@ def main():
     torch.save(model.state_dict(), "models/checkpoints/" + name + ".pth")
     print("Saved PyTorch Model State to model.pth")
 
-    # Copy the tensorboard log file with the closest timestamp into the exp-logs directory
-    utils.helpers.copy_tensorboard_log(tensorboard_path, 'exp-logs', hostname, time_now)
+    # Copy the tensorboard log file with the closest timestamp into the a directory with exp-name-logs
+
+    utils.helpers.copy_tensorboard_log(tensorboard_path, hostname, time_now)
 
     print("Done!")
 

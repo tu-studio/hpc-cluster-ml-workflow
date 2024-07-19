@@ -27,7 +27,7 @@ stages:
     outs:
     - models/checkpoints/
     - dvclive/
-    - tensorboard-final/
+    - exp-logs/tensorboard/
   export:
     cmd: python3 source/export.py
     deps:

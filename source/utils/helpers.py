@@ -1,7 +1,13 @@
 import os
 import shutil
 
-def copy_tensorboard_log(tensorboard_path, destination_path, hostname, timestamp) -> None:
+def copy_tensorboard_log(tensorboard_path, hostname, timestamp) -> None:
+
+    experiment_name = os.environ.get('DVC_EXP_NAME')
+    if experiment_name is None:
+        raise EnvironmentError(r"The environment variable 'DVC_EXP_NAME' is not set.")
+
+    destination_path = os.path.join('exp-logs/tensorboard', experiment_name)
 
     if not os.path.exists(destination_path):
         os.makedirs(destination_path)
