@@ -48,6 +48,7 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/home/app -
   # Check out the new branch, force the checkout to overwrite the current main branch
   git checkout "exp_$experiment_name" --force &&                
   # Track the log file with DVC
+  # TODO: Write into one run specific folder with tensorflow file
   dvc add logs/slurm/slurm-$SLURM_JOB_ID.out &&
   git add logs/slurm/slurm-$SLURM_JOB_ID.out.dvc &&
   git commit -m "Add experiment logs for $experiment_name" &&
