@@ -42,7 +42,7 @@ stages:
   save_logs: 
     cmd: python3 source/utils/save_logs.py
     outs: 
-    - exp-logs/slurm
+    - exp-logs/slurm/
   
 metrics:
 - dvclive/metrics.json
