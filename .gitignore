@@ -13,6 +13,7 @@ data/**/*
 /models
 logs/**/*
 /tmp
+/exp-logs
 
 # Not ignore dvc files and
 !data/raw.dvc
