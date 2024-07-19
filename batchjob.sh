@@ -34,10 +34,7 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/home/app -
   # Set environment variables defined in global.env
   source set_env.sh
   # Add the github.com host key to the known hosts file
-  ssh-keyscan github.com >> /root/.ssh/known_hosts &&
-  # Set the git user name and email
-  git config --global user.name $TUSTU_GITHUB_USERNAME &&     
-  git config --global user.email $TUSTU_GITHUB_EMAIL &&           
+  ssh-keyscan github.com >> /root/.ssh/known_hosts &&       
   # Run the experiment with the specified parameters set by exec_experiment.py as an environment variable
   dvc exp run --temp $EXP_PARAMS &&
   # Wait for the experiment to finish and parse the experiment name
