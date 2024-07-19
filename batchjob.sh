@@ -36,21 +36,5 @@ STORAGE_DEFAULT_DIRECTORY="$PWD" singularity exec --nv --bind $(pwd):/home/app -
   # Add the github.com host key to the known hosts file
   ssh-keyscan github.com >> /root/.ssh/known_hosts &&       
   # Run the experiment with the specified parameters set by exec_experiment.py as an environment variable
-  dvc exp run --temp $EXP_PARAMS &&
-  # Wait for the experiment to finish and parse the experiment name
-  sleep 5 &&
-  experiment_name=$(grep -oP "Ran experiment\(s\): \K[\w\-]+" logs/slurm/slurm-$SLURM_JOB_ID.out) &&
-  # Promote the current experiment to a new git branch 
-  dvc exp branch $experiment_name "exp_$experiment_name" &&
-  # Check out the new branch, force the checkout to overwrite the current main branch
-  git checkout "exp_$experiment_name" --force &&                
-  # Track the log file with DVC
-  # TODO: Write into one run specific folder with tensorflow file
-  dvc add logs/slurm/slurm-$SLURM_JOB_ID.out &&
-  git add logs/slurm/slurm-$SLURM_JOB_ID.out.dvc &&
-  git commit -m "Add experiment logs for $experiment_name" &&
-  # Push the new branch to the remote repository
-  git push --set-upstream origin "exp_$experiment_name" &&     
-  dvc push &&
-  git checkout main 						
+  dvc exp run --temp $EXP_PARAMS 				
   '

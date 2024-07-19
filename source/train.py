@@ -162,8 +162,8 @@ def main():
     
     writer.close()
 
-    if not os.path.exists('tensorboard-final/'):
-        os.makedirs('tensorboard-final/')
+    if not os.path.exists('exp-logs/'):
+        os.makedirs('exp-logs/')
 
 
     # Check if there are log files for the current hostname and append them to a list
@@ -181,7 +181,7 @@ def main():
     if len(log_files) > 0:
         # Find the log file with the closest timestamp to the current time
         closest_file = min(log_files, key=lambda x: abs(int(x.split('.')[3]) - int(time_now)))
-        shutil.copy(os.path.join(tensorboard_path, closest_file), 'tensorboard-final/')
+        shutil.copy(os.path.join(tensorboard_path, closest_file), 'exp-logs/')
     else:
         print("No log files found for the current hostname.")
 
