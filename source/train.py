@@ -162,18 +162,18 @@ def main():
     
     writer.close()
 
-    if not os.path.exists('exp-logs/'):
-        os.makedirs('exp-logs/')
+    if not os.path.exists('exp-logs/tensorboard'):
+        os.makedirs('exp-logs/tensorboard')
 
 
     # Check if there are log files for the current hostname and append them to a list
     log_files = []
     for f in os.listdir(tensorboard_path):
         parts = f.split('.')
-        # Erzeugt eine temporäre Liste ohne die ersten 3 Elemente und die letzten 2 Elemente
-        # Annahme: Die ersten 3 Teile sind nicht Teil des Hostnamens und die letzten 2 Teile sind die ID und die Erweiterung
+        # Creates a temporary list without the first 3 elements and the last 2 elements
+        # Assumption: The first 3 parts are not part of the hostname and the last 2 parts are the ID and extension
         temp_parts = parts[3:-2]
-        # Wieder zusammensetzen und prüfen, ob der Hostname enthalten ist
+        # Combining the parts to get the full hostname if it contained dots, and check if the hostname is included
         temp_hostname = '.'.join(temp_parts)
         if hostname in temp_hostname:
             log_files.append(f)
@@ -181,7 +181,7 @@ def main():
     if len(log_files) > 0:
         # Find the log file with the closest timestamp to the current time
         closest_file = min(log_files, key=lambda x: abs(int(x.split('.')[3]) - int(time_now)))
-        shutil.copy(os.path.join(tensorboard_path, closest_file), 'exp-logs/')
+        shutil.copy(os.path.join(tensorboard_path, closest_file), 'exp-logs/tensorboard')
     else:
         print("No log files found for the current hostname.")
 

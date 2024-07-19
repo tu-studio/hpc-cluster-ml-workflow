@@ -27,7 +27,7 @@ stages:
     outs:
     - models/checkpoints/
     - dvclive/
-    - exp-logs/
+    - exp-logs/tensorboard
   export:
     cmd: python3 source/export.py
     deps:
@@ -39,6 +39,11 @@ stages:
     - train.train_mode
     outs:
     - models/exports/
+  save_logs: 
+    cmd: python3 source/utils/save_logs.py
+    outs: 
+    - exp-logs/slurm
+  
 metrics:
 - dvclive/metrics.json
 plots:
