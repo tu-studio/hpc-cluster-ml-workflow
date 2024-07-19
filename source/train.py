@@ -8,6 +8,7 @@ import shutil
 import os
 from dvclive import Live
 from utils.config import load_params
+import utils.helpers
 from model import NeuralNetwork
 import time
 import socket
@@ -162,34 +163,15 @@ def main():
     
     writer.close()
 
-    if not os.path.exists('exp-logs/tensorboard'):
-        os.makedirs('exp-logs/tensorboard')
-
-
-    # Check if there are log files for the current hostname and append them to a list
-    log_files = []
-    for f in os.listdir(tensorboard_path):
-        parts = f.split('.')
-        # Creates a temporary list without the first 3 elements and the last 2 elements
-        # Assumption: The first 3 parts are not part of the hostname and the last 2 parts are the ID and extension
-        temp_parts = parts[3:-2]
-        # Combining the parts to get the full hostname if it contained dots, and check if the hostname is included
-        temp_hostname = '.'.join(temp_parts)
-        if hostname in temp_hostname:
-            log_files.append(f)
-    # If there are log files for the current hostname, copy the log file with the closest timestamp to the current time
-    if len(log_files) > 0:
-        # Find the log file with the closest timestamp to the current time
-        closest_file = min(log_files, key=lambda x: abs(int(x.split('.')[3]) - int(time_now)))
-        shutil.copy(os.path.join(tensorboard_path, closest_file), 'exp-logs/tensorboard')
-    else:
-        print("No log files found for the current hostname.")
-
-    print("Done!")
-
     # Save the model
     torch.save(model.state_dict(), "models/checkpoints/" + name + ".pth")
     print("Saved PyTorch Model State to model.pth")
+
+    # Copy the tensorboard log file with the closest timestamp into the a directory with exp-name-logs
+
+    utils.helpers.copy_tensorboard_log(tensorboard_path, hostname, time_now)
+
+    print("Done!")
 
 if __name__ == "__main__":
     main()

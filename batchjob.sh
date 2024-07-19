@@ -15,7 +15,7 @@
 module load singularity/4.0.2 
 
 # Set environment variables defined in global.env
-source ./global.env
+export $(grep -v '^#' global.env | xargs)
 
 # Remove the previous singularity image if it exists
 if [ -f $TUSTU_PROJECT_NAME-image_latest.sif ]; then

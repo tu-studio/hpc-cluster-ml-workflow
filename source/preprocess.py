@@ -53,10 +53,6 @@ def preprocess_data(params):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir) 
         print(f"Created directory {output_dir}")
-        gitkeep_path = os.path.join(output_dir, '.gitkeep')
-        with open(gitkeep_path, 'w') as f:
-            pass  
-        print(f"Created .gitkeep file in {output_dir}")
     
     output_file_path = os.path.join(output_dir, file_name)
 
