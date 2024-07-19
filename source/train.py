@@ -13,8 +13,6 @@ from model import NeuralNetwork
 import time
 import socket
 
-utils.helpers.copy_tensorboard_log(tensorboard_path, 'exp-logs', hostname, time_now)
-
 def get_train_mode_params(train_mode):
     if train_mode == 0:
         learning_rate = 0.01
