@@ -11,7 +11,7 @@ data/**/*
 /dvclive
 /tensorboard
 /models
-/logs/*
+logs/**/*
 /tmp
 
 # Not ignore dvc files and
