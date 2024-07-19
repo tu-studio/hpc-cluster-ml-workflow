@@ -168,7 +168,7 @@ def main():
 
     # Check if there are log files for the current hostname and append them to a list
     log_files = []
-    for f in os.listdir('tensorboard/'):
+    for f in os.listdir(tensorboard_path):
         parts = f.split('.')
         # Erzeugt eine temporäre Liste ohne die ersten 3 Elemente und die letzten 2 Elemente
         # Annahme: Die ersten 3 Teile sind nicht Teil des Hostnamens und die letzten 2 Teile sind die ID und die Erweiterung
@@ -181,7 +181,7 @@ def main():
     if len(log_files) > 0:
         # Find the log file with the closest timestamp to the current time
         closest_file = min(log_files, key=lambda x: abs(int(x.split('.')[3]) - int(time_now)))
-        shutil.copy(os.path.join('tensorboard/', closest_file), 'tensorboard-final/')
+        shutil.copy(os.path.join(tensorboard_path, closest_file), 'tensorboard-final/')
     else:
         print("No log files found for the current hostname.")
 
