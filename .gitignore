@@ -24,7 +24,7 @@ logs/**/*
 !docs/
 !.gitkeep
 !.dvc
-!/logs/*.dvc
+!/logs/**/*.dvc
 
 # Ignore personal notes
 NOTES.md
