@@ -7,24 +7,15 @@ myenv
 venv
 
 # Ignore data files
-data/**/* 
+data/*/*
+logs/*/*
 /dvclive
-/tensorboard
 /models
-logs/**/*
-/tmp
 
-# Not ignore dvc files and
-!data/raw.dvc
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-!logs/slurm/.gitkeep
-!logs/tensorboard/.gitkeep
-!source/
-!docs/
-!.gitkeep
-!.dvc
-!/logs/**/*.dvc
+# Not ignore
+!logs/*/.gitkeep
+!data/*/.gitkeep
+!*.dvc
 
 # Ignore personal notes
 NOTES.md
