@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     python3-pip \
     openssh-client \
+    rsync \
     # Remove apt cache
     && rm -rf /var/lib/apt/lists/*
 
