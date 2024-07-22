@@ -24,8 +24,10 @@ jobs:
 
     - name: Load Environment Variables from global.env
       run: |
-        grep -v '^#' global.env | while IFS='=' read -r key value; do
-          echo "$key=$value" >> $GITHUB_ENV
+        grep -v '^#' global.env | grep '=' | while IFS='=' read -r key value; do
+          if [[ -n "$key" && -n "$value" ]]; then
+            echo "$key=$value" >> $GITHUB_ENV
+          fi
         done
 
     - name: Login to DockerHub
