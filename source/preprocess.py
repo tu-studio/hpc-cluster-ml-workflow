@@ -41,13 +41,16 @@ def preprocess_data(params):
     X_training, X_testing = split_data(X_all, test_split)
     y_training, y_testing = split_data(y_all, test_split)
 
-    print("Data split into training and testing sets.")
-    X_ordered_training = create_ordered_data(X_training, input_size)
-    X_ordered_testing = create_ordered_data(X_testing, input_size)
+    # print("Data split into training and testing sets.")
+    # X_ordered_training = create_ordered_data(X_training, input_size)
+    # X_ordered_testing = create_ordered_data(X_testing, input_size)
 
-    print("Data ordered.")
+    # print("Data ordered.")
     y_ordered_training = torch.from_numpy(y_training[input_size-1:]).unsqueeze(1)
     y_ordered_testing = torch.from_numpy(y_testing[input_size-1:]).unsqueeze(1)
+
+    X_ordered_training =  X_training
+    X_ordered_testing = X_testing
 
     print("Target data ordered.")
     if not os.path.exists(output_dir):
