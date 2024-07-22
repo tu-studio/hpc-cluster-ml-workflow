@@ -1,5 +1,9 @@
 [core]
     remote = myremote
+[cache]
+    dir = /Users/michaelwitte/Documents/Arbeit/tu_studio/github/shared-cache
+    shared = group
+    type = symlink
 ['remote "myremote"']
     url = webdavs://tubcloud.tu-berlin.de/remote.php/dav/files/cf531c5e-2043-103b-8745-111da40a61ee/dvcR
     timeout = 600
