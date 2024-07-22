@@ -27,8 +27,21 @@ singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:la
 echo "Starting singularity execution..."
 
 # Run the singularity container, bind the current directory to the container's working directory, bind ssh key for git
-DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '  
+DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '
+  
+  if [ ! -d "$TEMP_DIR" ]; then
+    mkdir -p "$TEMP_DIR"
+    echo "The directory $TEMP_DIR has been created."
+  else
+    echo "The directory $TEMP_DIR already exists."
+  fi
+  mkdir -p "$TEMP_DIR/$INDEX"
+
+  # Copy all non-gitignored files to the temporary directory
+  rsync -av --files-from=<(git ls-files) ./ "$TEMP_DIR"
+  echo "All non-gitignored files have been copied to $TEMP_DIR"  
+
   # Run the experiment with the specified parameters set by exec_experiment.py as an environment variable
   # If no EXP_PARAMS is empty the default params are chosen
-  dvc exp run --temp $EXP_PARAMS 				
+  # dvc exp run --temp $EXP_PARAMS 				
   '
