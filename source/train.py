@@ -174,7 +174,7 @@ def main():
 
     # Copy the tensorboard log file with the closest timestamp into the a directory with exp-name-logs
 
-    copy_tensorboard_log(tensorboard_path, hostname, time_now)
+    # copy_tensorboard_log(tensorboard_path, hostname, time_now)
 
     print("Done!")
 

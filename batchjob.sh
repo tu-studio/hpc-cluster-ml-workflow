@@ -30,5 +30,5 @@ echo "Starting singularity execution..."
 DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '  
   # Run the experiment with the specified parameters set by exec_experiment.py as an environment variable
   # If no EXP_PARAMS is empty the default params are chosen
-  dvc exp run --temp $EXP_PARAMS 				
+  dvc exp run 		
   '
