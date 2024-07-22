@@ -10,8 +10,8 @@ preprocess:
 train:
   input_file: 'data/processed/processed_data.pt'
   name: 'model'
-  batch_size: 4096 
+  batch_size: 2048 
   epochs: 1
   train_mode: 0 
-  device: 'cuda'   
+  device: 'mps'   
 
