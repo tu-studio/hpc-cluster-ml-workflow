@@ -11,6 +11,7 @@ data/*/*
 logs/*/*
 /dvclive
 /models
+/temp
 /exp-logs/*
 
 # Not ignore

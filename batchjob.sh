@@ -27,20 +27,37 @@ singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:la
 echo "Starting singularity execution..."
 
 # Run the singularity container, bind the current directory to the container's working directory, bind ssh key for git
-DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '  
-  if [ ! -d "$TUSTU_TEMP_PATH" ]; then
-    mkdir -p "$TUSTU_TEMP_PATH"
-    echo "The directory $TUSTU_TEMP_PATH has been created."
+DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '    
+  echo "Checking directory existence..."
+  if [ ! -d "../$TUSTU_TEMP_PATH" ]; then
+    mkdir -p "../$TUSTU_TEMP_PATH"
+    echo "The directory ../$TUSTU_TEMP_PATH has been created."
   else
-    echo "The directory $TUSTU_TEMP_PATH already exists."
+    echo "The directory ../$TUSTU_TEMP_PATH already exists."
   fi
-  mkdir "$TUSTU_TEMP_PATH/$INDEX"
 
-  # Copy all non-gitignored files to the temporary directory
-  rsync -av --files-from=<(git ls-files) ./ "$TUSTU_TEMP_PATH/$INDEX"
-  echo "All non-gitignored files have been copied to $TUSTU_TEMP_PATH/$INDEX"  
+  mkdir "../$TUSTU_TEMP_PATH/$INDEX"
+  echo "Copying files..."
+  {
+    git ls-files;
+    echo ".dvc/config.local";
+  } | rsync -av --files-from=- ./ "../$TUSTU_TEMP_PATH/$INDEX"
 
-  # Run the experiment with the specified parameters set by exec_experiment.py as an environment variable
-  # If no EXP_PARAMS is empty the default params are chosen
-  # dvc exp run --temp $EXP_PARAMS 				
+  cd ../$TUSTU_TEMP_PATH/$INDEX
+
+  echo "Setting DVC cache directory..."
+  dvc cache dir $DEFAULT_DIR/.dvc/cache
+
+  echo "Pulling data with DVC..."
+  dvc pull
+  
+  echo "Running experiment..."
+  dvc exp run $EXP_PARAMS &&
+
+  echo "Pushing experiment..."
+  dvc exp push origin &&
+
+  echo "Cleaning up..."
+  cd .. &&
+  rm -rf $INDEX		
   '
