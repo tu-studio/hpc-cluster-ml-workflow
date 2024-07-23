@@ -21,7 +21,7 @@ export $(grep -v '^#' global.env | xargs)
 if [ -f $TUSTU_PROJECT_NAME-image_latest.sif ]; then
   rm $TUSTU_PROJECT_NAME-image_latest.sif
 fi
-Pull the latest docker image from Docker Hub and convert it to a singularity image. Using cached singularity image if nothing changed
+# Pull the latest docker image from Docker Hub and convert it to a singularity image. Using cached singularity image if nothing changed
 singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:latest 
 
 echo "Starting singularity execution..."
@@ -36,11 +36,25 @@ DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '
   fi
   mkdir "$TUSTU_TEMP_PATH/$INDEX"
 
-  # Copy all non-gitignored files to the temporary directory
-  rsync -av --files-from=<(git ls-files) ./ "$TUSTU_TEMP_PATH/$INDEX"
-  echo "All non-gitignored files have been copied to $TUSTU_TEMP_PATH/$INDEX"  
+  # Copy all non-gitignored files and config.local to the temporary directory
+  {
+    git ls-files;
+    echo ".dvc/config.local";
+  } | rsync -av --files-from=- ./ "$TUSTU_TEMP_PATH/$INDEX"
+  echo "All non-gitignored files have been copied to $TUSTU_TEMP_PATH/$INDEX"
+  cd $TUSTU_TEMP_PATH/$INDEX
 
+  # Set shared cache directory
+  dvc cache dir $PWD/.dvc/cache
+
+  dvc pull 
+	  
   # Run the experiment with the specified parameters set by exec_experiment.py as an environment variable
   # If no EXP_PARAMS is empty the default params are chosen
-  # dvc exp run --temp $EXP_PARAMS 				
+  dvc exp run $EXP_PARAMS &&
+
+  dvc exp push origin &&
+
+  cd .. &&
+  rm -rf $INDEX    
   '
