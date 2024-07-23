@@ -5,7 +5,6 @@
 # torch
 # torchinfo
 # tensorboard
-# numpy
 # pedalboard
 # ruamel.yaml
 # PyYAML

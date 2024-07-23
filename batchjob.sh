@@ -57,7 +57,7 @@ DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '
   echo "Pushing experiment..."
   dvc exp push origin &&
 
-  echo "Cleaning up..."
-  cd .. &&
-  rm -rf $INDEX		
+  # echo "Cleaning up..."
+  # cd .. &&
+  # rm -rf $INDEX		
   '
