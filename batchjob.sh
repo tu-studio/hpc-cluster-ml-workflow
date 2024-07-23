@@ -29,24 +29,35 @@ echo "Starting singularity execution..."
 # Run the singularity container, bind the current directory to the container's working directory, bind ssh key for git
 DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '    
   echo "Checking directory existence..."
-  if [ ! -d "$TUSTU_TEMP_PATH" ]; then
-    mkdir -p "$TUSTU_TEMP_PATH"
-    echo "The directory $TUSTU_TEMP_PATH has been created."
+  if [ ! -d "../$TUSTU_TEMP_PATH" ]; then
+    mkdir -p "../$TUSTU_TEMP_PATH"
+    echo "The directory ../$TUSTU_TEMP_PATH has been created."
   else
-    echo "The directory $TUSTU_TEMP_PATH already exists."
+    echo "The directory ../$TUSTU_TEMP_PATH exists."
   fi
 
-  mkdir "$TUSTU_TEMP_PATH/$INDEX"
+  if [ -z "$INDEX" ]
+  then
+    echo "Creating new index 0..."
+    INDEX=0
+  fi
+  mkdir "../$TUSTU_TEMP_PATH/$INDEX"
+
   echo "Copying files..."
   {
     git ls-files;
     echo ".dvc/config.local";
-  } | rsync -av --files-from=- ./ "$TUSTU_TEMP_PATH/$INDEX"
+    echo ".git";
+  } | while read file; do
+    cp -r --parents "$file" "../$TUSTU_TEMP_PATH/$INDEX/"
+  done
 
-  cd $TUSTU_TEMP_PATH/$INDEX
+  cd ../$TUSTU_TEMP_PATH/$INDEX
 
   echo "Setting DVC cache directory..."
   dvc cache dir $DEFAULT_DIR/.dvc/cache
+  # dvc config cache.shared group
+  # dvc config cache.type symlink
 
   echo "Pulling data with DVC..."
   dvc pull
@@ -59,5 +70,4 @@ DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '
 
   # echo "Cleaning up..."
   # cd .. &&
-  # rm -rf $INDEX		
-  '
+  # rm -rf $INDEX
