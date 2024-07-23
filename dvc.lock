@@ -1,0 +1,27 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python3 source/preprocess.py
+    deps:
+    - path: data/raw/
+      hash: md5
+      md5: 258f409b9cb543c7cae3902ab7eb808f.dir
+      size: 65879160
+      nfiles: 2
+    - path: source/preprocess.py
+      hash: md5
+      md5: 6e2c3051db0637a7404beaf7ddd7a038
+      size: 2556
+    params:
+      params.yaml:
+        preprocess.input_file: /../data/raw/ts9_test1_in_FP32.wav
+        preprocess.input_size: 150
+        preprocess.output_dir: data/processed/
+        preprocess.target_file: /../data/raw/ts9_test1_out_FP32.wav
+        preprocess.test_split: 0.3
+    outs:
+    - path: data/processed/
+      hash: md5
+      md5: bc335ea666efef3e200c31ca53ae5298.dir
+      size: 81792578
+      nfiles: 1
