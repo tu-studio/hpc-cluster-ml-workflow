@@ -1,0 +1,97 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python3 source/preprocess.py
+    deps:
+    - path: data/raw/
+      hash: md5
+      md5: 258f409b9cb543c7cae3902ab7eb808f.dir
+      size: 65879160
+      nfiles: 2
+    - path: source/preprocess.py
+      hash: md5
+      md5: 47e483fc49497df02f879ad7a82785c6
+      size: 2479
+    params:
+      params.yaml:
+        preprocess.input_file: /../data/raw/ts9_test1_in_FP32.wav
+        preprocess.input_size: 150
+        preprocess.output_dir: data/processed/
+        preprocess.target_file: /../data/raw/ts9_test1_out_FP32.wav
+        preprocess.test_split: 0.3
+    outs:
+    - path: data/processed/
+      hash: md5
+      md5: aac4961a69616b3efd73796176c5d0f1.dir
+      size: 4973692020
+      nfiles: 1
+  train:
+    cmd: python3 source/train.py
+    deps:
+    - path: data/processed/
+      hash: md5
+      md5: aac4961a69616b3efd73796176c5d0f1.dir
+      size: 4973692020
+      nfiles: 1
+    - path: source/model.py
+      hash: md5
+      md5: f42976c63a29b715fa9e7565692481b9
+      size: 897
+    - path: source/train.py
+      hash: md5
+      md5: b2c10748207b77495b07035433b2df87
+      size: 6504
+    params:
+      params.yaml:
+        train.batch_size: 4096
+        train.device: cuda
+        train.epochs: 1
+        train.name: model
+        train.train_mode: 0
+    outs:
+    - path: dvclive/
+      hash: md5
+      md5: d1baf95d8789fe4bb7c78ef72d51822f.dir
+      size: 450
+      nfiles: 2
+    - path: exp-logs/tensorboard/
+      hash: md5
+      md5: fa022d3440460ea9bdaaba236c5794f1.dir
+      size: 10579
+      nfiles: 1
+    - path: models/checkpoints/
+      hash: md5
+      md5: 60912e036ee6fec038d45e21c6bf1279.dir
+      size: 47278
+      nfiles: 1
+  export:
+    cmd: python3 source/export.py
+    deps:
+    - path: models/checkpoints/
+      hash: md5
+      md5: 60912e036ee6fec038d45e21c6bf1279.dir
+      size: 47278
+      nfiles: 1
+    - path: source/export.py
+      hash: md5
+      md5: fa135c8f84fc1a0daad7085916377f89
+      size: 1339
+    params:
+      params.yaml:
+        preprocess.input_size: 150
+        train.name: model
+        train.train_mode: 0
+    outs:
+    - path: models/exports/
+      hash: md5
+      md5: 6695823e4474ab2e5c80b2f339c66e2f.dir
+      size: 50450
+      nfiles: 1
+  save_logs:
+    cmd: python3 source/utils/save_logs.py
+    outs:
+    - path: exp-logs/slurm
+      hash: md5
+      md5: dcfbe130f81583584073fabd62127604.dir
+      size: 5910
+      nfiles: 1

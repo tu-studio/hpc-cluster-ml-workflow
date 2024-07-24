@@ -66,7 +66,7 @@ DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '
   dvc exp run $EXP_PARAMS &&
 
   echo "Pushing experiment..."
-  dvc exp push origin &&
+  dvc exp push origin --no-run-cache &&
 
   echo "Cleaning up..."
   cd .. &&
