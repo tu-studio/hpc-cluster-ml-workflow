@@ -1,6 +1,6 @@
 import itertools
 import subprocess
-import os
+import os 
 
 # Submit experiment for hyperparameter combination
 def submit_batch_job(index, test_split, batch_size):
