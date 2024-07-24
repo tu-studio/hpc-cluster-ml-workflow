@@ -18,11 +18,11 @@ Create and setup a virtual environment inside the repository. If you chose a dif
 ```
 cd ml-training-pipeline
 
-python3 -m venv myenv
+python3 -m venv venv
 
-echo myenv/ >> .gitignore
+echo venv/ >> .gitignore
 
-source myenv/bin/activate
+source venv/bin/activate
 
 pip install -r requirements.txt
 ```
