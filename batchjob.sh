@@ -26,7 +26,7 @@ singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:la
 
 echo "Starting singularity execution..."
 
-# Run the singularity container, bind the current directory to the container's working directory, bind ssh key for git
+# Run the singularity container
 DEFAULT_DIR="$PWD" singularity exec --nv ml-pipeline-image_latest.sif bash -c '    
   echo "Checking directory existence..."
   if [ ! -d "../$TUSTU_TEMP_PATH" ]; then
