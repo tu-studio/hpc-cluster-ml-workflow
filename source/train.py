@@ -5,16 +5,12 @@ from torch import nn
 import torchinfo
 import tensorflow as tf
 from tensorboard.plugins.hparams import api as hp
-# from torch.utils.tensorboard import SummaryWriter
 from utils.save_logs import CustomSummaryWriter 
 import os
-from dvclive import Live
 from utils.config import load_params
 from utils.config import flatten_dict
 from utils.save_logs import copy_tensorboard_log
 from model import NeuralNetwork
-# import time
-# import socket
 
 def get_train_mode_params(train_mode):
     if train_mode == 0:
@@ -55,7 +51,7 @@ def prepare_device(request):
     return device
 
 
-def train_epoch(dataloader, model, loss_fn, optimizer, device, live, writer, epoch):
+def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
     train_loss = 0 
@@ -73,8 +69,6 @@ def train_epoch(dataloader, model, loss_fn, optimizer, device, live, writer, epo
             loss_value = loss.item()
             current = (batch + 1) * len(X)
             print(f"loss: {loss_value:>7f}  [{current:>5d}/{size:>5d}]")
-            live.log_metric("train: mse loss", loss_value)
-            live.next_step() 
     train_loss /=  num_batches
     return train_loss
     
@@ -184,17 +178,14 @@ def main():
     testing_dataset = torch.utils.data.TensorDataset(X_ordered_testing, y_ordered_testing)
     testing_dataloader = torch.utils.data.DataLoader(testing_dataset, batch_size=batch_size, shuffle=False)
 
-    live = Live()  
-
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
-        epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, live, writer, epoch=t)
+        epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, writer, epoch=t)
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)
         epoch_audio_examples = get_audio_example(model, device, testing_dataloader)
         writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
         writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
         writer.add_audio("Audio_Pred/test", epoch_audio_examples, t, sample_rate=44100)
-        # live.next_step()  # Indicate the end of an epoch
 
     writer.close()
 
@@ -202,8 +193,7 @@ def main():
     torch.save(model.state_dict(), "models/checkpoints/" + name + ".pth")
     print("Saved PyTorch Model State to model.pth")
 
-    # Copy the tensorboard log file with the closest timestamp into the a directory with exp-name-logs
-    # copy_tensorboard_log(tensorboard_path, hostname, time_now)
+    # Copy the tensorboard log file with the closest timestamp into the directory with exp-name-logs
     copy_tensorboard_log(tensorboard_path, experiment_name)
 
 
