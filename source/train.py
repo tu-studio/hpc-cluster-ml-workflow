@@ -92,6 +92,20 @@ def test_epoch(dataloader, model, loss_fn, device, writer):
     print(f"Test Error: \n Avg loss: {test_loss:>8f} \n")
     return test_loss
 
+def get_audio_example(model, device, dataloader):
+    print("Running prediction...")
+    prediction = torch.zeros(0).to(device)
+    target = torch.zeros(0).to(device)
+    with torch.no_grad():
+        for X, y in dataloader:
+            X = X.to(device)
+            y = y.to(device)
+            predicted_batch = model(X)
+            prediction = torch.cat((prediction, predicted_batch.flatten()), 0)
+            target = torch.cat((target, y.flatten()), 0)
+    audio_example = torch.cat((target, prediction), 0)
+    return audio_example
+
 def main():
     # Get the path to the tensorboard directory
     tustu_logs_path = os.environ.get('TUSTU_LOGS_PATH')
@@ -127,7 +141,7 @@ def main():
     random_seed = params.general.random_seed
     device_request = params.train.device
 
-    metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None}
+    metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None, 'Step_Loss/train': None}
     # Add hyperparameters to the tensorboard logs
     params_dict = params.to_dict()
     params_dict = flatten_dict(params_dict)
@@ -139,6 +153,8 @@ def main():
     torch.manual_seed(random_seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(random_seed)
+    if torch.backends.mps.is_available():
+        torch.mps.manual_seed(random_seed)
 
     # Load preprocessed data
     data = torch.load(input_file)
@@ -174,8 +190,10 @@ def main():
         print(f"Epoch {t+1}\n-------------------------------")
         epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, live, writer, epoch=t)
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)
+        epoch_audio_examples = get_audio_example(model, device, testing_dataloader)
         writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
         writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
+        writer.add_audio("Audio_Pred/test", epoch_audio_examples, t, sample_rate=44100)
         # live.next_step()  # Indicate the end of an epoch
 
     writer.close()
