@@ -3,11 +3,14 @@ import random
 import numpy as np
 from torch import nn
 import torchinfo
-from torch.utils.tensorboard import SummaryWriter
-import shutil
+import tensorflow as tf
+from tensorboard.plugins.hparams import api as hp
+# from torch.utils.tensorboard import SummaryWriter
+from utils.save_logs import CustomSummaryWriter 
 import os
 from dvclive import Live
 from utils.config import load_params
+from utils.config import flatten_dict
 from utils.save_logs import copy_tensorboard_log
 from model import NeuralNetwork
 import time
@@ -97,18 +100,21 @@ def main():
     default_dir = os.environ.get('DEFAULT_DIR')
     if default_dir is None: 
         raise EnvironmentError("The environment variable 'DEFAULT_DIR' is not set.")
-
-    tensorboard_path = os.path.join(default_dir, os.path.join(tustu_logs_path, 'tensorboard'))
+    experiment_name = os.environ.get('DVC_EXP_NAME', 'default_experiment')
+    if experiment_name is None:
+        raise EnvironmentError(r"The environment variable 'DVC_EXP_NAME' is not set.")
+    
+    tensorboard_path = os.path.join(default_dir, tustu_logs_path, 'tensorboard', experiment_name)
 
     if not os.path.exists(tensorboard_path):
         os.makedirs(tensorboard_path)
 
     # Get the hostname and the current time to identify the tensorboard log file to copy to experiment branch
-    hostname = socket.gethostname()
-    time_now = time.time()
+    # hostname = socket.gethostname()
+    # time_now = time.time()
 
     # Create a SummaryWriter object to write the tensorboard logs
-    writer = SummaryWriter(tensorboard_path)
+    writer = CustomSummaryWriter(log_dir=tensorboard_path)
 
     # Load the parameters from the config file
     params = load_params()
@@ -120,6 +126,12 @@ def main():
     input_size = params.preprocess.input_size
     random_seed = params.general.random_seed
     device_request = params.train.device
+
+    metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None}
+    # Add hyperparameters to the tensorboard logs
+    params_dict = params.to_dict()
+    params_dict = flatten_dict(params_dict)
+    writer.add_hparams(hparam_dict=params_dict, metric_dict=metrics, run_name=tensorboard_path)
 
     # Set random seed for reproducibility
     random.seed(random_seed)
@@ -165,7 +177,7 @@ def main():
         writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
         writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
         # live.next_step()  # Indicate the end of an epoch
-    
+
     writer.close()
 
     # Save the model
@@ -173,8 +185,9 @@ def main():
     print("Saved PyTorch Model State to model.pth")
 
     # Copy the tensorboard log file with the closest timestamp into the a directory with exp-name-logs
+    # copy_tensorboard_log(tensorboard_path, hostname, time_now)
+    copy_tensorboard_log(tensorboard_path, experiment_name)
 
-    copy_tensorboard_log(tensorboard_path, hostname, time_now)
 
     print("Done!")
 
