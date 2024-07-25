@@ -13,8 +13,8 @@ from utils.config import load_params
 from utils.config import flatten_dict
 from utils.save_logs import copy_tensorboard_log
 from model import NeuralNetwork
-import time
-import socket
+# import time
+# import socket
 
 def get_train_mode_params(train_mode):
     if train_mode == 0:
