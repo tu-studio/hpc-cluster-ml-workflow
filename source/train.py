@@ -3,18 +3,10 @@ import random
 import numpy as np
 from torch import nn
 import torchinfo
-import tensorflow as tf
-from tensorboard.plugins.hparams import api as hp
-# from torch.utils.tensorboard import SummaryWriter
-from utils.save_logs import CustomSummaryWriter 
+import utils 
 import os
-from dvclive import Live
-from utils.config import load_params
-from utils.config import flatten_dict
-from utils.save_logs import copy_tensorboard_log
 from model import NeuralNetwork
-# import time
-# import socket
+
 
 def get_train_mode_params(train_mode):
     if train_mode == 0:
@@ -55,7 +47,7 @@ def prepare_device(request):
     return device
 
 
-def train_epoch(dataloader, model, loss_fn, optimizer, device, live, writer, epoch):
+def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
     train_loss = 0 
@@ -73,8 +65,6 @@ def train_epoch(dataloader, model, loss_fn, optimizer, device, live, writer, epo
             loss_value = loss.item()
             current = (batch + 1) * len(X)
             print(f"loss: {loss_value:>7f}  [{current:>5d}/{size:>5d}]")
-            live.log_metric("train: mse loss", loss_value)
-            live.next_step() 
     train_loss /=  num_batches
     return train_loss
     
@@ -107,31 +97,16 @@ def get_audio_example(model, device, dataloader):
     return audio_example
 
 def main():
-    # Get the path to the tensorboard directory
-    tustu_logs_path = os.environ.get('TUSTU_LOGS_PATH')
-    if tustu_logs_path is None:
-        raise EnvironmentError("The environment variable ‘TUSTU_LOGS_PATH’ is not set.")
-    default_dir = os.environ.get('DEFAULT_DIR')
-    if default_dir is None: 
-        raise EnvironmentError("The environment variable 'DEFAULT_DIR' is not set.")
-    experiment_name = os.environ.get('DVC_EXP_NAME', 'default_experiment')
-    if experiment_name is None:
-        raise EnvironmentError(r"The environment variable 'DVC_EXP_NAME' is not set.")
-    
-    tensorboard_path = os.path.join(default_dir, tustu_logs_path, 'tensorboard', experiment_name)
-
+    # Get the path to the tensorboard directory and create it if it does not exist
+    tensorboard_path = utils.logs.create_tensorboard_path()
     if not os.path.exists(tensorboard_path):
         os.makedirs(tensorboard_path)
 
-    # Get the hostname and the current time to identify the tensorboard log file to copy to experiment branch
-    # hostname = socket.gethostname()
-    # time_now = time.time()
-
     # Create a SummaryWriter object to write the tensorboard logs
-    writer = CustomSummaryWriter(log_dir=tensorboard_path)
+    writer = utils.logs.CustomSummaryWriter(log_dir=tensorboard_path)
 
     # Load the parameters from the config file
-    params = load_params()
+    params = utils.config.load_params()
     input_file = params.train.input_file
     name = params.train.name
     epochs = params.train.epochs
@@ -141,13 +116,13 @@ def main():
     random_seed = params.general.random_seed
     device_request = params.train.device
 
+    # Add experiment hyperparameters and metrics to the hparams plugin of tensorboard
     metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None, 'Step_Loss/train': None}
-    # Add hyperparameters to the tensorboard logs
     params_dict = params.to_dict()
-    params_dict = flatten_dict(params_dict)
+    params_dict = utils.config.flatten_dict(params_dict)
     writer.add_hparams(hparam_dict=params_dict, metric_dict=metrics, run_name=tensorboard_path)
 
-    # Set random seed for reproducibility
+    # Set a random seed for reproducibility
     random.seed(random_seed)
     np.random.seed(random_seed)
     torch.manual_seed(random_seed)
@@ -168,33 +143,37 @@ def main():
     if not os.path.exists('models/checkpoints/'):
         os.makedirs('models/checkpoints/')
 
+    # Get the hyperparameters for the training mode
     learning_rate, conv1d_strides, conv1d_filters, hidden_units = get_train_mode_params(train_mode)
 
+    # Create the model
     model = NeuralNetwork(conv1d_filters, conv1d_strides, hidden_units).to(device)
     summary = torchinfo.summary(model, (1, 1, input_size), device=device)
     print(summary)
+
+    # Add the model graph to the tensorboard logs
     sample_inputs = torch.randn(1, 1, input_size) 
     writer.add_graph(model, sample_inputs.to(device))
 
-    loss_fn = nn.MSELoss(reduction='mean')
+    # Define the loss function and the optimizer
+    loss_fn = torch.nn.MSELoss(reduction='mean')
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
+    # Create the dataloaders
     training_dataset = torch.utils.data.TensorDataset(X_ordered_training, y_ordered_training)
     training_dataloader = torch.utils.data.DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
     testing_dataset = torch.utils.data.TensorDataset(X_ordered_testing, y_ordered_testing)
     testing_dataloader = torch.utils.data.DataLoader(testing_dataset, batch_size=batch_size, shuffle=False)
 
-    live = Live()  
-
+    # Training loop
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
-        epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, live, writer, epoch=t)
+        epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, writer, epoch=t)
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)
         epoch_audio_examples = get_audio_example(model, device, testing_dataloader)
         writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
         writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
         writer.add_audio("Audio_Pred/test", epoch_audio_examples, t, sample_rate=44100)
-        # live.next_step()  # Indicate the end of an epoch
 
     writer.close()
 
@@ -202,12 +181,10 @@ def main():
     torch.save(model.state_dict(), "models/checkpoints/" + name + ".pth")
     print("Saved PyTorch Model State to model.pth")
 
-    # Copy the tensorboard log file with the closest timestamp into the a directory with exp-name-logs
-    # copy_tensorboard_log(tensorboard_path, hostname, time_now)
-    copy_tensorboard_log(tensorboard_path, experiment_name)
+    # Copy the tensorboard log file to the temporary experiment sub-directory so it will be pushed to the dvc experiment branch
+    utils.logs.copy_tensorboard_logs(tensorboard_path, experiment_name)
 
-
-    print("Done!")
+    print("Done with the training!")
 
 if __name__ == "__main__":
     main()
