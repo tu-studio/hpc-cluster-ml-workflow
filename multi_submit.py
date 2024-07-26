@@ -12,7 +12,7 @@ def submit_batch_job(index, test_split, batch_size):
         "INDEX": str(index)
     }
     # Run sbatch command with the environment variables as bash! subprocess! command (otherwise module not found)
-    subprocess.run(['/usr/bin/bash', '-c', 'sbatch slurmjob.sh'], env=env)
+    subprocess.run(['/usr/bin/bash', '-c', 'sbatch slurm_job.sh'], env=env)
 
 if __name__ == "__main__":
     test_split_list = [0.2, 0.3]

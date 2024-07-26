@@ -3,7 +3,7 @@ import random
 import numpy as np
 from torch import nn
 import torchinfo
-import utils 
+from utils import logs, config
 import os
 from model import NeuralNetwork
 
@@ -82,8 +82,8 @@ def test_epoch(dataloader, model, loss_fn, device, writer):
     print(f"Test Error: \n Avg loss: {test_loss:>8f} \n")
     return test_loss
 
-def get_audio_example(model, device, dataloader):
-    print("Running prediction...")
+def generate_audio_example(model, device, dataloader):
+    print("Running audio prediction...")
     prediction = torch.zeros(0).to(device)
     target = torch.zeros(0).to(device)
     with torch.no_grad():
@@ -98,15 +98,15 @@ def get_audio_example(model, device, dataloader):
 
 def main():
     # Get the path to the tensorboard directory and create it if it does not exist
-    tensorboard_path = utils.logs.create_tensorboard_path()
+    tensorboard_path = logs.create_tensorboard_path()
     if not os.path.exists(tensorboard_path):
         os.makedirs(tensorboard_path)
 
     # Create a SummaryWriter object to write the tensorboard logs
-    writer = utils.logs.CustomSummaryWriter(log_dir=tensorboard_path)
+    writer = logs.CustomSummaryWriter(log_dir=tensorboard_path)
 
-    # Load the parameters from the config file
-    params = utils.config.load_params()
+    # Load the hyperparameters from the config file
+    params = config.load_params('params.yaml')
     input_file = params.train.input_file
     name = params.train.name
     epochs = params.train.epochs
@@ -116,10 +116,10 @@ def main():
     random_seed = params.general.random_seed
     device_request = params.train.device
 
-    # Add experiment hyperparameters and metrics to the hparams plugin of tensorboard
-    metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None, 'Step_Loss/train': None}
+    # Add hyperparameters and metrics to the hparams plugin of tensorboard
     params_dict = params.to_dict()
-    params_dict = utils.config.flatten_dict(params_dict)
+    params_dict = config.flatten_dict(params_dict)
+    metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None, 'Step_Loss/train': None}
     writer.add_hparams(hparam_dict=params_dict, metric_dict=metrics, run_name=tensorboard_path)
 
     # Set a random seed for reproducibility
@@ -170,10 +170,10 @@ def main():
         print(f"Epoch {t+1}\n-------------------------------")
         epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, writer, epoch=t)
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)
-        epoch_audio_examples = get_audio_example(model, device, testing_dataloader)
+        epoch_audio_example = generate_audio_example(model, device, testing_dataloader)
         writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
         writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
-        writer.add_audio("Audio_Pred/test", epoch_audio_examples, t, sample_rate=44100)
+        writer.add_audio("Audio_Pred/test", epoch_audio_example, t, sample_rate=44100)
 
     writer.close()
 
@@ -182,7 +182,7 @@ def main():
     print("Saved PyTorch Model State to model.pth")
 
     # Copy the tensorboard log file to the temporary experiment sub-directory so it will be pushed to the dvc experiment branch
-    utils.logs.copy_tensorboard_logs(tensorboard_path, experiment_name)
+    logs.copy_tensorboard_logs(tensorboard_path, os.environ.get['DVC_EXP_NAME'])
 
     print("Done with the training!")
 
