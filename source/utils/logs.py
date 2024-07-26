@@ -1,5 +1,6 @@
 import os
 import shutil
+import pathlib as Path
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.tensorboard.summary import hparams
@@ -19,20 +20,10 @@ class CustomSummaryWriter(SummaryWriter):
             if v is not None:
                 self.add_scalar(k, v)
 
-def create_tensorboard_path():
-    tustu_logs_path = os.environ.get('TUSTU_LOGS_PATH')
-    if tustu_logs_path is None:
-        raise EnvironmentError("The environment variable ‘TUSTU_LOGS_PATH’ is not set.")
-    default_dir = os.environ.get('DEFAULT_DIR')
-    if default_dir is None: 
-        raise EnvironmentError("The environment variable 'DEFAULT_DIR' is not set.")
-    experiment_name = os.environ.get('DVC_EXP_NAME', 'default_experiment')
-    if experiment_name is None:
-        raise EnvironmentError("The environment variable 'DVC_EXP_NAME' is not set.")
-    tensorboard_path = os.path.join(default_dir, tustu_logs_path, 'tensorboard', experiment_name)
-    return tensorboard_path
+def create_tensorboard_path(tustu_logs_dir, default_dir, dvc_exp_name) -> str:
+    tensorboard_path = os.path.join(default_dir, tustu_logs_dir, 'tensorboard', dvc_exp_name)
+    return tensorboard_path 
     
-
 # Copy the experiment specific tensorboard logs from the host directory to the temporary experiment directory
 def copy_tensorboard_logs(tensorboard_path, experiment_name) -> None:
     destination_path = os.path.join('exp-logs/tensorboard', experiment_name)
@@ -43,7 +34,7 @@ def copy_tensorboard_logs(tensorboard_path, experiment_name) -> None:
         destination_file = os.path.join(destination_path, file_name)
         shutil.copy(source_file, destination_file)
 
-def copy_slurm_logs():
+def copy_slurm_logs(experiment_name, tustu_logs_path) -> None:
     experiment_name = os.environ.get('DVC_EXP_NAME')
     if experiment_name is None:
         raise EnvironmentError("The environment variable 'DVC_EXP_NAME' is not set.")

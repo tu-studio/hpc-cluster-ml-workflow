@@ -1,17 +1,15 @@
 import torch
 import numpy as np
 import os
-from utils.config import load_params
+from utils import config
 from train import get_train_mode_params
 from model import NeuralNetwork
 
 def main():
-    # Load parameters from params.yaml
-    params = load_params()
-    
-    name = params.train.name
-    input_size = params.preprocess.input_size
-    train_mode = params.train.train_mode
+    params = config.Params()
+    name = params['train']['name']
+    input_size = params['preprocess']['input_size']
+    train_mode = params['train']['train_mode']
 
     # Get model hyperparameters based on training mode
     _, conv1d_strides, conv1d_filters, hidden_units = get_train_mode_params(train_mode)

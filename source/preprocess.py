@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import os
-from utils.config import load_params
+from utils import config
 from pedalboard.io import AudioFile
 
 def normalize(data):
@@ -26,13 +26,14 @@ def create_ordered_data(data, input_size):
         ordered_data[i] = torch.gather(data, 0, idx)
     return ordered_data.unsqueeze(1)
 
-def preprocess_data(params):
-    input_file = params.preprocess.input_file
-    target_file = params.preprocess.target_file
-    input_size = params.preprocess.input_size
-    test_split = params.preprocess.test_split
-    output_dir = params.preprocess.output_dir
-    file_name = params.preprocess.file_name
+def main():
+    params = config.Params()
+    input_size = params['general']['input_size']
+    input_file = params['preprocess']['input_file']
+    target_file = params['preprocess']['target_file']
+    test_split = params['preprocess']['test_split']
+    output_dir = params['preprocess']['output_dir']
+    file_name = params['preprocess']['file_name']
 
     X_all = load_and_process_audio(input_file)
     y_all = load_and_process_audio(target_file)
@@ -67,5 +68,4 @@ def preprocess_data(params):
     print("Preprocessing done and data saved.")
 
 if __name__ == "__main__":
-    params = load_params()
-    preprocess_data(params)
+    main()
