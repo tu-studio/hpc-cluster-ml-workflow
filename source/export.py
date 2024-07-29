@@ -1,6 +1,4 @@
 import torch
-import numpy as np
-import os
 from utils import config
 from train import get_train_mode_params
 from model import NeuralNetwork

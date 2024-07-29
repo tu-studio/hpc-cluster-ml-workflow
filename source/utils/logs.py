@@ -1,10 +1,8 @@
-import os
 import shutil
 from pathlib import Path
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.tensorboard.summary import hparams
-from utils import config
 from utils.config import get_env_variable
 
 
