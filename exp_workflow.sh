@@ -2,11 +2,11 @@
 
 # Create a temporary directory for the experiment
 echo "Checking directory existence..."
-if [ ! -d "$TUSTU_TEMP_DIR" ]; then
-    mkdir -p "$TUSTU_TEMP_DIR"
-    echo "The directory $TUSTU_TEMP_DIR has been created."
+if [ ! -d "$TUSTU_TMP_DIR" ]; then
+    mkdir -p "$TUSTU_TMP_DIR"
+    echo "The directory $TUSTU_TMP_DIR has been created."
 else
-    echo "The directory $TUSTU_TEMP_DIR exists. Using existing directory."
+    echo "The directory $TUSTU_TMP_DIR exists. Using existing directory."
 fi &&
 
 # Create a new sub-directory in the temporary directory for the experiment
@@ -14,7 +14,8 @@ echo "Creating temporary sub-directory..." &&
 HOSTNAME=$(hostname) &&
 # Generate a unique ID with the current timestamp, process ID, and hostname for the sub-directory
 UNIQUE_ID=$(date +%s)-$$-$HOSTNAME &&
-mkdir -p "$TUSTU_TEMP_DIR/$UNIQUE_ID" &&
+TUSTU_EXP_TMP_DIR="$TUSTU_TMP_DIR/$UNIQUE_ID" &&
+mkdir -p $TUSTU_EXP_TMP_DIR &&
 
 # Copy the necessary files to the temporary directory
 echo "Copying files..." &&
@@ -24,11 +25,11 @@ git ls-files;
 echo ".dvc/config.local";
 echo ".git";
 } | while read file; do
-    rsync -aR "$file" "$TUSTU_TEMP_DIR/$INDEX/"
+    rsync -aR "$file" $TUSTU_EXP_TMP_DIR;
 done &&
 
 # Change the working directory to the temporary sub-directory
-cd $TUSTU_TEMP_DIR/$INDEX &&
+cd $TUSTU_EXP_TMP_DIR &&
 
 # Set the DVC cache directory to the shared cache located in the host directory
 echo "Setting DVC cache directory..." &&
@@ -49,4 +50,4 @@ dvc exp push origin &&
 # Clean up the temporary sub-directory
 echo "Cleaning up..." &&
 cd .. &&
-rm -rf $INDEX
+rm -rf $UNIQUE_ID
