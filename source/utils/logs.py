@@ -3,7 +3,7 @@ from pathlib import Path
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.tensorboard.summary import hparams
-from utils.config import get_env_variable
+from config import get_env_variable
 
 
 # Overrides the Tensorboard SummaryWriter class to add hyperparameters to the same tensorboard logs and enable metrics as scalar sequences
@@ -51,7 +51,7 @@ def copy_slurm_logs() -> None:
     print(f"Slurm log {current_slurm_job_id} copied to {slurm_logs_destination}")
 
 def main():
-    copy_slurm_logs()
+    # copy_slurm_logs()
     copy_tensorboard_logs()
 
 

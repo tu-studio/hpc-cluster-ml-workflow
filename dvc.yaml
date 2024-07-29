@@ -39,5 +39,5 @@ stages:
   save_logs:
     cmd: python3 source/utils/logs.py
     outs:
-    - exp_logs/slurm
+#    - exp_logs/slurm
     - exp_logs/tensorboard/
