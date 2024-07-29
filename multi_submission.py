@@ -3,13 +3,12 @@ import subprocess
 import os 
 
 # Submit experiment for hyperparameter combination
-def submit_batch_job(index, test_split, batch_size):
+def submit_batch_job(test_split, batch_size):
     # Set dynamic parameters for the batch job as environment variables
     # But dont forget to add the os.environ to the new environment variables otherwise the PATH is not found
     env = {
         **os.environ,
-        "EXP_PARAMS": f"-S preprocess.test_split={test_split} -S train.batch_size={batch_size}",
-        "INDEX": str(index)
+        "EXP_PARAMS": f"-S preprocess.test_split={test_split} -S train.batch_size={batch_size}"
     }
     # Run sbatch command with the environment variables as bash! subprocess! command (otherwise module not found)
     subprocess.run(['/usr/bin/bash', '-c', 'sbatch slurm_job.sh'], env=env)
