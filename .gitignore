@@ -3,7 +3,6 @@
 __pycache__/
 
 # Ignore Python virtual environments
-myenv
 venv
 
 # Ignore data files
@@ -11,8 +10,8 @@ data/*/*
 logs/*/*
 /dvclive
 /models
-/temp
-/exp-logs/*
+/tmp
+/exp_logs/*
 
 # Not ignore
 !logs/*/.gitkeep

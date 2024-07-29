@@ -3,7 +3,7 @@ from pathlib import Path
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.tensorboard.summary import hparams
-from utils.config import get_env_variable
+from config import get_env_variable
 
 
 # Overrides the Tensorboard SummaryWriter class to add hyperparameters to the same tensorboard logs and enable metrics as scalar sequences
