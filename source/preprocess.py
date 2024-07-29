@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import os
 from utils import config
+from pathlib import Path
 from pedalboard.io import AudioFile
 
 def normalize(data):
@@ -27,37 +28,34 @@ def create_ordered_data(data, input_size):
     return ordered_data.unsqueeze(1)
 
 def main():
-    params = config.Params()
+    # Load the hyperparameters from the params yaml file into a Dictionary
+    params = config.Params('params.yaml')
+
+    # Load the parameters from the dictionary into variables
     input_size = params['general']['input_size']
     input_file = params['preprocess']['input_file']
     target_file = params['preprocess']['target_file']
     test_split = params['preprocess']['test_split']
-    output_dir = params['preprocess']['output_dir']
-    file_name = params['preprocess']['file_name']
 
     X_all = load_and_process_audio(input_file)
     y_all = load_and_process_audio(target_file)
-
     print("Data loaded and normalized.")
+
     X_training, X_testing = split_data(X_all, test_split)
     y_training, y_testing = split_data(y_all, test_split)
-
     print("Data split into training and testing sets.")
+
     X_ordered_training = create_ordered_data(X_training, input_size)
     X_ordered_testing = create_ordered_data(X_testing, input_size)
+    print("Input data ordered.")
 
-    print("Data ordered.")
     y_ordered_training = torch.from_numpy(y_training[input_size-1:]).unsqueeze(1)
     y_ordered_testing = torch.from_numpy(y_testing[input_size-1:]).unsqueeze(1)
-
     print("Target data ordered.")
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir) 
-        print(f"Created directory {output_dir}")
-    
-    output_file_path = os.path.join(output_dir, file_name)
 
-    print(f"Saving data to {output_file_path}")
+    output_file_path = Path('data/processed/data.pt')
+    print(f"Saved data to {output_file_path}")
+
     torch.save({
         'X_ordered_training': X_ordered_training,
         'y_ordered_training': y_ordered_training,

@@ -5,11 +5,10 @@ stages:
     - source/preprocess.py
     - data/raw/
     params:
+    - general.input_size
     - preprocess.input_file
     - preprocess.target_file
-    - preprocess.input_size
     - preprocess.test_split
-    - preprocess.output_dir
     outs:
     - data/processed/
   train:
@@ -19,26 +18,26 @@ stages:
     - source/model.py
     - data/processed/
     params:
-    - train.name
+    - general.input_size
+    - general.random_seed
     - train.batch_size
     - train.epochs
     - train.train_mode
-    - train.device
+    - train.device_request
     outs:
     - models/checkpoints/
-    - exp-logs/tensorboard/
   export:
     cmd: python3 source/export.py
     deps:
     - source/export.py
     - models/checkpoints/
     params:
-    - preprocess.input_size
-    - train.name
+    - general.input_size
     - train.train_mode
     outs:
     - models/exports/
   save_logs:
-    cmd: python3 source/utils/save_logs.py
+    cmd: python3 source/utils/logs.py
     outs:
-    - exp-logs/slurm
+    - exp_logs/slurm
+    - exp_logs/tensorboard/

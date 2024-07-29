@@ -5,7 +5,7 @@ from torch import nn
 import torchinfo
 from utils import logs, config
 import os
-import pathlib as Path
+from pathlib import Path
 from model import NeuralNetwork
 
 
@@ -46,6 +46,42 @@ def prepare_device(request):
         device = torch.device("cpu")
         print("Using CPU device")
     return device
+
+def set_random_seed(random_seed):
+    if 'random' in globals():
+        random.seed(random_seed)
+    else:
+        print("The 'random' package is not imported, skipping random seed.")
+
+    if 'np' in globals():
+        np.random.seed(random_seed)
+    else:
+        print("The 'numpy' package is not imported, skipping numpy seed.")
+
+    if 'torch' in globals():
+        torch.manual_seed(random_seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(random_seed)
+        if torch.backends.mps.is_available():
+            torch.mps.manual_seed(random_seed)
+    else:
+        print("The 'torch' package is not imported, skipping torch seed.")
+    
+    if 'tf' in globals():
+        tf.random.set_seed(random_seed)
+    else:
+        print("The 'tensorflow' package is not imported, skipping tensorflow seed.")
+
+    if 'scipy' in globals():
+        scipy.random.seed(random_seed)
+    else:
+        print("The 'scipy' package is not imported, skipping scipy seed.")
+    
+    if 'sklearn' in globals():
+        sklearn.utils.random.seed(random_seed)
+    else:
+        print("The 'sklearn' package is not imported, skipping sklearn seed.")
+
 
 
 def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
@@ -98,50 +134,42 @@ def generate_audio_example(model, device, dataloader):
     return audio_example
 
 def main():
-    # Load the environment variables into an Environment object
-    environ = config.Environment()
-    # Load the hyperparameters from the config yaml file into a ConfigBox object
-    params = config.Params()
+    # Load the hyperparameters from the params yaml file into a Dictionary
+    params = config.Params('params.yaml')
+
     input_size = params['general']['input_size']
     random_seed = params['general']['random_seed']
-    input_file = params['train']['input_file']
-    name = params['train']['name']
     epochs = params['train']['epochs']
     train_mode = params['train']['train_mode']
     batch_size = params['train']['batch_size']
     device_request = params['train']['device_request']
 
-    # Define the path to the tensorboard logs directory
-    tensorboard_path = Path(environ.default_dir) / environ.tustu_logs_dir / 'tensorboard' / environ.dvc_exp_name
+    # Define and create the path to the tensorboard logs directory in the source repository
+    default_dir = config.get_env_variable('DEFAULT_DIR')
+    dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')   
+    tensorboard_path = Path(f'{default_dir}/logs/tensorboard/{dvc_exp_name}')
     tensorboard_path.mkdir(parents=True, exist_ok=True)
+
     # Create a SummaryWriter object to write the tensorboard logs
     writer = logs.CustomSummaryWriter(log_dir=tensorboard_path)
 
     # Add hyperparameters and metrics to the hparams plugin of tensorboard
-    flattened_dict = params.get_flat_copy()
     metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None, 'Step_Loss/train': None}
-    writer.add_hparams(hparam_dict=flattened_dict, metric_dict=metrics, run_name=tensorboard_path)
+    writer.add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=tensorboard_path)
 
     # Set a random seed for reproducibility across all devices
-    random.seed(random_seed)
-    np.random.seed(random_seed)
-    torch.manual_seed(random_seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(random_seed)
-    if torch.backends.mps.is_available():
-        torch.mps.manual_seed(random_seed)
+    set_random_seed(random_seed)
 
     # Load preprocessed data from the input file into the training and testing tensors
-    data = torch.load(input_file)
+    input_file_path = Path('data/processed/data.pt')
+    data = torch.load(input_file_path)
     X_ordered_training = data['X_ordered_training']
     y_ordered_training = data['y_ordered_training']
     X_ordered_testing = data['X_ordered_testing']
     y_ordered_testing = data['y_ordered_testing']
 
+    # Prepare the requested device for training. Use cpu if the requested device is not available 
     device = prepare_device(device_request)
-
-    if not os.path.exists('models/checkpoints/'):
-        os.makedirs('models/checkpoints/')
 
     # Get the hyperparameters for the training mode
     learning_rate, conv1d_strides, conv1d_filters, hidden_units = get_train_mode_params(train_mode)
@@ -177,14 +205,14 @@ def main():
 
     writer.close()
 
-    # Save the model
-    torch.save(model.state_dict(), "models/checkpoints/" + name + ".pth")
+    # Save the model checkpoint
+    models_checkpoints_dir = Path('models/checkpoints')
+    models_checkpoints_dir.mkdir(parents=True, exist_ok=True)
+    output_file_path = models_checkpoints_dir / 'model.pth'
+    torch.save(model.state_dict(), output_file_path)
     print("Saved PyTorch Model State to model.pth")
 
-    # Copy the tensorboard log file to the temporary experiment sub-directory so it will be pushed to the dvc experiment branch
-    logs.copy_tensorboard_logs(tensorboard_path, env.dvc_exp_name)
-
-    print("Done with the training!")
+    print("Done with the training stage!")
 
 if __name__ == "__main__":
     main()

@@ -10,12 +10,11 @@ else
 fi &&
 
 # Create a new sub-directory in the temporary directory for the experiment
-if [ -z "$INDEX" ]; then
-    echo "Index not provided. Creating new index 0..."
-    INDEX=0
-fi &&
 echo "Creating temporary sub-directory..." &&
-mkdir -p "$TUSTU_TEMP_DIR/$INDEX" &&
+HOSTNAME=$(hostname) &&
+# Generate a unique ID with the current timestamp, process ID, and hostname for the sub-directory
+UNIQUE_ID=$(date +%s)-$$-$HOSTNAME &&
+mkdir -p "$TUSTU_TEMP_DIR/$UNIQUE_ID" &&
 
 # Copy the necessary files to the temporary directory
 echo "Copying files..." &&
