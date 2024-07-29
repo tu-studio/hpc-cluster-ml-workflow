@@ -53,7 +53,7 @@ def main():
     print("Target data ordered.")
 
     output_file_path = Path('data/processed/data.pt')
-    print(f"Saved data to {output_file_path}")
+    output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
     torch.save({
         'X_ordered_training': X_ordered_training,
@@ -61,7 +61,6 @@ def main():
         'X_ordered_testing': X_ordered_testing,
         'y_ordered_testing': y_ordered_testing
     }, output_file_path)
-
     print("Preprocessing done and data saved.")
 
 if __name__ == "__main__":

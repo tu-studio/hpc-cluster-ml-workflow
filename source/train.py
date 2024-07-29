@@ -206,9 +206,8 @@ def main():
     writer.close()
 
     # Save the model checkpoint
-    models_checkpoints_dir = Path('models/checkpoints')
-    models_checkpoints_dir.mkdir(parents=True, exist_ok=True)
-    output_file_path = models_checkpoints_dir / 'model.pth'
+    output_file_path = Path('models/checkpoints/model.pth')
+    output_file_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(model.state_dict(), output_file_path)
     print("Saved PyTorch Model State to model.pth")
 

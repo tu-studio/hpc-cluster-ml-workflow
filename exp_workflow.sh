@@ -1,5 +1,11 @@
 # Description: This script runs an experiment with DVC within a temporary directory copy and pushes the results to the dvc remote repository.
 
+# Set environment variables defined in global.env
+export $(grep -v '^#' global.env | xargs)
+
+# Define DEFAULT_DIR in the host environment
+export DEFAULT_DIR="$PWD"
+
 # Create a temporary directory for the experiment
 echo "Checking directory existence..."
 if [ ! -d "$TUSTU_TMP_DIR" ]; then
