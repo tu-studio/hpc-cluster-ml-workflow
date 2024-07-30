@@ -30,4 +30,4 @@ singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:la
 echo "Starting singularity execution..."
 
 # Run the singularity container
-singularity exec --nv ml-pipeline-image_latest.sif bash -c exp_workflow.sh
+singularity exec --nv $TUSTU_PROJECT_NAME-image_latest.sif bash exp_workflow.sh
