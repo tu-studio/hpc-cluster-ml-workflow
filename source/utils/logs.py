@@ -3,7 +3,9 @@ from pathlib import Path
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.tensorboard.summary import hparams
-from config import get_env_variable
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from utils import config
 
 
 # Overrides the Tensorboard SummaryWriter class to add hyperparameters to the same tensorboard logs and enable metrics as scalar sequences
@@ -23,8 +25,8 @@ class CustomSummaryWriter(SummaryWriter):
     
 # Copy the experiment specific tensorboard logs from the host directory to the temporary experiment directory
 def copy_tensorboard_logs() -> None:
-    default_dir = get_env_variable('DEFAULT_DIR')
-    dvc_exp_name = get_env_variable('DVC_EXP_NAME')
+    default_dir = config.get_env_variable('DEFAULT_DIR')
+    dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
     tensorboard_logs_source = Path(f'{default_dir}/logs/tensorboard')
     tensorboard_logs_destination = Path(f'exp_logs/tensorboard/{dvc_exp_name}')
     tensorboard_logs_destination.mkdir(parents=True, exist_ok=True)
@@ -36,9 +38,9 @@ def copy_tensorboard_logs() -> None:
 
 # Copy the experiment specific slurm logs from the host directory to the temporary experiment directory
 def copy_slurm_logs() -> None:
-    default_dir = get_env_variable('DEFAULT_DIR')
-    current_slurm_job_id = get_env_variable('SLURM_JOB_ID')
-    dvc_exp_name = get_env_variable('DVC_EXP_NAME')
+    default_dir = config.get_env_variable('DEFAULT_DIR')
+    current_slurm_job_id = config.get_env_variable('SLURM_JOB_ID')
+    dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
     slurm_logs_source = Path(f'{default_dir}/logs/slurm')
     slurm_logs_destination = Path(f'exp_logs/slurm/{dvc_exp_name}')
     slurm_logs_destination.mkdir(parents=True, exist_ok=True)
