@@ -53,7 +53,7 @@ def copy_slurm_logs() -> None:
     print(f"Slurm log {current_slurm_job_id} copied to {slurm_logs_destination}")
 
 def main():
-    copy_slurm_logs()
+#    copy_slurm_logs()
     copy_tensorboard_logs()
 
 
