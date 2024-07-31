@@ -51,7 +51,7 @@ dvc exp run $EXP_PARAMS &&
 
 # Push the results to the DVC remote repository
 echo "Pushing experiment..." &&
-dvc exp push origin &&
+dvc exp push origin -v &&
 
 # Clean up the temporary sub-directory
 echo "Cleaning up..." &&
