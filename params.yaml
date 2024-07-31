@@ -2,16 +2,16 @@ general:
   random_seed: 42
   input_size: 150
 preprocess:
-  input_file: '/../data/raw/ts9_test1_in_FP32.wav'
-  target_file: '/../data/raw/ts9_test1_out_FP32.wav'
-  test_split: 0.2
-  output_dir: 'data/processed/'
-  file_name: 'processed_data.pt'
+  input_file: /../data/raw/ts9_test1_in_FP32.wav
+  target_file: /../data/raw/ts9_test1_out_FP32.wav
+  test_split: 0.3
+  output_dir: data/processed/
+  file_name: processed_data.pt
 train:
-  input_file: 'data/processed/processed_data.pt'
-  name: 'model'
-  batch_size: 4096 
+  input_file: data/processed/processed_data.pt
+  name: model
+  batch_size: 2048
   epochs: 1
-  train_mode: 0 
-  device_request: 'mps'   
+  train_mode: 0
+  device_request: mps
 
