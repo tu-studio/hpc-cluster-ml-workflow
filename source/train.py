@@ -194,7 +194,7 @@ def main():
     testing_dataloader = torch.utils.data.DataLoader(testing_dataset, batch_size=batch_size, shuffle=False)
 
     # Get the rsync interval from the environment variables
-    logs_intervall = config.get_env_variable('TUSTU_LOGS_INTERVALL')
+    logs_intervall = int(config.get_env_variable('TUSTU_LOGS_INTERVALL'))
     rsync_logs_enabled = config.get_env_variable('TUSTU_RSYNC_LOGS_ENABLED')
     default_dir =  config.get_env_variable('DEFAULT_DIR')
     tensorboard_host = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
@@ -208,7 +208,7 @@ def main():
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)
         epoch_audio_example = generate_audio_example(model, device, testing_dataloader)
         # Every logs_intervall epochs, write the metrics to the tensorboard logs
-        if t % int(logs_intervall) == 0:
+        if t % logs_intervall == 0:
             writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
             writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
             writer.add_audio("Audio_Pred/test", epoch_audio_example, t, sample_rate=44100)
