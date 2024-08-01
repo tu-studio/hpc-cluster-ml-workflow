@@ -7,7 +7,7 @@ preprocess:
   test_split: 0.2
 train:
   batch_size: 4096 
-  epochs: 1
+  epochs: 4
   train_mode: 0 
-  device_request: 'mps'   
+  device_request: 'cuda'   
 
