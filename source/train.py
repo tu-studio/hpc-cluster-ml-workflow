@@ -214,7 +214,8 @@ def main():
             writer.add_audio("Audio_Pred/test", epoch_audio_example, t, sample_rate=44100)
             if rsync_logs_enabled:
                 writer.flush()  # Ensure all logs are written to disk
-                # Add your rsync command here to sync logs to the SSH server
+                print("Copying logs to host")
+                # Rsync logs to the SSH server
                 tensorboard_path = Path(f'{default_dir}/logs/tensorboard/{dvc_exp_name}')
                 os.system(f"rsync -avz {tensorboard_path} {tensorboard_host}:Data/{project_name}")
 
