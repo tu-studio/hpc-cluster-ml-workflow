@@ -208,7 +208,7 @@ def main():
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)
         epoch_audio_example = generate_audio_example(model, device, testing_dataloader)
         # Every logs_intervall epochs, write the metrics to the tensorboard logs
-        if t % logs_intervall == 0:
+        if t % int(logs_intervall) == 0:
             writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
             writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
             writer.add_audio("Audio_Pred/test", epoch_audio_example, t, sample_rate=44100)
