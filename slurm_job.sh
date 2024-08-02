@@ -21,6 +21,8 @@ export $(grep -v '^#' local.env | xargs)
 # Define DEFAULT_DIR in the host environment
 export DEFAULT_DIR="$PWD"
 
+echo $DEFAULT_DIR
+
 # Remove the previous singularity image if it exists
 if [ -f $TUSTU_PROJECT_NAME-image_latest.sif ]; then
   rm $TUSTU_PROJECT_NAME-image_latest.sif
@@ -31,4 +33,4 @@ singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:la
 echo "Starting singularity execution..."
 
 # Run the singularity container
-singularity exec --nv $TUSTU_PROJECT_NAME-image_latest.sif bash exp_workflow.sh
+singularity exec --nv --bind $DEFAULT_DIR  $TUSTU_PROJECT_NAME-image_latest.sif bash exp_workflow.sh

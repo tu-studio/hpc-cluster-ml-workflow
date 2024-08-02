@@ -7,7 +7,7 @@ preprocess:
   test_split: 0.2
 train:
   batch_size: 2048 
-  epochs: 4
+  epochs: 40
   train_mode: 0 
   device_request: 'cuda'   
 
