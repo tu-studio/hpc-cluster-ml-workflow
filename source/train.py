@@ -1,12 +1,13 @@
 import torch
 import random 
 import numpy as np
-from torch import nn
 import torchinfo
 from utils import logs, config
 import os
 from pathlib import Path
 from model import NeuralNetwork
+import subprocess 
+import ast
 
 
 def get_train_mode_params(train_mode):
@@ -195,10 +196,11 @@ def main():
 
     # Get the rsync interval from the environment variables
     logs_intervall = int(config.get_env_variable('TUSTU_LOGS_INTERVALL'))
-    rsync_logs_enabled = config.get_env_variable('TUSTU_RSYNC_LOGS_ENABLED')
+    rsync_logs_enabled = ast.literal_evel(config.get_env_variable('TUSTU_RSYNC_LOGS_ENABLED')) # String to boolean
     default_dir =  config.get_env_variable('DEFAULT_DIR')
-    tensorboard_host = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
     project_name = config.get_env_variable('TUSTU_PROJECT_NAME')
+    if rsync_logs_enabled:
+        tensorboard_host = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
 
 
     # Training loop
