@@ -16,7 +16,9 @@ module load singularity/4.0.2
 
 # Set environment variables defined in global.env and local.env
 export $(grep -v '^#' global.env | xargs)
-export $(grep -v '^#' local.env | xargs)
+if [ -f local.env ]; then
+  export $(grep -v '^#' local.env | xargs)
+fi
 
 # Define DEFAULT_DIR in the host environment
 export DEFAULT_DIR="$PWD"
