@@ -196,7 +196,7 @@ def main():
 
     # Get the rsync interval from the environment variables
     logs_intervall = int(config.get_env_variable('TUSTU_LOGS_INTERVALL'))
-    rsync_logs_enabled = ast.literal_evel(config.get_env_variable('TUSTU_RSYNC_LOGS_ENABLED')) # String to boolean
+    rsync_logs_enabled = ast.literal_eval(config.get_env_variable('TUSTU_RSYNC_LOGS_ENABLED')) # String to boolean
     default_dir =  config.get_env_variable('DEFAULT_DIR')
     project_name = config.get_env_variable('TUSTU_PROJECT_NAME')
     if rsync_logs_enabled:
