@@ -219,7 +219,7 @@ def main():
                 print("Copying logs to host")
                 # Rsync logs to the SSH server
                 tensorboard_path = Path(f'{default_dir}/logs/tensorboard/{dvc_exp_name}')
-                os.system(f"rsync -v --inplace {tensorboard_path} {tensorboard_host}:Data/{project_name}")
+                os.system(f"rsync -r --inplace {tensorboard_path} {tensorboard_host}:Data/{project_name}")
 
 
     writer.close()

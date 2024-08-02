@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu:tesla:1
 #SBATCH --mem=100GB
-#SBATCH --time=1:00:00 
+#SBATCH --time=10:00:00 
 #SBATCH --partition=gpu
 #SBATCH --output=./logs/slurm/slurm-%j.out
 
