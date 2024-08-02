@@ -21,8 +21,6 @@ export $(grep -v '^#' local.env | xargs)
 # Define DEFAULT_DIR in the host environment
 export DEFAULT_DIR="$PWD"
 
-echo $DEFAULT_DIR
-
 # Remove the previous singularity image if it exists
 if [ -f $TUSTU_PROJECT_NAME-image_latest.sif ]; then
   rm $TUSTU_PROJECT_NAME-image_latest.sif
