@@ -14,7 +14,7 @@ def submit_batch_job(test_split, batch_size):
     subprocess.run(['/usr/bin/bash', '-c', 'sbatch slurm_job.sh'], env=env)
 
 if __name__ == "__main__":
-    test_split_list = [0.2, 0.3]
+    test_split_list = [0.19, 0.22]
     batch_size_list = [2048, 4096]
     for test_split, batch_size in itertools.product(test_split_list, batch_size_list):
         submit_batch_job(test_split,batch_size)
