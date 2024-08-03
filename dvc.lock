@@ -1,0 +1,91 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python3 source/preprocess.py
+    deps:
+    - path: data/raw/
+      hash: md5
+      md5: 258f409b9cb543c7cae3902ab7eb808f.dir
+      size: 65879160
+      nfiles: 2
+    - path: source/preprocess.py
+      hash: md5
+      md5: 4a35638bb775ecc26220c0af35ab5bdf
+      size: 2420
+    params:
+      params.yaml:
+        general.input_size: 150
+        preprocess.input_file: /../data/raw/ts9_test1_in_FP32.wav
+        preprocess.target_file: /../data/raw/ts9_test1_out_FP32.wav
+        preprocess.test_split: 0.22
+    outs:
+    - path: data/processed/
+      hash: md5
+      md5: a474884e83e6e3df4c0959cc8140cb33.dir
+      size: 4973691876
+      nfiles: 1
+  train:
+    cmd: python3 source/train.py
+    deps:
+    - path: data/processed/
+      hash: md5
+      md5: a474884e83e6e3df4c0959cc8140cb33.dir
+      size: 4973691876
+      nfiles: 1
+    - path: source/model.py
+      hash: md5
+      md5: 67bc4dea1c315530d86a4baf04da1bd8
+      size: 884
+    - path: source/train.py
+      hash: md5
+      md5: 8b3cc8e9ee80c524956202c274aaea67
+      size: 9180
+    params:
+      params.yaml:
+        general.input_size: 150
+        general.random_seed: 42
+        train.batch_size: 4096
+        train.device_request: cuda
+        train.epochs: 40
+        train.train_mode: 0
+    outs:
+    - path: models/checkpoints/
+      hash: md5
+      md5: c137ee57713387ffa06a421a20d41ae7.dir
+      size: 47278
+      nfiles: 1
+  export:
+    cmd: python3 source/export.py
+    deps:
+    - path: models/checkpoints/
+      hash: md5
+      md5: c137ee57713387ffa06a421a20d41ae7.dir
+      size: 47278
+      nfiles: 1
+    - path: source/export.py
+      hash: md5
+      md5: f795d961d17988c38039fc22bca23278
+      size: 1300
+    params:
+      params.yaml:
+        general.input_size: 150
+        train.train_mode: 0
+    outs:
+    - path: models/exports/
+      hash: md5
+      md5: 2368df162165046b2079745a3e65f05c.dir
+      size: 50450
+      nfiles: 1
+  save_logs:
+    cmd: python3 source/utils/logs.py
+    outs:
+    - path: exp_logs/slurm
+      hash: md5
+      md5: 4e6acc0b5606b6a041557f03053f146a.dir
+      size: 32436
+      nfiles: 1
+    - path: exp_logs/tensorboard/
+      hash: md5
+      md5: fa2a294baa7d8265fcb178eda0c5c17c.dir
+      size: 0
+      nfiles: 1
