@@ -8,6 +8,8 @@ export $(grep -v '^#' global.env | xargs)
 # Define DEFAULT_DIR in the host environment
 export DEFAULT_DIR="$PWD"
 
+TUSTU_TMP_DIR=tmp
+
 # Create a temporary directory for the experiment
 echo "Checking directory existence..."
 if [ ! -d "$TUSTU_TMP_DIR" ]; then
@@ -19,7 +21,6 @@ fi &&
 
 # Create a new sub-directory in the temporary directory for the experiment
 echo "Creating temporary sub-directory..." &&
-HOSTNAME=$(hostname) &&
 # Generate a unique ID with the current timestamp, process ID, and hostname for the sub-directory
 UNIQUE_ID=$(date +%s)-$$-$HOSTNAME &&
 TUSTU_EXP_TMP_DIR="$TUSTU_TMP_DIR/$UNIQUE_ID" &&
@@ -30,7 +31,9 @@ echo "Copying files..." &&
 {
 # Add all git-tracked files
 git ls-files;
-echo ".dvc/config.local";
+if [ -f ".dvc/config.local" ]; then
+    echo ".dvc/config.local";
+fi;
 echo ".git";
 } | while read file; do
     rsync -aR "$file" $TUSTU_EXP_TMP_DIR;
@@ -44,8 +47,10 @@ echo "Setting DVC cache directory..." &&
 dvc cache dir $DEFAULT_DIR/.dvc/cache &&
 
 # Pull the data from the DVC remote repository
-echo "Pulling data with DVC..." &&
-dvc pull data/raw &&
+if [ -f "data/raw.dvc" ]; then
+    echo "Pulling data with DVC..." 
+    dvc pull data/raw;
+fi &&
 
 # Run the experiment with passed parameters. Runs with the default parameters if none are passed.
 echo "Running experiment..." &&
