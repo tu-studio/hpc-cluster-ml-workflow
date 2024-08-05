@@ -6,8 +6,6 @@ from utils import logs, config
 import os
 from pathlib import Path
 from model import NeuralNetwork
-import subprocess 
-import ast
 
 def get_train_mode_params(train_mode):
     if train_mode == 0:
@@ -25,64 +23,7 @@ def get_train_mode_params(train_mode):
         conv1d_strides = 3
         conv1d_filters = 36
         hidden_units = 96
-    return learning_rate, conv1d_strides, conv1d_filters, hidden_units
-
-def prepare_device(request):
-    if request == "mps":
-        if torch.backends.mps.is_available():
-            device = torch.device("mps")
-            print("Using MPS device")
-        else:
-            device = torch.device("cpu")
-            print("MPS requested but not available. Using CPU device")
-    elif request == "cuda":
-        if torch.cuda.is_available():
-            device = torch.device("cuda")
-            print("Using CUDA device")
-        else:
-            device = torch.device("cpu")
-            print("CUDA requested but not available. Using CPU device")
-    else:
-        device = torch.device("cpu")
-        print("Using CPU device")
-    return device
-
-def set_random_seed(random_seed):
-    if 'random' in globals():
-        random.seed(random_seed)
-    else:
-        print("The 'random' package is not imported, skipping random seed.")
-
-    if 'np' in globals():
-        np.random.seed(random_seed)
-    else:
-        print("The 'numpy' package is not imported, skipping numpy seed.")
-
-    if 'torch' in globals():
-        torch.manual_seed(random_seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(random_seed)
-        if torch.backends.mps.is_available():
-            torch.mps.manual_seed(random_seed)
-    else:
-        print("The 'torch' package is not imported, skipping torch seed.")
-    
-    if 'tf' in globals():
-        tf.random.set_seed(random_seed)
-    else:
-        print("The 'tensorflow' package is not imported, skipping tensorflow seed.")
-
-    if 'scipy' in globals():
-        scipy.random.seed(random_seed)
-    else:
-        print("The 'scipy' package is not imported, skipping scipy seed.")
-    
-    if 'sklearn' in globals():
-        sklearn.utils.random.seed(random_seed)
-    else:
-        print("The 'sklearn' package is not imported, skipping sklearn seed.")
-
-
+    return learning_rate, conv1d_strides, conv1d_filters, hidden_units    
 
 def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
     size = len(dataloader.dataset)
@@ -96,7 +37,7 @@ def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-        writer.add_scalar("Step_Loss/train", loss.item(), batch + epoch * len(dataloader))
+        writer.add_scalar("Batch_Loss/train", loss.item(), batch + epoch * len(dataloader))
         train_loss += loss.item()
         if batch % 100 == 0:
             loss_value = loss.item()
@@ -144,21 +85,13 @@ def main():
     batch_size = params['train']['batch_size']
     device_request = params['train']['device_request']
 
-    # Define and create the path to the tensorboard logs directory in the source repository
-    default_dir = config.get_env_variable('DEFAULT_DIR')
-    dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')   
-    tensorboard_path = Path(f'{default_dir}/logs/tensorboard/{dvc_exp_name}')
-    tensorboard_path.mkdir(parents=True, exist_ok=True)
-
     # Create a SummaryWriter object to write the tensorboard logs
-    writer = logs.CustomSummaryWriter(log_dir=tensorboard_path)
+    tensorboard_path = logs.return_tensorboard_path()
+    metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None, 'Batch_Loss/train': None}
+    writer = logs.CustomSummaryWriter(log_dir=tensorboard_path, params=params, metrics=metrics)
 
-    # Add hyperparameters and metrics to the hparams plugin of tensorboard
-    metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None, 'Step_Loss/train': None}
-    writer.add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=tensorboard_path)
-
-    # Set a random seed for reproducibility across all devices
-    set_random_seed(random_seed)
+    # Set a random seed for reproducibility across all devices. Add more devices if needed
+    config.set_random_seeds(random_seed)
 
     # Load preprocessed data from the input file into the training and testing tensors
     input_file_path = Path('data/processed/data.pt')
@@ -169,7 +102,7 @@ def main():
     y_ordered_testing = data['y_ordered_testing']
 
     # Prepare the requested device for training. Use cpu if the requested device is not available 
-    device = prepare_device(device_request)
+    device = config.prepare_device(device_request)
 
     # Get the hyperparameters for the training mode
     learning_rate, conv1d_strides, conv1d_filters, hidden_units = get_train_mode_params(train_mode)
@@ -193,33 +126,16 @@ def main():
     testing_dataset = torch.utils.data.TensorDataset(X_ordered_testing, y_ordered_testing)
     testing_dataloader = torch.utils.data.DataLoader(testing_dataset, batch_size=batch_size, shuffle=False)
 
-    # Get the rsync interval from the environment variables
-    logs_intervall = int(config.get_env_variable('TUSTU_LOGS_INTERVALL'))
-    rsync_logs_enabled = ast.literal_eval(config.get_env_variable('TUSTU_RSYNC_LOGS_ENABLED')) # String to boolean
-    default_dir =  config.get_env_variable('DEFAULT_DIR')
-    project_name = config.get_env_variable('TUSTU_PROJECT_NAME')
-    if rsync_logs_enabled:
-        tensorboard_host = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
-
-
     # Training loop
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, writer, epoch=t)
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)
         epoch_audio_example = generate_audio_example(model, device, testing_dataloader)
-        # Every logs_intervall epochs, write the metrics to the tensorboard logs
-        if t % logs_intervall == 0:
-            writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
-            writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
-            writer.add_audio("Audio_Pred/test", epoch_audio_example, t, sample_rate=44100)
-            if rsync_logs_enabled:
-                writer.flush()  # Ensure all logs are written to disk
-                print("Copying logs to host")
-                # Rsync logs to the SSH server
-                tensorboard_path = Path(f'{default_dir}/logs/tensorboard/{dvc_exp_name}')
-                os.system(f"rsync -r --inplace {tensorboard_path} {tensorboard_host}:Data/{project_name}")
-
+        writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
+        writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
+        writer.add_audio("Audio_Pred/test", epoch_audio_example, t, sample_rate=44100)
+        writer.step()  
 
     writer.close()
 
