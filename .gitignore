@@ -24,4 +24,9 @@ logs/*/*
 NOTES.md
 
 # Ignore singularity image
-ml-pipeline-image_latest.sif
+*.sif
+
+# Temporarily ignore the following files
+docs/USER_GUIDE.md
+docs/CONTRIBUTING.md
+docs/graphics/
