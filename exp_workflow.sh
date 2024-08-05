@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Description: This script runs an experiment with DVC within a temporary directory copy and pushes the results to the dvc remote repository.
 
 # Set environment variables defined in global.env
