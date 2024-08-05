@@ -9,7 +9,6 @@ from model import NeuralNetwork
 import subprocess 
 import ast
 
-
 def get_train_mode_params(train_mode):
     if train_mode == 0:
         learning_rate = 0.01
