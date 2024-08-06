@@ -30,4 +30,4 @@ singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:la
 echo "Starting singularity execution..."
 
 # Run the singularity container
-singularity exec --nv --bind $DEFAULT_DIR $TUSTU_PROJECT_NAME-image_latest.sif exp_workflow.sh
+singularity exec --nv --bind $DEFAULT_DIR $TUSTU_PROJECT_NAME-image_latest.sif ./exp_workflow.sh
