@@ -1,4 +1,5 @@
 # Ignore all files in this directory
 **
-# Except this file
+# Except this files
 !requirements.txt
+!global.env
