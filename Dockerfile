@@ -26,17 +26,17 @@ COPY global.env /tmp/global.env
 
 # Install Python Version
 RUN set -a && . /tmp/global.env && set +a \
-    wget --no-check-certificate https://www.python.org/ftp/python/{TUSTU_PYTHON_VERSION}/Python-{TUSTU_PYTHON_VERSION}.tgz \
-    && tar -xf Python-{TUSTU_PYTHON_VERSION}.tgz \
-    && cd Python-{TUSTU_PYTHON_VERSION} \
+    wget --no-check-certificate https://www.python.org/ftp/python/${TUSTU_PYTHON_VERSION}/Python-${TUSTU_PYTHON_VERSION}.tgz \
+    && tar -xf Python-${TUSTU_PYTHON_VERSION}.tgz \
+    && cd Python-${TUSTU_PYTHON_VERSION} \
     && ./configure --enable-optimizations \
     && make -j$(nproc) \
     && make altinstall \
     && cd .. \
     # Delete the unzipped directory and downloaded archive to save space
-    && rm -rf Python-{TUSTU_PYTHON_VERSION} Python-{TUSTU_PYTHON_VERSION}.tgz \
+    && rm -rf Python-${TUSTU_PYTHON_VERSION} Python-${TUSTU_PYTHON_VERSION}.tgz \
     # Create symlink for python3
-    && ln -s /usr/local/bin/python${PYTHON_VERSION%.*} /usr/local/bin/python3
+    && ln -s /usr/local/bin/python${TUSTU_PYTHON_VERSION%.*} /usr/local/bin/python3
 
 # Set the working directory
 WORKDIR /home/app
