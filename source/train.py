@@ -1,9 +1,6 @@
 import torch
-import random 
-import numpy as np
 import torchinfo
 from utils import logs, config
-import os
 from pathlib import Path
 from model import NeuralNetwork
 
@@ -92,6 +89,8 @@ def main():
 
     # Set a random seed for reproducibility across all devices. Add more devices if needed
     config.set_random_seeds(random_seed)
+    # Prepare the requested device for training. Use cpu if the requested device is not available 
+    device = config.prepare_device(device_request)
 
     # Load preprocessed data from the input file into the training and testing tensors
     input_file_path = Path('data/processed/data.pt')
@@ -100,9 +99,6 @@ def main():
     y_ordered_training = data['y_ordered_training']
     X_ordered_testing = data['X_ordered_testing']
     y_ordered_testing = data['y_ordered_testing']
-
-    # Prepare the requested device for training. Use cpu if the requested device is not available 
-    device = config.prepare_device(device_request)
 
     # Get the hyperparameters for the training mode
     learning_rate, conv1d_strides, conv1d_filters, hidden_units = get_train_mode_params(train_mode)

@@ -10,7 +10,7 @@ import os
 
 # Overrides the Tensorboard SummaryWriter class to add hyperparameters to the same tensorboard logs and enable metrics as scalar sequences
 class CustomSummaryWriter(SummaryWriter):
-    def __init__(self, log_dir, params=None, metrics={}, sync_interval=os.getenv('TUSTU_SYNC_INTERVAL'), remote_dir=f'{os.getenv('TUSTU_TENSORBOARD_HOST')}:Data/{os.getenv('TUSTU_PROJECT_NAME')}/logs/tensorboard'): 
+    def __init__(self, log_dir, params=None, metrics={}, sync_interval=int(config.get_env_variable('TUSTU_SYNC_INTERVAL')), remote_dir=f'{config.get_env_variable('TUSTU_TENSORBOARD_HOST')}:Data/{config.get_env_variable('TUSTU_PROJECT_NAME')}/logs/tensorboard'): 
         super().__init__(log_dir=log_dir)
         if params is not None:
             self.add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=log_dir)
@@ -20,7 +20,7 @@ class CustomSummaryWriter(SummaryWriter):
 
     def step(self) -> None:
         self.current_step += 1
-        if self.tensorboard_host is not None and self.sync_interval != 0:
+        if self.sync_interval != 0:
             if self.current_step % self.sync_interval == 0:
                 self.flush()
                 os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}")
@@ -37,6 +37,11 @@ class CustomSummaryWriter(SummaryWriter):
         for k, v in metric_dict.items():
             if v is not None:
                 self.add_scalar(k, v)
+
+def return_tensorboard_path() -> str:
+    default_dir = config.get_env_variable('DEFAULT_DIR')
+    dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
+    return Path(f'{default_dir}/logs/tensorboard/{dvc_exp_name}')
 
 # Copy the experiment specific slurm logs from the host directory to the temporary experiment directory
 def copy_slurm_logs() -> None:

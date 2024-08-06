@@ -5,7 +5,6 @@ from typing import Dict, Any, Generator, Tuple
 from ruamel.yaml import YAML
 from collections.abc import MutableMapping
 
-
 def get_env_variable(var_name: str) -> str:
     value = os.getenv(var_name)
     if var_name == "SLURM_JOB_ID" and value is None:
@@ -44,7 +43,7 @@ class Params(dict):
         return self._flatten_dict(params_dict)
     
 
-def prepare_device(request):
+def prepare_device(request: str) -> torch.device:
     if request == "mps":
         if torch.backends.mps.is_available():
             device = torch.device("mps")
