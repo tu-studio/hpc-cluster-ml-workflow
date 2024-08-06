@@ -23,7 +23,8 @@ class CustomSummaryWriter(SummaryWriter):
         if self.sync_interval != 0:
             if self.current_step % self.sync_interval == 0:
                 self.flush()
-                os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}")
+                os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir} --rsync-path='mkdir -p Data/{config.get_env_variable('TUSTU_PROJECT_NAME')}/logs/tensorboard && rsync'")
+
                 
     def add_hparams(self, hparam_dict, metric_dict, hparam_domain_discrete=None, run_name=None):
         torch._C._log_api_usage_once("tensorboard.logging.add_hparams")
