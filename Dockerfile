@@ -25,9 +25,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY global.env /tmp/global.env
 
 # Install Python Version
-RUN set -ex \
-    set -a && . /tmp/global.env && set +a \
-    wget --no-check-certificate https://www.python.org/ftp/python/${TUSTU_PYTHON_VERSION}/Python-${TUSTU_PYTHON_VERSION}.tgz \
+RUN export $(grep -v '^#' /tmp/global.env | xargs) \
+    && echo "Using Python version: ${TUSTU_PYTHON_VERSION}" \
+    && echo "Downloading Python version: ${TUSTU_PYTHON_VERSION}" \
+    && wget --no-check-certificate https://www.python.org/ftp/python/${TUSTU_PYTHON_VERSION}/Python-${TUSTU_PYTHON_VERSION}.tgz \
     && tar -xf Python-${TUSTU_PYTHON_VERSION}.tgz \
     && cd Python-${TUSTU_PYTHON_VERSION} \
     && ./configure --enable-optimizations \
