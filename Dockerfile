@@ -25,7 +25,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY global.env /tmp/global.env
 
 # Install Python Version
-RUN set -a && . /tmp/global.env && set +a \
+RUN set -ex \
+    set -a && . /tmp/global.env && set +a \
     wget --no-check-certificate https://www.python.org/ftp/python/${TUSTU_PYTHON_VERSION}/Python-${TUSTU_PYTHON_VERSION}.tgz \
     && tar -xf Python-${TUSTU_PYTHON_VERSION}.tgz \
     && cd Python-${TUSTU_PYTHON_VERSION} \
