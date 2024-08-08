@@ -13,7 +13,7 @@ class CustomSummaryWriter(SummaryWriter):
     def __init__(self, log_dir, params=None, metrics={}, sync_interval=int(config.get_env_variable('TUSTU_SYNC_INTERVAL')), remote_dir=f'{config.get_env_variable('TUSTU_TENSORBOARD_HOST')}:Data/{config.get_env_variable('TUSTU_PROJECT_NAME')}/logs/tensorboard'): 
         super().__init__(log_dir=log_dir)
         if params is not None:
-            self.add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=log_dir)
+            self._add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=log_dir)
         self.sync_interval = sync_interval
         self.remote_dir = remote_dir   
         self.current_step = 0
@@ -25,8 +25,7 @@ class CustomSummaryWriter(SummaryWriter):
                 self.flush()
                 os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir} --rsync-path='mkdir -p Data/{config.get_env_variable('TUSTU_PROJECT_NAME')}/logs/tensorboard && rsync'")
 
-                
-    def add_hparams(self, hparam_dict, metric_dict, hparam_domain_discrete=None, run_name=None):
+    def _add_hparams(self, hparam_dict, metric_dict, hparam_domain_discrete=None, run_name=None):
         torch._C._log_api_usage_once("tensorboard.logging.add_hparams")
         if type(hparam_dict) is not dict or type(metric_dict) is not dict:
             raise TypeError('hparam_dict and metric_dict should be dictionary.')
