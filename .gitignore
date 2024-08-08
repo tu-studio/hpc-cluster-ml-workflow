@@ -5,16 +5,14 @@ __pycache__/
 # Ignore Python virtual environments
 venv
 
-# Ignore local environment variables
-local.env
-
 # Ignore data files
 data/*/*
 logs/*/*
-/dvclive
 /models
-/tmp
 /exp_logs/*
+
+# Ignore tmp copies for experiments
+/tmp
 
 # Not ignore
 !logs/*/.gitkeep
@@ -29,4 +27,5 @@ NOTES.md
 # Temporarily ignore the following files
 docs/USER_GUIDE.md
 docs/CONTRIBUTING.md
+docs/SETUP.md
 docs/graphics/
