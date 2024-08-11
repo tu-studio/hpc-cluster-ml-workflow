@@ -1,12 +1,12 @@
 # Setup Instructions
 
 **Table of Contents:**
-- [1 - Project Setup](#1-project-setup)
-- [2 - DVC Experiment Pipeline](#2-dvc-experiment-pipeline)
-- [3 - Tensorboard Metrics](#3-tensorboard-metrics)
-- [4 - Docker Image](#4-docker-image)
-- [5 - HPC Cluster Setup](#5-project-setup-hpc-cluster)
-- [6 - Slurm Job Configuration](#6-slurm-job-configuration)
+- [1 - Project Setup](#1---project-setup)
+- [2 - DVC Experiment Pipeline](#2---dvc-experiment-pipeline)
+- [3 - Tensorboard Metrics](#3---tensorboard-metrics)
+- [4 - Docker Image](#4---docker-image)
+- [5 - HPC Cluster Setup](#5---project-setup-hpc-cluster)
+- [6 - Slurm Job Configuration](#6---slurm-job-configuration)
 
 ## 1 - Project Setup
 
