@@ -1,6 +1,6 @@
 # HPC-Cluster-ML-Workflow 
 
-This repository provides a structured workflow template for audio machine learning research on the [HPC Cluster of ZECM at TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc). It integrates cutting-edge tools, including DVC, Docker, and TensorBoard, to offer comprehensive development and management capabilities for audio machine learning experiments. This approach is especially well-suited to projects that require the management of multiple experiments over an extended period.
+This template repository provides a structured workflow designed for audio machine learning research on the [HPC Cluster of ZECM at TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc). Aiming at projects that require ongoing management of multiple experiments over extended periods, this setup ensures high reproducibility. By incorporating tools like DVC, Docker, and TensorBoard, it provides a robust framework for conducting machine learning experiments effectively.
 
 ## Features
 - **Reproducible Experiments**: 
