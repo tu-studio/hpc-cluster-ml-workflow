@@ -284,7 +284,7 @@ Once you have successfully tested your initial Docker image locally, you can use
    git push origin 
    ```
 
-## 6 - Slurm Job Configuration
+## 5 - Slurm Job Configuration
 
 This section covers SLURM Job setup for the HPC-Cluster. SLURM manages resource allocation, which we specify in a batch job script. Our goal is to run the DVC experiment pipeline within a Singularity Container on the nodes, pulled and converted from your DockerHub image. The [slurm_job.sh](../slurm_job.sh) template handles these processes, requiring minimal configuration.
 
@@ -319,7 +319,7 @@ Set time limit:
    ```
 
 
-## 5 - Project Setup: HPC Cluster 
+## 6 - Project Setup: HPC Cluster 
 
 This section shows you how to set up your project on the HPC Cluster. It assumes prior configurations are already pushed to the Git remote, thus it focuses on reconfiguring git-ignored items and SSH keys. Additionally, it includes general filesystem and storage configurations that are not project-specific.
 
