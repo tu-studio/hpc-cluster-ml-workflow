@@ -10,8 +10,13 @@ import os
 
 # Overrides the Tensorboard SummaryWriter class to add hyperparameters to the same tensorboard logs and enable metrics as scalar sequences
 class CustomSummaryWriter(SummaryWriter):
-    def __init__(self, log_dir, params=None, metrics={}, sync_interval=int(config.get_env_variable('TUSTU_SYNC_INTERVAL')), remote_dir=f'{config.get_env_variable('TUSTU_TENSORBOARD_HOST')}:Data/{config.get_env_variable('TUSTU_PROJECT_NAME')}/logs/tensorboard'): 
+    def __init__(self, log_dir, params=None, metrics={}, sync_interval=None, remote_dir=None): 
         super().__init__(log_dir=log_dir)
+        if sync_interval is None:
+            sync_interval = int(config.get_env_variable('TUSTU_SYNC_INTERVAL'))
+        if remote_dir is None:
+            remote_dir = f'{config.get_env_variable("TUSTU_TENSORBOARD_HOST")}:Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard'
+        
         if params is not None:
             self._add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=log_dir)
         self.sync_interval = sync_interval
