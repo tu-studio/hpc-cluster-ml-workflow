@@ -153,7 +153,7 @@ def main():
 dvc add data/raw
 dvc push
 ```
-> **Info**: The files added with dvc should be Git-ignored, but adding it will create a reference with the ending .dvc (data/raw.dvc). Add and push the file to the Git remote at the end of this section. 
+> **Info**: The files added with dvc should be Git-ignored, but adding it will create a reference with the ending .dvc (data/raw.dvc). Add and push the .dvc file to the Git remote at the end of this section. 
 
 **Configure dvc.yaml**: Manually add your stages to the [dvc.yaml](../dvc.yaml) file:
 - `cmd:` Specify the command to run the stage.
