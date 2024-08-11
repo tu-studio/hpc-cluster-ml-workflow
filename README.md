@@ -10,7 +10,7 @@ A structured workflow template for audio ML research on the [HPC Cluster of ZECM
 - **Automation**: Streamlined workflows for builds, data pipelines, parallel execution, and remote syncing, minimizing manual intervention and enhancing productivity.
 - **HPC Integration**: 
    - Custom implementation enabling parallel DVC experiments across multiple nodes, extending DVC's native single-node parallel execution capabilities.
-   - Utilizes Singularity's Docker support for convenient container conversion, simplifying the process of creating and deploying Singularity images in HPC contexts.
+   - Utilizes Singularity's Docker support for convenient image conversion, simplifying the process of creating and deploying Singularity images in the HPC-Cluster.
 - **Tensorboard Integration**: Comprehensive overview of DVC experiments within TensorBoard, allowing comparison and analysis of results while having TensorBoard's ability to log audio samples.
 - **Real-time Monitoring**: Offer live tracking and visualization of experiment metrics, enabling immediate insights and possible termination of flawed experiments.
 
