@@ -162,7 +162,7 @@ dvc push
 - `out:` Add output directories.
 - The last stage should be left as `save_logs`, which will copy the logs to the DVC experiment branch before the experiment ends and push to the remote.
 > **Note**: The stage scripts should be able to recreate the output directories, because DVC will delete them at the beginning of each stage.
-**Test and Debug Locally**: Test and debug the DVC pipeline using the `source exp_workflow.sh` command with minimal examples on a local CPU or other available device.
+**Test and Debug Locally**: Test and debug the DVC pipeline using the `$ source exp_workflow.sh` command with minimal examples on a local CPU or other available device.
 
 ### Commit your Changes
 
