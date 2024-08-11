@@ -81,7 +81,7 @@ dvc config cache.type symlink
 
 If you are part of the [Audio Communication Group - TU Berlin](https://www.tu.berlin/ak), please contact studio@ak.tu-berlin.de for access to our SSH Host for tensorboard.
 
-Open your SSH configuration (~/.ssh/config) and add your SSH host:
+Open your SSH configuration (`~/.ssh/config`) and add your SSH host:
 ```text
 Host yourserveralias
 HostName yourserver.domain.com
