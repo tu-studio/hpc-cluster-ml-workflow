@@ -25,7 +25,5 @@ NOTES.md
 *.sif
 
 # Temporarily ignore the following files
-docs/USER_GUIDE.md
+docs/USAGE.md
 docs/CONTRIBUTING.md
-docs/SETUP.md
-docs/graphics/
