@@ -16,7 +16,7 @@ This section guides you through setting up your project locally.
 
 - Navigate to the template repository on GitHub.
 - Click **Use this template** &rarr; **Create a new repository**.
-- Configure repository settings as needed.
+- Configure the repository settings as needed.
     <!-- > **Info**: For detailed information, refer to the [GitHub documentation](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template). -->
 - Clone your new repository:
 ```sh
