@@ -43,7 +43,6 @@ def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
     train_loss /=  num_batches
     return train_loss
     
-
 def test_epoch(dataloader, model, loss_fn, device, writer):
     num_batches = len(dataloader)
     model.eval()
@@ -74,7 +73,6 @@ def generate_audio_example(model, device, dataloader):
 def main():
     # Load the hyperparameters from the params yaml file into a Dictionary
     params = config.Params('params.yaml')
-
     input_size = params['general']['input_size']
     random_seed = params['general']['random_seed']
     epochs = params['train']['epochs']
