@@ -1,22 +1,22 @@
 # HPC-Cluster-ML-Workflow 
 
-This repository provides a structured workflow template for audio machine learning research on the [HPC Cluster of ZECM at TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc). It incorporates cutting-edge tools, including DVC, Docker, and TensorBoard, to offer comprehensive development and management capabilities for audio machine learning experiments. This approach is especially well-suited to projects that require the management of multiple experiments over an extended period.
+This repository provides a structured workflow template for audio machine learning research on the [HPC Cluster of ZECM at TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc). It integrates cutting-edge tools, including DVC, Docker, and TensorBoard, to offer comprehensive development and management capabilities for audio machine learning experiments. This approach is especially well-suited to projects that require the management of multiple experiments over an extended period.
 
 ## Features
 - **Reproducible Experiments**: 
-  - Enables end-to-end reproduction of artifacts through comprehensive versioning of dependencies, pipeline definitions and artifacts.
+  - Enables the reproduction of models and artifacts through comprehensive versioning of dependencies, pipeline definitions, and artifacts.
   - Ensures consistent and repeatable results across different systems through containerized execution environments. 
-- **Resource Optimization**: Efficient storage management through a shared cache system of DVC, optimizing resource utilization across experiments.
-- **Automation**: Streamlined workflows for builds, data pipelines, parallel execution, and remote syncing, minimizing manual intervention and enhancing productivity.
+- **Resource Optimization**: Enhances efficiency by skipping unnecessary stage executions across experiments, leveraging a shared cache to reuse data.
+- **Automation**: Streamlines workflows for builds, data pipelines, parallel execution, and remote syncing, reducing manual intervention and enhancing productivity.
 - **HPC Integration**: 
-   - Custom implementation enabling parallel DVC experiments across multiple nodes, extending DVC's native single-node parallel execution capabilities.
-   - Utilizes Singularity's Docker support for convenient image conversion, simplifying the process of creating and deploying Singularity images in the HPC-Cluster.
-- **Tensorboard Integration**: Comprehensive overview of DVC experiments within TensorBoard, allowing comparison and analysis of results while having TensorBoard's ability to log audio samples.
-- **Real-time Monitoring**: Offer live tracking and visualization of experiment metrics, enabling immediate insights and possible termination of flawed experiments.
+   - Extends DVC's native single-node parallel execution capabilities with a custom implementation that enables parallel DVC experiments across multiple nodes.
+   - Utilizes Singularity's Docker support to facilitate convenient image conversion, simplifying the creation and deployment of Singularity images in the HPC cluster.
+- **Tensorboard Integration**: Provides a comprehensive overview of DVC experiments within TensorBoard, enabling comparison and analysis of results, augmented by TensorBoard's capability to log audio samples.
+- **Real-time Monitoring**: Offers live tracking and visualization of experiment metrics, facilitating immediate insights and enabling the quick termination of flawed experiments.
 
 ## Overview
 
-The following table summarizes the key tools involved in the HPC-Cluster-ML-Workflow, along with their primary roles and links to their official documentation for further reference.
+The table below summarizes the key tools involved in the HPC-Cluster-ML-Workflow, detailing their primary roles within the workflow and providing links to their official documentation for further reference.
 
 <table align="center" style="width: 60%; border-collapse: collapse;">
   <tr>
@@ -57,7 +57,7 @@ The following table summarizes the key tools involved in the HPC-Cluster-ML-Work
 </table>
 
 ### System Transfer
-The figure below provides a simplified overview of how data is transferred between systems in this workflow. Some of the commands shown are automated with the provided scripts, so the visualization is for comprehension, not direct usage reference.
+The figure below offers a simplified overview of how data is transferred between systems in this workflow. While some of the commands depicted are automated through the provided scripts, the visualization is intended for comprehension and not as a direct usage reference.
         <p align="center">
         <img src="docs/graphics/Dependency_Transfer_Simplified.png" alt="Simplified diagram of dependency transfer between systems" width="690">
         </p>
@@ -71,7 +71,7 @@ The figure below provides a simplified overview of how data is transferred betwe
 
 ## Setup and Usage
 
-The template includes a simple PyTorch example project (a neural guitar amp simulation), which can be edited and reused, or just used as a reference. 
+This template provides a simple PyTorch example project, simulating a neural guitar amp, which you can modify and reuse or use as a reference for the pipeline implementation. 
 
 - [Setup Instructions](docs/SETUP.md)
 - [User Guide](docs/USAGE.md)
