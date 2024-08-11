@@ -57,7 +57,7 @@ The table below summarizes the key tools involved in the HPC-Cluster-ML-Workflow
 </table>
 
 ### System Transfer
-The figure below offers a simplified overview of how data is transferred between systems in this workflow. While some of the commands depicted are automated through the provided scripts, the visualization is intended for comprehension and not as a direct usage reference.
+The figure below offers a simplified overview of how data is transferred between systems in this setup. While some of the commands depicted are automated through the provided scripts, the visualization is intended for comprehension and not as a direct usage reference.
         <p align="center">
         <img src="docs/graphics/Dependency_Transfer_Simplified.png" alt="Simplified diagram of dependency transfer between systems" width="690">
         </p>
