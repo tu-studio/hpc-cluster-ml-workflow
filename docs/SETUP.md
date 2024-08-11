@@ -5,8 +5,8 @@
 - [2 - DVC Experiment Pipeline](#2---dvc-experiment-pipeline)
 - [3 - Tensorboard Metrics](#3---tensorboard-metrics)
 - [4 - Docker Image](#4---docker-image)
-- [5 - HPC Cluster Setup](#5---project-setup-hpc-cluster)
-- [6 - Slurm Job Configuration](#6---slurm-job-configuration)
+- [5 - Slurm Job Configuration](#5---slurm-job-configuration)
+- [6 - HPC Cluster Setup](#6---project-setup-hpc-cluster)
 
 ## 1 - Project Setup
 
@@ -120,7 +120,7 @@ git commit -m "General project configuration"
 
 ## 2 - DVC Experiment Pipeline 
 
-This section guides you through setting up the DVC Experiment Pipeline. The DVC experiment pipeline allows you to manage and version your machine learning workflows, making it easier to track, reproduce, and share your experiments. It also optimizes computational and storage costs by using an internal cache system to avoid redundant computation of pipeline stages.
+This section guides you through setting up the DVC experiment pipeline. The DVC experiment pipeline allows you to manage and version your machine learning workflows, making it easier to track, reproduce, and share your experiments. It also optimizes computational and storage costs by using an internal cache system to avoid redundant computation of pipeline stages.
 
 > **Info:** For a deeper understanding of DVC, refer to the [DVC Documentation](https://dvc.org/doc).
 
@@ -133,7 +133,7 @@ This section guides you through setting up the DVC Experiment Pipeline. The DVC 
 
 - **Identify Hyperparameters**: Identify the hyperparameters in your scripts that should be configurable.
 - **Add to params.yaml**: Add the hyperparameters to the [params.yaml](../params.yaml) file, organized by stage or module. Use a `general:` section for shared hyperparameters.
-- **Use the Params Class**: Instantiate a `Params` object in each stage script to access the required parameters in dictionary notation:
+- **Use the Params Class**: Instantiate a `Params` object in each stage to access the required parameters in dictionary notation:
 
 ```python
 # train.py
@@ -153,7 +153,7 @@ def main():
 dvc add data/raw
 dvc push
 ```
-> **Info**: The files added with dvc should be Git-ignored, but adding it will create a reference with the ending .dvc (data/raw.dvc). Add and push the .dvc file to the Git remote at the end of this section. 
+> **Info**: The files added with DVC should be Git-ignored, but adding them will create a reference with a .dvc suffix (data/raw.dvc). Make sure you add and push the .dvc file to the Git remote at the end of this section.
 
 **Configure dvc.yaml**: Manually add your stages to the [dvc.yaml](../dvc.yaml) file:
 - `cmd:` Specify the command to run the stage.
@@ -162,6 +162,7 @@ dvc push
 - `out:` Add output directories.
 - The last stage should be left as `save_logs`, which will copy the logs to the DVC experiment branch before the experiment ends and push to the remote.
 > **Note**: The stage scripts should be able to recreate the output directories, because DVC will delete them at the beginning of each stage.
+
 **Test and Debug Locally**: Test and debug the DVC pipeline using the `$ source exp_workflow.sh` command with minimal examples on a local CPU or other available device.
 
 ### Commit your Changes
@@ -173,7 +174,7 @@ git commit -m "Initial DVC pipeline configuration"
 
 ## 3 - Tensorboard Metrics
 
-To log your machine learning metrics using TensorBoard, and also enable comparison of DVC experiments, follow the steps below:
+To log your machine learning metrics using TensorBoard and  enable comparison of DVC experiments, follow the steps below:
 
 ### Initialize TensorBoard Logging
 
@@ -194,8 +195,8 @@ def main():
 
 ### Log Metrics 
 
-For detailed information on how to write different types of log data, refer to the [TensorBoard SummaryWriter Class Documentation](https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter).
-> **Note:** `writer.add_hparams` is no longer required, as the child class `CustomSummaryWriter` used for this workflow automatically manages the logging of dvc hyperparameters along with metrics in a way that makes them displayable in the HParams plugin.
+For detailed information on how to write different types of log data, refer to the official [TensorBoard SummaryWriter Class Documentation](https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter).
+> **Note:** `writer.add_hparams` is no longer required, as the child class `CustomSummaryWriter` used for this workflow automatically manages the logging of DVC hyperparameters along with metrics in a way that makes them displayable in the HParams plugin.
 
 Below is an example on how to log scalar metrics and audio examples in the training loop. Ensure that the metric names used with `add_scalar` match those in the metrics dictionary initialized earlier, especially if you want them to appear in the HParams section of TensorBoard.
 
@@ -225,7 +226,7 @@ This process will create a directory (including parent directories) under `Data/
 
 ### Commit your Changes
 
-Once tested tensorboard logging locally commit your changes. Refer to the User Guide on how to launch tensorboard display.
+Once you have tested tensorboard logging locally, commit your changes. See the user manual on how to start tensorboard display.
 
 >**Tip**: If you are using VSCode, we remommend you to install and use the official [TensorBoard VSCode Extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.tensorboard).
 
@@ -246,7 +247,7 @@ Before building your Docker image, ensure all dependencies are set by updating t
 
 ### Build and Debug the Docker Image
 
-For building and debugging your Docker image, we recommended to install [Docker Desktop](https://www.docker.com/products/docker-desktop/). 
+For debugging your Docker image locally, we recommended to install [Docker Desktop](https://www.docker.com/products/docker-desktop/). 
 
 To build your Docker image, use the following command in your project directory:
 
@@ -269,7 +270,7 @@ docker run --rm \
 
 ### Automated Image Builds with GitHub Actions
 
-Once you have successfully tested your initial Docker image locally, you can utilize the build and push workflow with GitHub Actions. Remember to always fix the requirement versions you use before pushing, if some requirements changed. Also using the free docker/build-push-action there is a limit of 20 GB for the image:
+Once you have successfully tested your initial Docker image locally, you can use the build and push workflow with GitHub Actions. Remember to always fix the requirements versions you are using before pushing in case some requirements have changed. Also, when using the free docker/build-push action, there is a 20GB limit for the image:
 
    ```sh
    pip freeze > requirements.txt
@@ -283,12 +284,44 @@ Once you have successfully tested your initial Docker image locally, you can uti
    git push origin 
    ```
 
+## 6 - Slurm Job Configuration
+
+This section covers SLURM Job setup for the HPC-Cluster. SLURM manages resource allocation, which we specify in a batch job script. Our goal is to run the DVC experiment pipeline within a Singularity Container on the nodes, pulled and converted from your DockerHub image. The [slurm_job.sh](../slurm_job.sh) template handles these processes, requiring minimal configuration.
+
+For single GPU nodes, modify these SBATCH directives in [slurm_job.sh](../slurm_job.sh):
+
+Replace project name:
+```bash
+#SBATCH -J your_project_name
+```
+
+Set memory usage:
+```bash
+#SBATCH --mem=100GB
+```
+
+Set time limit:
+```bash
+#SBATCH --time=10:00:00
+```
+
+> **Tip**: Lower time and memory settings are recommended for initial testing, as they affect job prioritization. 
+
+> **Note**: SBATCH directives are executed first and can't be easily configured with environment variables.
+
+> **Info**: For detailed information, consult the official [SLURM Documentation](https://slurm.schedmd.com/documentation.html). See [HPC Documentation](https://hpc.tu-berlin.de/doku.php?id=hpc:scheduling:access) for information regarding the [HPC Cluster - ZECM, TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc).
+
+**Commit and Push Changes:** Push your changes to your GitHub repository. 
+   ```sh
+   git add slurm_job.sh
+   git commit -m "Slurm Job Configuration"
+   git push origin 
+   ```
+
 
 ## 5 - Project Setup: HPC Cluster 
 
-This section guides you through setting up your project on the HPC Cluster, enabling resource usage while synchronizing with local development via Git, DVC, and Docker remotes. It assumes prior configurations are already pushed to the Git remote, thus it focuses on reconfiguring git-ignored items and SSH keys. Additionally, it includes general filesystem and storage configurations that are not project-specific.
-
-Assuming you have access to the HPC Cluster:
+This section shows you how to set up your project on the HPC Cluster. It assumes prior configurations are already pushed to the Git remote, thus it focuses on reconfiguring git-ignored items and SSH keys. Additionally, it includes general filesystem and storage configurations that are not project-specific.
 
 ### SSH into the HPC Cluster
    ```sh
@@ -341,34 +374,8 @@ Configure DVC remote:
       dvc remote modify --local myremote user 'yourusername'
       dvc remote modify --local myremote password 'yourpassword'
    ```
-Connect Tensorboard Host 
+Connect Tensorboard Host (Optional) 
 
 Repeat Steps 1-4 of the Section [Connect SSH Host for Tensorboard (Optianal)](#connect-ssh-host-for-tensorboard-optional)
 
 
-## 6 - Slurm Job Configuration
-
-This section covers SLURM Job setup for the HPC-Cluster. SLURM manages resource allocation, which we specify in a batch job script. Our goal is to run the DVC experiment pipeline within a Singularity Container on the nodes, pulled and converted from your DockerHub image. The [slurm_job.sh](../slurm_job.sh) template handles these processes, requiring minimal configuration.
-
-For single GPU nodes, modify these SBATCH directives in [slurm_job.sh](../slurm_job.sh):
-
-Replace project name:
-```bash
-#SBATCH -J your_project_name
-```
-
-Set memory usage:
-```bash
-#SBATCH --mem=100GB
-```
-
-Set time limit:
-```bash
-#SBATCH --time=10:00:00
-```
-
-> **Tip**: Lower time and memory settings are recommended for initial testing, as they affect job prioritization. 
-
-> **Note**: SBATCH directives are executed first and can't be easily configured with environment variables.
-
-> **Info**: For detailed information, consult the official [SLURM Documentation](https://slurm.schedmd.com/documentation.html). See [HPC Documentation](https://hpc.tu-berlin.de/doku.php?id=hpc:scheduling:access) for information regarding the [HPC Cluster - ZECM, TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc).
