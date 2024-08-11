@@ -1,0 +1,43 @@
+stages:
+  preprocess:
+    cmd: python3 source/preprocess.py
+    deps:
+    - source/preprocess.py
+    - data/raw/
+    params:
+    - general.input_size
+    - preprocess.input_file
+    - preprocess.target_file
+    - preprocess.test_split
+    outs:
+    - data/processed/
+  train:
+    cmd: python3 source/train.py
+    deps:
+    - source/train.py
+    - source/model.py
+    - data/processed/
+    params:
+    - general.input_size
+    - general.random_seed
+    - train.batch_size
+    - train.epochs
+    - train.train_mode
+    - train.device_request
+    outs:
+    - models/checkpoints/
+  export:
+    cmd: python3 source/export.py
+    deps:
+    - source/export.py
+    - models/checkpoints/
+    params:
+    - general.input_size
+    - train.train_mode
+    outs:
+    - models/exports/
+  save_logs:
+    cmd: python3 source/utils/logs.py
+    outs:
+    - exp_logs/slurm
+    - exp_logs/tensorboard/

@@ -1,0 +1,31 @@
+# Ignore typical temporary and system files
+.DS_Store
+__pycache__/
+
+# Ignore Python virtual environments
+venv
+
+# Ignore data files
+data/*/*
+logs/*/*
+/models
+/exp_logs/*
+
+# Ignore tmp copies for experiments
+/tmp
+
+# Not ignore
+!logs/*/.gitkeep
+!*.dvc
+
+# Ignore personal notes
+NOTES.md
+
+# Ignore singularity image
+*.sif
+
+# Temporarily ignore the following files
+docs/USER_GUIDE.md
+docs/CONTRIBUTING.md
+docs/SETUP.md
+docs/graphics/
