@@ -7,7 +7,7 @@ This template provides a structured workflow designed for audio machine learning
   - Enables the reproduction of models and artifacts through comprehensive versioning of dependencies, pipeline definitions, and artifacts.
   - Ensures consistent and repeatable results across different systems through containerized execution environments. 
 - **Resource Optimization**: Improves efficiency by avoiding unnecessary stage executions across experiments, utilizing a shared cache to reuse data.
-- **Automation**: Streamlines workflows for builds, data pipelines, parallel execution, and remote syncing, reducing manual intervention and enhancing productivity.
+- **Automation**: Streamlines workflows for builds, data pipelines, and remote syncing, minimizing manual intervention and enhancing productivity.
 - **HPC Integration**: 
    - Extends DVC's native single-node parallel execution capabilities with a custom implementation that enables parallel DVC experiments across multiple nodes.
    - Utilizes Singularity's Docker support to facilitate convenient image conversion, simplifying the creation and deployment of Singularity images in the HPC cluster.
