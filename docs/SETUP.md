@@ -73,7 +73,7 @@ dvc config cache.type symlink
 - **Configure GitHub Secrets:** In your GitHub repository, go to **Settings** → **Security** → **Secrets and variables** → **Actions** → **New repository secret**, and add secrets for:
    - `DOCKER_USERNAME`: Your Docker Hub username
    - `DOCKER_PASSWORD`: Your Docker Hub password
-- **Update Local Environment File:** Edit [global.env](./../global.env)  to set:
+- **Update Global Environment File:** Edit [global.env](./../global.env)  to set:
    - `TUSTU_DOCKERHUB_USERNAME`: Your Docker Hub username
    - `TUSTU_PYTHON_VERSION`: The Python version required for your project (check with `python3 --version`).
 
