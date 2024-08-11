@@ -23,9 +23,11 @@ This section guides you through setting up your project locally.
 git clone git@github.com:<github_user>/<repository_name>.git
 ```
 
-### Change Project Name
+### Change the Project Name
 
-Modify the environment variable `TUSTU_PROJECT_NAME` in [global.env](./../global.env)
+In your Git repository open the file [global.env](./../global.env) and modify the following variable:
+
+`TUSTU_PROJECT NAME`: Your Project Name
 
 ### Set up a Virtual Environment 
 
@@ -37,7 +39,7 @@ Modify the environment variable `TUSTU_PROJECT_NAME` in [global.env](./../global
    ```
    > **Note**: If you choose a different virtual environment name, update it in [.gitignore](./../.gitignore).
 
-### Configure DVC Remote
+### Configure your DVC Remote
 
 If you are part of the Audio Communication Group - TU Berlin, please contact studio@ak.tu-berlin.de for access to our SSH Remote Data Storage.
 
@@ -62,7 +64,7 @@ dvc remote modify myremote timeout 600
 dvc config cache.shared group
 dvc config cache.type symlink
 ```
-> **Info:** For information regarding other storage types, refer to the [DVC documentation](https://dvc.org/doc/command-reference/remote).
+> **Info:** For detailed information regarding other storage types, refer to the [DVC documentation](https://dvc.org/doc/command-reference/remote).
 
 
 ### Configure Docker Registry  
@@ -131,7 +133,7 @@ This section guides you through setting up the DVC Experiment Pipeline. The DVC 
 
 - **Identify Hyperparameters**: Identify the hyperparameters in your scripts that should be configurable.
 - **Add to params.yaml**: Add the hyperparameters to the [params.yaml](../params.yaml) file, organized by stage or module. Use a `general:` section for shared hyperparameters.
-- **Use the Params Class**: Instantiate a `Params` object in each stage script to access the required parameters:
+- **Use the Params Class**: Instantiate a `Params` object in each stage script to access the required parameters in dictionary notation:
 
 ```python
 # train.py
@@ -151,15 +153,16 @@ def main():
 dvc add data/raw
 dvc push
 ```
+> **Info**: The files added with dvc should be Git-ignored, but adding it will create a reference with the ending .dvc (data/raw.dvc). Add and push the file to the Git remote at the end of this section. 
 
 **Configure dvc.yaml**: Manually add your stages to the [dvc.yaml](../dvc.yaml) file:
-- Specify the command to execute the stage under `cmd:`.
-- Decide which dependencies should retrigger the stage on a change and add them to `deps:`.
-- Include the hyperparameters from params.yaml that should retrigger the stage on a change under `params:`.
-- Add output directories under `out:` 
-- The last stage should be left as `save_logs`, which will copy the experiment-specific logs to the DVC experiment branch before termination and push them to the remote.
+- `cmd:` Specify the command to run the stage.
+- `deps:` Decide which dependencies should launch the stage execution on a change.
+- `params:` Include the hyperparameters from [params.yaml](../params.yaml) that should launch the stage execution on a change.
+- `out:` Add output directories.
+- The last stage should be left as `save_logs`, which will copy the logs to the DVC experiment branch before the experiment ends and push to the remote.
 > **Note**: The stage scripts should be able to recreate the output directories, because DVC will delete them at the beginning of each stage.
-**Test and Debug Locally**: If possible, test and debug the DVC pipeline with minimal examples on a local CPU or other available device using the `$ source exp_workflow.sh` command.
+**Test and Debug Locally**: Test and debug the DVC pipeline using the `source exp_workflow.sh` command with minimal examples on a local CPU or other available device.
 
 ### Commit your Changes
 
