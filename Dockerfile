@@ -1,4 +1,4 @@
-# Use an official Debian runtime as a parent image
+# Use an official Debian runtime with fixed version as a parent image
 FROM debian:11-slim
 
 # Install necessary packages
