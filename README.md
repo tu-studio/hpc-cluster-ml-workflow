@@ -69,11 +69,14 @@ The figure below offers a simplified overview of how data is transferred between
 - Familiarity with Git, DVC, and Docker.
 - Docker Hub account.
 
-## Setup and Usage
+## Setup 
 
 This template provides a simple PyTorch example project, simulating a neural guitar amp, which you can modify and reuse or use as a reference for the pipeline implementation. 
 
 - [Setup Instructions](docs/SETUP.md)
+
+## Usage
+
 - [User Guide](docs/USAGE.md)
 
 ## Contributors
