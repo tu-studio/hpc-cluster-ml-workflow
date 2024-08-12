@@ -7,7 +7,7 @@ import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from utils import config
 import os
-
+import datetime
 class CustomSummaryWriter(SummaryWriter):
     """
     A custom subclass of the TensorBoard SummaryWriter that allows for logging hyperparameters to the same log file, display scalar metrics in the HParams tab,
@@ -27,14 +27,17 @@ class CustomSummaryWriter(SummaryWriter):
         if sync_interval is None:
             sync_interval = int(config.get_env_variable('TUSTU_SYNC_INTERVAL')) 
         if remote_dir is None:
-            self.remote_name = config.get_env_variable('TUSTU_REMOTUSTU_TENSORBOARD_HOST')
-            self.remote_path = Path('Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard')  
-            remote_dir = f'{self.remote_dir}:{self.remote_path}'
+            self.remote_name = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
+            self.remote_path = Path(f'Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard')  
+            remote_dir = f'{self.remote_name}:{self.remote_path}'
+        self.datetime = str(log_dir).split('/')[-1].split('_')[0]
         if params is not None:
-            self._add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=log_dir)
+            params = params.flattened_copy()
+            params['datetime'] = self.datetime
+            self._add_hparams(hparam_dict=params, metric_dict=metrics, run_name=log_dir)
         self.sync_interval = sync_interval
         self.remote_dir = remote_dir   
-        self.current_step = 0
+        self.current_step = 0 
 
     def step(self) -> None:
         """
@@ -81,7 +84,11 @@ def return_tensorboard_path() -> str:
     """
     default_dir = config.get_env_variable('DEFAULT_DIR')
     dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
-    return Path(f'{default_dir}/logs/tensorboard/{dvc_exp_name}')
+    current_datetime = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    # Set the TUSTU_WRITER_DATE environment variable to the current datetime for the writer to access
+    tensorboard_path = Path(f'{default_dir}/logs/tensorboard/{current_datetime}_{dvc_exp_name}')
+    tensorboard_path.mkdir(parents=True, exist_ok=True)
+    return tensorboard_path
 
 def copy_slurm_logs() -> None:
     """
@@ -97,7 +104,7 @@ def copy_slurm_logs() -> None:
     current_slurm_job_id = config.get_env_variable('SLURM_JOB_ID')
     dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
     slurm_logs_source = Path(f'{default_dir}/logs/slurm')
-    slurm_logs_destination = Path(f'exp_logs/slurm/{dvc_exp_name}')
+    slurm_logs_destination = Path(f'exp_logs/slurm/_{dvc_exp_name}')
     slurm_logs_destination.mkdir(parents=True, exist_ok=True)
     if current_slurm_job_id is not None:
         for f in slurm_logs_source.iterdir():
