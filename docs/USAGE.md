@@ -1,5 +1,52 @@
 # User Guide
 
+## Folder Structure
+
+```text
+.
+├── .dockerignore
+├── .dvc/
+│   ├── .gitignore
+│   ├── config
+│   └── tmp/
+│       ├── btime
+│       ├── dag.md
+│       └── exps/
+├── .dvcignore
+├── .github/
+│   └── workflows/
+│       └── docker_image.yml
+├── .gitignore
+├── data/
+│   ├── raw/
+│   └── preprocessed/
+├── models/
+│   ├── checkpoints/
+│   └── exports/
+├── Dockerfile
+├── docs/
+├── dvc.yaml
+├── exp_workflow.sh
+├── global.env
+├── logs/ 
+│   ├── slurm/
+│   └── tensorboard/
+├── multi_submission.py
+├── params.yaml
+├── README.md
+├── requirements.txt
+├── slurm_job.sh
+└── source/
+    ├── export.py
+    ├── model.py
+    ├── preprocess.py
+    ├── train.py
+    └── utils/
+        ├── __init__.py
+        └── config.py
+        └── logs.py
+```
+
 ## Local Development
 
 ### Data Management with DVC
