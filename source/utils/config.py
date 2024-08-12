@@ -27,7 +27,7 @@ def get_env_variable(var_name: str) -> str:
     if var_name == "SLURM_JOB_ID" and value is None:
         return None  
     if value is None:
-        raise EnvironmentError(f"The environment variable '{var_name}' is required but not set.")
+        raise EnvironmentError(f"The environment variable {var_name} is required but not set.")
     return value
     
 class Params(dict):

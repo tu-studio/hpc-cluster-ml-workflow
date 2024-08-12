@@ -27,13 +27,13 @@ class CustomSummaryWriter(SummaryWriter):
         if sync_interval is None:
             sync_interval = int(config.get_env_variable('TUSTU_SYNC_INTERVAL')) 
         if remote_dir is None:
-            self.remote_name = config.get_env_variable('TUSTU_REMOTUSTU_TENSORBOARD_HOST')
+            self.remote_name = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
             self.remote_path = Path('Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard')  
-            remote_dir = f'{self.remote_dir}:{self.remote_path}'
+            remote_dir = f'{self.remote_name}:{self.remote_path}'
         if params is not None:
             self._add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=log_dir)
         self.sync_interval = sync_interval
-        self.remote_dir = remote_dir   
+        self.remote_dir = remote_dir
         self.current_step = 0
 
     def step(self) -> None:
@@ -45,7 +45,9 @@ class CustomSummaryWriter(SummaryWriter):
             if self.current_step % self.sync_interval == 0:
                 self.flush()
 
-                os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir} --rsync-path='mkdir -p Data/{config.get_env_variable('TUSTU_PROJECT_NAME')}/logs/tensorboard && rsync'")
+                if not os.path.exists(self.remote_dir):
+                    os.system(f"mkdir -p {self.remote_dir}")
+                os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}")
 
     def _add_hparams(self, hparam_dict, metric_dict, hparam_domain_discrete=None, run_name=None):
         """
