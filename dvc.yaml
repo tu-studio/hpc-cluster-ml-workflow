@@ -20,9 +20,12 @@ stages:
     params:
     - general.input_size
     - general.random_seed
+    - model.conv1d_strides
+    - model.conv1d_filters
+    - model.hidden_units
     - train.batch_size
+    - train.learning_rate
     - train.epochs
-    - train.train_mode
     - train.device_request
     outs:
     - models/checkpoints/

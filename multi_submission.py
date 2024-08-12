@@ -16,5 +16,6 @@ def submit_batch_job(test_split, batch_size):
 if __name__ == "__main__":
     test_split_list = [0.2, 0.3]
     batch_size_list = [2048, 4096]
+    # Iterate over a cartesian product parameter grid of the test_split and batch_size lists
     for test_split, batch_size in itertools.product(test_split_list, batch_size_list):
         submit_batch_job(test_split,batch_size)
