@@ -24,7 +24,8 @@ As your requirements change, always update `requirements.txt` with your fixed ve
 pip freeze > requirements.txt
 ```
 
-Docker images are automatically rebuilt and pushed to Docker Hub when `requirements.txt`, `Dockerfile`, or `docker_image.yaml` are updated. If you trigger an image build, ensure it is completed and pushed before proceeding.
+- Docker images are automatically rebuilt and pushed to Docker Hub when `requirements.txt`, `Dockerfile`, or `docker_image.yaml` are updated.
+- If you trigger an image build, ensure it is completed and pushed before proceeding.
 
 ## Launch ML Pipeline
 
