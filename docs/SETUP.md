@@ -197,7 +197,7 @@ Manually add your stages to the [dvc.yaml](../dvc.yaml) file:
 - The last stage should be left as `save_logs`, which will copy the logs to the DVC experiment branch before the experiment ends and push to the remote.
 > **Note**: The stage scripts should be able to recreate the output directories, because DVC will delete them at the beginning of each stage.
 
-## 3 - Tensorboard Metrics
+## 4 - Tensorboard Metrics
 
 To log your machine learning metrics using TensorBoard and enable comparison of DVC experiments, follow the steps below:
 

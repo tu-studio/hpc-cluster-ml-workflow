@@ -1,8 +1,7 @@
 # User Guide
 
-## Local Development
+## Adding data to DVC remote
 
-### Data Management with DVC
 To track and add new data inputs (e.g., `data/raw`):
 
 ```sh
@@ -10,7 +9,9 @@ dvc add data/raw
 dvc push
 ```
 
-### Docker Image Automation
+>**Note**: Only necessary if you want to track new data inputs that are not already declared in the `dvc.yaml` file as outputs of a stage.
+
+## Update Docker Image / Dependencies
 
 As your requirements change, always update `requirements.txt` with your fixed versions:
 
@@ -18,7 +19,9 @@ As your requirements change, always update `requirements.txt` with your fixed ve
 pip freeze > requirements.txt
 ```
 
-Docker images are automatically rebuilt and pushed to Docker Hub when `requirements.txt`, `Dockerfile`, or `docker_image.yaml` are updated. If you trigger an image build, ensure it is completed and pushed before proceeding.
+Docker images are automatically rebuilt and pushed to Docker Hub when `requirements.txt`, `Dockerfile`, or `docker_image.yml` are updated by the github workflow. If you trigger an image build, ensure it is completed and pushed before proceeding.
+
+**Note**: On the HPC cluster, the Docker image is automatically pulled and converted to a Singularity image with the command `singularity pull docker://<your_image_name>` in the `slurm_job.sh` script.
 
 ## Launch ML Pipeline
 
@@ -56,25 +59,6 @@ sbatch slurm_job.sh
 # submit multiple Slurm jobs:
 venv/bin/python multi_submission.py
 ```
-
-## DVC Experiment Retrieval
-
-Each time we run the pipeline, DVC creates a new experiment. These are saved as custom git references that can be retrieved and applied to your workspace. These references do not appear in the git log, but are stored in the `.git/refs/exps` directory and can be pushed to the remote git repository. This is done automatically at the end of the [exp_workflow.sh](../exp_workflow.sh) with `dvc exp push origin`. All outputs and dependencies are stored in the `.dvc/cache` directory and pushed to the remote dvc storage when the experiment is pushed. Since we create a new temporary copy of the repository for each pipeline run (and delete it at the end), the experiments will not automatically appear in the main repository.
-
-To retrieve, view, and apply an experiment, do the following (either locally or on the HPC cluster)
-
-```sh
-# Get all experiments from remote
-dvc exp pull origin
-# List experiments
-dvc exp show
-# Apply a specific experiment
-dvc exp apply <exp_name>.
-```
-
-> **Note**: By default, experiments are bound to the git commit when they were run. Therefore the commands `dvc exp pull` and `show` will work on experiments from the same commit as when the experiment was created. To pull, show or apply experiments from a different commit, you can use flags defined in the [DVC documentation](https://dvc.org/doc/command-reference/experiments).
-
-> **Tip**: You can also get the git ref hash of the experiment from `dvc exp show` and do a git diff.
 
 ## Monitoring and Logs
 
@@ -132,51 +116,21 @@ localhost:6006
 
 > **Tip**: You can also view TensorBoard logs in VSCode using the official extension.
 
+## DVC Experiment Retrieval
 
-## Folder Structure
+Each time we run the pipeline, DVC creates a new experiment. These are saved as custom git references that can be retrieved and applied to your workspace. These references do not appear in the git log, but are stored in the `.git/refs/exps` directory and can be pushed to the remote git repository. This is done automatically at the end of the [exp_workflow.sh](../exp_workflow.sh) with `dvc exp push origin`. All outputs and dependencies are stored in the `.dvc/cache` directory and pushed to the remote dvc storage when the experiment is pushed. Since we create a new temporary copy of the repository for each pipeline run (and delete it at the end), the experiments will not automatically appear in the main repository.
 
-```text
-.
-├── .dockerignore
-├── .dvc/
-│   ├── .gitignore
-│   ├── config
-│   └── tmp/
-│       ├── btime
-│       ├── dag.md
-│       └── exps/
-├── .dvcignore
-├── .github/
-│   └── workflows/
-│       └── docker_image.yml
-├── .gitignore
-├── data/
-│   ├── raw/
-│   └── preprocessed/
-├── models/
-│   ├── checkpoints/
-│   └── exports/
-├── Dockerfile
-├── docs/
-├── dvc.yaml
-├── exp_workflow.sh
-├── global.env
-├── logs/ 
-│   ├── slurm/
-│   └── tensorboard/
-├── multi_submission.py
-├── params.yaml
-├── README.md
-├── requirements.txt
-├── slurm_job.sh
-└── source/
-    ├── export.py
-    ├── model.py
-    ├── preprocess.py
-    ├── train.py
-    └── utils/
-        ├── __init__.py
-        └── config.py
-        └── logs.py
-└── tmp/        
+To retrieve, view, and apply an experiment, do the following (either locally or on the HPC cluster)
+
+```sh
+# Get all experiments from remote
+dvc exp pull origin
+# List experiments
+dvc exp show
+# Apply a specific experiment
+dvc exp apply <exp_name>.
 ```
+
+> **Note**: By default, experiments are bound to the git commit when they were run. Therefore the commands `dvc exp pull` and `show` will work on experiments from the same commit as when the experiment was created. To pull, show or apply experiments from a different commit, you can use flags defined in the [DVC documentation](https://dvc.org/doc/command-reference/experiments).
+
+> **Tip**: You can also get the git ref hash of the experiment from `dvc exp show` and do a git diff.
