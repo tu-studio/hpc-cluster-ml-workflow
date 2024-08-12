@@ -6,7 +6,6 @@ __pycache__/
 venv
 
 # Ignore data files
-data/*/*
 logs/*/*
 /models
 /exp_logs/*

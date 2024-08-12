@@ -93,4 +93,3 @@ This project is licensed under the terms of the [MIT License](LICENSE.md).
 ## References
 
 **Faressc. (n.d.). *Guitar LSTM* [pytorch-version]. GitHub. [Link](https://github.com/faressc/GuitarLSTM/tree/main/pytorch-version)**
-
