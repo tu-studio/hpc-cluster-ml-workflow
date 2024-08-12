@@ -6,7 +6,7 @@ This template provides a structured workflow designed for audio machine learning
 - **Reproducible Experiments**: 
   - Enables the reproduction of models and artifacts through comprehensive versioning of dependencies, pipeline definitions, and artifacts.
   - Ensures consistent and repeatable results across different systems through containerized execution environments. 
-- **Resource Optimization**: Improves efficiency by avoiding unnecessary stage executions across experiments, utilizing a shared cache to reuse data.
+- **Resource Optimization**: Improves efficiency by avoiding unnecessary stage executions across experiments using a shared cache.
 - **Automation**: Streamlines workflows for builds, data pipelines, and remote syncing, minimizing manual intervention and enhancing productivity.
 - **HPC Integration**: 
    - Extends DVC's native single-node parallel execution capabilities with a custom implementation that enables parallel DVC experiments across multiple nodes.
@@ -71,11 +71,13 @@ The figure below offers a simplified overview of how data is transferred between
 
 ## Setup 
 
-This template provides a simple PyTorch example project, simulating a neural guitar amp, which you can modify and reuse or use as a reference for the pipeline implementation. 
+This template offers a straightforward PyTorch example project that you can customize, reuse, or reference for your pipeline implementation. Follow the detailed setup instructions below to guide you through the configuration process.
 
 - [Setup Instructions](docs/SETUP.md)
 
 ## Usage
+
+After completing the setup, you can start using the project by following the user guide provided. This guide will help you understand how to run the project, customize the model, and experiment with different configurations.
 
 - [User Guide](docs/USAGE.md)
 
