@@ -8,14 +8,28 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from utils import config
 import os
 
-# Overrides the Tensorboard SummaryWriter class to add hyperparameters to the same tensorboard logs and enable metrics as scalar sequences
 class CustomSummaryWriter(SummaryWriter):
+    """
+    A custom subclass of the TensorBoard SummaryWriter that allows for logging hyperparameters to the same log file, display scalar metrics in the HParams tab,
+    and automatically synchronizing logs with a remote directory at regular intervals.
+
+    Args:
+        log_dir (str): Directory where the TensorBoard logs will be stored.
+        params (Params, optional): Params object of DVC hyperparameters to log. Defaults to None.
+        metrics (dict, optional): Dictionary of initial metrics to log. Defaults to an empty dictionary.
+        sync_interval (int, optional): Number of steps between automatic syncs to the remote directory. 
+                                       Defaults to the value of the 'TUSTU_SYNC_INTERVAL' environment variable.
+        remote_dir (str, optional): Remote directory to which logs are synced. 
+                                    Defaults to a path constructed from environment variables.
+    """    
     def __init__(self, log_dir, params=None, metrics={}, sync_interval=None, remote_dir=None): 
         super().__init__(log_dir=log_dir)
         if sync_interval is None:
-            sync_interval = int(config.get_env_variable('TUSTU_SYNC_INTERVAL'))
+            sync_interval = int(config.get_env_variable('TUSTU_SYNC_INTERVAL')) 
         if remote_dir is None:
-            remote_dir = f'{config.get_env_variable("TUSTU_TENSORBOARD_HOST")}:Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard'
+            self.remote_name = config.get_env_variable('TUSTU_REMOTUSTU_TENSORBOARD_HOST')
+            self.remote_path = Path('Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard')  
+            remote_dir = f'{self.remote_dir}:{self.remote_path}'
         if params is not None:
             self._add_hparams(hparam_dict=params.flattened_copy(), metric_dict=metrics, run_name=log_dir)
         self.sync_interval = sync_interval
@@ -23,13 +37,29 @@ class CustomSummaryWriter(SummaryWriter):
         self.current_step = 0
 
     def step(self) -> None:
+        """
+        Increments the current step and performs synchronization of logs if the sync interval is reached.
+        """
         self.current_step += 1
         if self.sync_interval != 0:
             if self.current_step % self.sync_interval == 0:
                 self.flush()
+
                 os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir} --rsync-path='mkdir -p Data/{config.get_env_variable('TUSTU_PROJECT_NAME')}/logs/tensorboard && rsync'")
 
     def _add_hparams(self, hparam_dict, metric_dict, hparam_domain_discrete=None, run_name=None):
+        """
+        Adds hyperparameters and metrics to TensorBoard logs.
+
+        Args:
+            hparam_dict (dict): Dictionary of hyperparameters.
+            metric_dict (dict): Dictionary of metrics.
+            hparam_domain_discrete (dict, optional): Discrete domains for hyperparameters. Defaults to None.
+            run_name (str, optional): Name of the run in TensorBoard. Defaults to None.
+
+        Raises:
+            TypeError: If `hparam_dict` or `metric_dict` are not dictionaries.
+        """
         torch._C._log_api_usage_once("tensorboard.logging.add_hparams")
         if type(hparam_dict) is not dict or type(metric_dict) is not dict:
             raise TypeError('hparam_dict and metric_dict should be dictionary.')
@@ -43,12 +73,26 @@ class CustomSummaryWriter(SummaryWriter):
                 self.add_scalar(k, v)
 
 def return_tensorboard_path() -> str:
+    """
+    Returns the path to the TensorBoard logs directory for the current experiment.
+
+    Returns:
+        str: The path to the TensorBoard logs directory.
+    """
     default_dir = config.get_env_variable('DEFAULT_DIR')
     dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
     return Path(f'{default_dir}/logs/tensorboard/{dvc_exp_name}')
 
-# Copy the experiment specific slurm logs from the host directory to the temporary experiment directory
 def copy_slurm_logs() -> None:
+    """
+    Copies the SLURM logs specific to the current experiment from the host directory
+    to the temporary experiment directory.
+
+    The SLURM log is identified using the SLURM_JOB_ID environment variable, and the logs are
+    copied from the source directory to the destination directory named after the current DVC experiment.
+
+    If the SLURM_JOB_ID is not found, the copying process is skipped.
+    """
     default_dir = config.get_env_variable('DEFAULT_DIR')
     current_slurm_job_id = config.get_env_variable('SLURM_JOB_ID')
     dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
@@ -66,8 +110,14 @@ def copy_slurm_logs() -> None:
     else:
         print("No SLURM_JOB_ID found. Skipping copying of SLURM logs.")    
     
-# Copy the experiment specific tensorboard logs from the host directory to the temporary experiment directory
 def copy_tensorboard_logs() -> None:
+    """
+    Copies the TensorBoard logs specific to the current experiment from the host directory
+    to the temporary experiment directory.
+
+    The logs are copied from the source directory to a destination directory named after the
+    current DVC experiment.
+    """
     default_dir = config.get_env_variable('DEFAULT_DIR')
     dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
     tensorboard_logs_source = Path(f'{default_dir}/logs/tensorboard')

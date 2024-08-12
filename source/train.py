@@ -3,25 +3,6 @@ import torchinfo
 from utils import logs, config
 from pathlib import Path
 from model import NeuralNetwork
-import tensorboard
-
-def get_train_mode_params(train_mode):
-    if train_mode == 0:
-        learning_rate = 0.01
-        conv1d_strides = 12
-        conv1d_filters = 16
-        hidden_units = 36
-    elif train_mode == 1:
-        learning_rate = 0.01
-        conv1d_strides = 4
-        conv1d_filters = 36
-        hidden_units = 64
-    else:
-        learning_rate = 0.0005
-        conv1d_strides = 3
-        conv1d_filters = 36
-        hidden_units = 96
-    return learning_rate, conv1d_strides, conv1d_filters, hidden_units    
 
 def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
     size = len(dataloader.dataset)
@@ -73,15 +54,18 @@ def generate_audio_example(model, device, dataloader):
 
 def main():
     # Load the hyperparameters from the params yaml file into a Dictionary
-    params = config.Params('params.yaml')
+    params = config.Params()
 
     # Load the parameters from the dictionary into variables
     input_size = params['general']['input_size']
     random_seed = params['general']['random_seed']
     epochs = params['train']['epochs']
-    train_mode = params['train']['train_mode']
     batch_size = params['train']['batch_size']
+    learning_rate = params['train']['learning_rate']
     device_request = params['train']['device_request']
+    conv1d_strides = params['model']['conv1d_strides']
+    conv1d_filters = params['model']['conv1d_filters']
+    hidden_units = params['model']['hidden_units']
 
     # Create a SummaryWriter object to write the tensorboard logs
     tensorboard_path = logs.return_tensorboard_path()
@@ -100,9 +84,6 @@ def main():
     y_ordered_training = data['y_ordered_training']
     X_ordered_testing = data['X_ordered_testing']
     y_ordered_testing = data['y_ordered_testing']
-
-    # Get the hyperparameters for the training mode
-    learning_rate, conv1d_strides, conv1d_filters, hidden_units = get_train_mode_params(train_mode)
 
     # Create the model
     model = NeuralNetwork(conv1d_filters, conv1d_strides, hidden_units).to(device)

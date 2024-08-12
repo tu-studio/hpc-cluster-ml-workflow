@@ -1,18 +1,16 @@
 import torch
 from utils import config
-from train import get_train_mode_params
 from model import NeuralNetwork
 from pathlib import Path
 
 def main():
     params = config.Params()
     input_size = params['general']['input_size']
-    train_mode = params['train']['train_mode']
+    conv1d_strides = params['model']['conv1d_strides']
+    conv1d_filters = params['model']['conv1d_filters']
+    hidden_units = params['model']['hidden_units']
 
-    # Get model hyperparameters based on training mode
-    _, conv1d_strides, conv1d_filters, hidden_units = get_train_mode_params(train_mode)
-
-    # Define the model (ensure to use the same architecture as in training.py)
+    # Define the model (ensure to use the same architecture as in train.py)
     model = NeuralNetwork(conv1d_filters, conv1d_strides, hidden_units)
 
     # Load the model state
