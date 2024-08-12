@@ -10,7 +10,7 @@
 
 ## 1 - Project Setup
 
-This section guides you through setting up your project locally.
+This section guides you through local project setup. Use your local machine for development and debugging, reserving the cluster primarily for training and minor configurations.
 
 ### Create your Git Repository from the Template
 
@@ -120,7 +120,7 @@ git commit -m "General project configuration"
 
 ## 2 - DVC Experiment Pipeline 
 
-This section guides you through setting up the DVC experiment pipeline. The DVC experiment pipeline allows you to manage and version your machine learning workflows, making it easier to track, reproduce, and share your experiments. It also optimizes computational and storage costs by using an internal cache system to avoid redundant computation of pipeline stages.
+This section guides you through setting up the DVC experiment pipeline. The DVC experiment pipeline allows you to manage and version your machine learning workflows, making it easier to track, reproduce, and share your experiments. It also optimizes computational and storage costs by using an internal cache storage to avoid redundant computation of pipeline stages.
 
 > **Info:** For a deeper understanding of DVC, refer to the [DVC Documentation](https://dvc.org/doc).
 
