@@ -3,6 +3,7 @@ import torchinfo
 from utils import logs, config
 from pathlib import Path
 from model import NeuralNetwork
+import tensorboard
 
 def get_train_mode_params(train_mode):
     if train_mode == 0:
@@ -43,7 +44,6 @@ def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
     train_loss /=  num_batches
     return train_loss
     
-
 def test_epoch(dataloader, model, loss_fn, device, writer):
     num_batches = len(dataloader)
     model.eval()
@@ -75,6 +75,7 @@ def main():
     # Load the hyperparameters from the params yaml file into a Dictionary
     params = config.Params('params.yaml')
 
+    # Load the parameters from the dictionary into variables
     input_size = params['general']['input_size']
     random_seed = params['general']['random_seed']
     epochs = params['train']['epochs']
