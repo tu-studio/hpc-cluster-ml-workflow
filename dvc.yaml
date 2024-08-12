@@ -36,7 +36,6 @@ stages:
     - models/checkpoints/
     params:
     - general.input_size
-    - train.train_mode
     outs:
     - models/exports/
   save_logs:
