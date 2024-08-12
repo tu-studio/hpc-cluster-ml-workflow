@@ -8,6 +8,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from utils import config
 import os
 import datetime
+import subprocess
 class CustomSummaryWriter(SummaryWriter):
     """
     A custom subclass of the TensorBoard SummaryWriter that allows for logging hyperparameters to the same log file, display scalar metrics in the HParams tab,
@@ -26,10 +27,11 @@ class CustomSummaryWriter(SummaryWriter):
         super().__init__(log_dir=log_dir)
         if sync_interval is None:
             sync_interval = int(config.get_env_variable('TUSTU_SYNC_INTERVAL')) 
-        if remote_dir is None:
-            self.remote_name = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
-            self.remote_path = Path(f'Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard')  
-            remote_dir = f'{self.remote_name}:{self.remote_path}'
+        if remote_dir is None and sync_interval != 0:
+            self.tensorboard_host_dir = config.get_env_variable('TUSTU_TENSORBOARD_HOST_DIR')
+            self.tensorboard_host = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
+            self.tensorboard_host_savepath = Path(f'{self.tensorboard_host_dir}/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard')  
+            remote_dir = f'{self.tensorboard_host}:{self.tensorboard_host_savepath}'
         self.datetime = str(log_dir).split('/')[-1].split('_')[0]
         if params is not None:
             params = params.flattened_copy()
@@ -41,16 +43,20 @@ class CustomSummaryWriter(SummaryWriter):
 
     def step(self) -> None:
         """
-        Increments the current step and performs synchronization of logs if the sync interval is reached.
+        Increments the current step and calls sync_logs() if the sync interval is reached.
         """
         self.current_step += 1
         if self.sync_interval != 0:
             if self.current_step % self.sync_interval == 0:
                 self.flush()
+                self._sync_logs()
 
-                if not os.path.exists(self.remote_dir):
-                    os.system(f"mkdir -p {self.remote_dir}")
-                os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}")
+    def _sync_logs(self) -> None:
+        """
+        Synchronizes the logs with the remote directory.
+        """
+        rsync_command = ['rsync', '-rv', '--inplace', '--progress', self.log_dir, self.remote_dir, f'--rsync-path=mkdir -p {self.tensorboard_host_savepath} && rsync"']
+        subprocess.run(rsync_command, check=True)
 
     def _add_hparams(self, hparam_dict, metric_dict, hparam_domain_discrete=None, run_name=None):
         """
@@ -86,7 +92,7 @@ def return_tensorboard_path() -> str:
     """
     default_dir = config.get_env_variable('DEFAULT_DIR')
     dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
-    current_datetime = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    current_datetime = datetime.datetime.now().strftime('%Y%m%d-%H%M%')
     # Set the TUSTU_WRITER_DATE environment variable to the current datetime for the writer to access
     tensorboard_path = Path(f'{default_dir}/logs/tensorboard/{current_datetime}_{dvc_exp_name}')
     tensorboard_path.mkdir(parents=True, exist_ok=True)
