@@ -28,26 +28,16 @@ class CustomSummaryWriter(SummaryWriter):
             sync_interval = int(config.get_env_variable('TUSTU_SYNC_INTERVAL')) 
         if remote_dir is None:
             self.remote_name = config.get_env_variable('TUSTU_TENSORBOARD_HOST')
-<<<<<<< HEAD
-            self.remote_path = Path('Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard')  
-            remote_dir = f'{self.remote_name}:{self.remote_path}'
-=======
             self.remote_path = Path(f'Data/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard')  
             remote_dir = f'{self.remote_name}:{self.remote_path}'
         self.datetime = str(log_dir).split('/')[-1].split('_')[0]
->>>>>>> 494a4e6cc52e61b10ffd1383b00236a4129537c5
         if params is not None:
             params = params.flattened_copy()
             params['datetime'] = self.datetime
             self._add_hparams(hparam_dict=params, metric_dict=metrics, run_name=log_dir)
         self.sync_interval = sync_interval
-<<<<<<< HEAD
         self.remote_dir = remote_dir
         self.current_step = 0
-=======
-        self.remote_dir = remote_dir   
-        self.current_step = 0 
->>>>>>> 494a4e6cc52e61b10ffd1383b00236a4129537c5
 
     def step(self) -> None:
         """
