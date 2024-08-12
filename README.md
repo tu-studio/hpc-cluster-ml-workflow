@@ -77,7 +77,7 @@ This template offers a straightforward PyTorch example project that you can cust
 
 ## Usage
 
-After completing the setup, you can start using the project by following the user guide provided. This guide will help you understand how to run the project, customize the model, and experiment with different configurations.
+After completing the setup, you can begin using the project by following the user guide provided. This guide will assist you in understanding how to develop, initiate experiments, and monitor your training processes.
 
 - [User Guide](docs/USAGE.md)
 
