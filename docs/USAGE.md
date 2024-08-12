@@ -95,7 +95,7 @@ Access TensorBoard via your browser at:
 ```text
 localhost:6006
 ```
-**Tip**: You can also view TensorBoard logs in VSCode using the official extension.
+> **Tip**: You can also view TensorBoard logs in VSCode using the official extension.
 
 ## Experiment Retrieval
 To retrieve your experiments on your local machine:
