@@ -2,17 +2,17 @@ general:
   random_seed: 42
   input_size: 150
 preprocess:
-  input_file: '/../data/raw/ts9_test1_in_FP32.wav'
-  target_file: '/../data/raw/ts9_test1_out_FP32.wav'
-  test_split: 0.2
+  input_file: /../data/raw/ts9_test1_in_FP32.wav
+  target_file: /../data/raw/ts9_test1_out_FP32.wav
+  test_split: 0.3
 model:
   conv1d_strides: 12
   conv1d_filters: 16
   hidden_units: 36
 train:
-  batch_size: 4096 
+  batch_size: 4096
   learning_rate: 0.01
   epochs: 60
-  device_request: 'cuda'   
+  device_request: cuda
 
 
