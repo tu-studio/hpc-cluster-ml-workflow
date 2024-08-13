@@ -56,8 +56,8 @@ class CustomSummaryWriter(SummaryWriter):
         """
         Synchronizes the logs with the remote directory.
         """
-        path = f'mkdir -p {self.remote_dir} && rsync'
-        os.system(f'rsync -rv --inplace --progress {self.log_dir} {self.remote_dir} --rsync-path={path}')
+        # path = f'mkdir -p {self.remote_dir} && rsync'
+        os.system(f'rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}')
 
     def _add_hparams(self, hparam_dict, metric_dict, hparam_domain_discrete=None, run_name=None):
         """
