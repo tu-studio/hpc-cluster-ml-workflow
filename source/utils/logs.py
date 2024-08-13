@@ -20,6 +20,7 @@ class CustomSummaryWriter(SummaryWriter):
         metrics (dict, optional): Dictionary of initial metrics to log. Defaults to an empty dictionary.
         sync_interval (int, optional): Number of steps between automatic syncs to the remote directory. 
                                        Defaults to the value of the 'TUSTU_SYNC_INTERVAL' environment variable.
+                                       If set to 0, no automatic syncs will be performed. 
         remote_dir (str, optional): Remote directory to which logs are synced. 
                                     Defaults to a path constructed from environment variables.
     """    
@@ -55,8 +56,8 @@ class CustomSummaryWriter(SummaryWriter):
         """
         Synchronizes the logs with the remote directory.
         """
-        rsync_command = ['rsync', '-rv', '--inplace', '--progress', self.log_dir, self.remote_dir, f'--rsync-path=mkdir -p {self.tensorboard_host_savepath} && rsync"']
-        subprocess.run(rsync_command, check=True)
+        path = f'mkdir -p {self.remote_dir} && rsync'
+        os.system(f'rsync -rv --inplace --progress {self.log_dir} {self.remote_dir} --rsync-path={path}')
 
     def _add_hparams(self, hparam_dict, metric_dict, hparam_domain_discrete=None, run_name=None):
         """
@@ -92,7 +93,7 @@ def return_tensorboard_path() -> str:
     """
     default_dir = config.get_env_variable('DEFAULT_DIR')
     dvc_exp_name = config.get_env_variable('DVC_EXP_NAME')
-    current_datetime = datetime.datetime.now().strftime('%Y%m%d-%H%M%')
+    current_datetime = datetime.datetime.now().strftime('%Y%m%d-%H%M')
     # Set the TUSTU_WRITER_DATE environment variable to the current datetime for the writer to access
     tensorboard_path = Path(f'{default_dir}/logs/tensorboard/{current_datetime}_{dvc_exp_name}')
     tensorboard_path.mkdir(parents=True, exist_ok=True)

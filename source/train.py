@@ -38,7 +38,7 @@ def test_epoch(dataloader, model, loss_fn, device, writer):
     print(f"Test Error: \n Avg loss: {test_loss:>8f} \n")
     return test_loss
 
-def generate_audio_example(model, device, dataloader):
+def generate_audio_examples(model, device, dataloader):
     print("Running audio prediction...")
     prediction = torch.zeros(0).to(device)
     target = torch.zeros(0).to(device)
@@ -49,8 +49,7 @@ def generate_audio_example(model, device, dataloader):
             predicted_batch = model(X)
             prediction = torch.cat((prediction, predicted_batch.flatten()), 0)
             target = torch.cat((target, y.flatten()), 0)
-    audio_example = torch.cat((target, prediction), 0)
-    return audio_example
+    return prediction, target
 
 def main():
     # Load the hyperparameters from the params yaml file into a Dictionary
@@ -109,10 +108,11 @@ def main():
         print(f"Epoch {t+1}\n-------------------------------")
         epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, writer, epoch=t)
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)
-        epoch_audio_example = generate_audio_example(model, device, testing_dataloader)
+        epoch_audio_prediction, epoch_audio_target  = generate_audio_examples(model, device, testing_dataloader)
         writer.add_scalar("Epoch_Loss/train", epoch_loss_train, t)
         writer.add_scalar("Epoch_Loss/test", epoch_loss_test, t)
-        writer.add_audio("Audio_Pred/test", epoch_audio_example, t, sample_rate=44100)
+        writer.add_audio("Audio/prediction", epoch_audio_prediction, t, sample_rate=44100)
+        writer.add_audio("Audio/target", epoch_audio_target, t, sample_rate=44100)        
         writer.step()  
 
     writer.close()
