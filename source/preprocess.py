@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from utils import config
+from source.utils import config
 from pathlib import Path
 from pedalboard.io import AudioFile
 

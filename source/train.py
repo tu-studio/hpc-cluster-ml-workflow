@@ -1,6 +1,6 @@
 import torch
 import torchinfo
-from utils import logs, config
+from source.utils import logs, config
 from pathlib import Path
 from model import NeuralNetwork
 

@@ -4,8 +4,8 @@ This template provides a structured workflow designed for audio machine learning
 
 ## Features
 - **Reproducible Experiments**: 
-  - Enables the reproduction of results through comprehensive versioning of dependencies, pipeline definitions, and artifacts.
-  - Ensures consistent and repeatable results across different systems through containerized execution environments. 
+  - Enables reproduction of results through comprehensive versioning of dependencies, pipeline definitions, and artifacts.
+  - Ensures consistency across different systems through containerized execution environments. 
 - **Resource Optimization**: Improves efficiency by avoiding unnecessary stage executions across experiments using a shared cache.
 - **Automation**: Streamlines workflows for builds, data pipelines, and remote syncing, minimizing manual intervention and enhancing productivity.
 - **HPC Integration**: 

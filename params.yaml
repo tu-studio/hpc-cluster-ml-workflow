@@ -12,7 +12,7 @@ model:
 train:
   batch_size: 4096 
   learning_rate: 0.01
-  epochs: 60
-  device_request: 'cuda'   
+  epochs: 1
+  device_request: 'mps'   
 
 

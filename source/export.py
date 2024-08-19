@@ -1,5 +1,5 @@
 import torch
-from utils import config
+from source.utils import config
 from model import NeuralNetwork
 from pathlib import Path
 
