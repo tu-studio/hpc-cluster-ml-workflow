@@ -11,7 +11,7 @@ export DEFAULT_DIR="$PWD"
 TUSTU_TMP_DIR=tmp
 
 # Return function that will be called on exit or error
-return() {
+return_to_default_dir() {
     if [[ "$PWD" != "$DEFAULT_DIR" ]]; then
         echo "Returning to $DEFAULT_DIR"
         cd "$DEFAULT_DIR"
@@ -23,7 +23,7 @@ return() {
 }
 
 # Trap various signals and the EXIT signal to ensure return is called
-trap return EXIT SIGINT SIGTERM
+trap return_to_default_dir EXIT SIGINT SIGTERM
 
 # Create a temporary directory for the experiment
 echo "Checking directory existence..."
