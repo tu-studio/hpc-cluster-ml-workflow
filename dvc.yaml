@@ -1,6 +1,6 @@
 stages:
   preprocess:
-    cmd: python3 source/preprocess.py
+    cmd: python3 -m source.preprocess
     deps:
     - source/preprocess.py
     - data/raw/
@@ -12,7 +12,7 @@ stages:
     outs:
     - data/processed/
   train:
-    cmd: python3 source/train.py
+    cmd: python3 -m source.train
     deps:
     - source/train.py
     - source/model.py
@@ -30,7 +30,7 @@ stages:
     outs:
     - models/checkpoints/
   export:
-    cmd: python3 source/export.py
+    cmd: python3 -m source.export
     deps:
     - source/export.py
     - models/checkpoints/
@@ -39,7 +39,7 @@ stages:
     outs:
     - models/exports/
   save_logs:
-    cmd: python3 source/utils/logs.py
+    cmd: python3 -m source.utils.logs
     outs:
     - exp_logs/slurm
     - exp_logs/tensorboard/
