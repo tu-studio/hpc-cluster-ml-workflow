@@ -46,7 +46,9 @@ class CustomSummaryWriter(SummaryWriter):
             else int(config.get_env_variable("TUSTU_SYNC_INTERVAL"))
         )
         self.remote_dir = (
-            remote_dir or self._construct_remote_dir() if self.sync_interval != 0 else None
+            remote_dir or self._construct_remote_dir()
+            if self.sync_interval != 0
+            else None
         )
         self.datetime = self._extract_datetime_from_log_dir(log_dir)
 
@@ -57,24 +59,33 @@ class CustomSummaryWriter(SummaryWriter):
 
     def _construct_remote_dir(self) -> str:
         """Constructs the remote directory path based on environment variables."""
-        tensorboard_host_dir = config.get_env_variable("TUSTU_TENSORBOARD_HOST_DIR")
+        tensorboard_host_dir = config.get_env_variable(
+            "TUSTU_TENSORBOARD_HOST_DIR"
+        )
         tensorboard_host = config.get_env_variable("TUSTU_TENSORBOARD_HOST")
         tensorboard_host_savepath = Path(
             f'{tensorboard_host_dir}/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard'
         )
         return f"{tensorboard_host}:{tensorboard_host_savepath}"
 
-    def _extract_datetime_from_log_dir(self, log_dir: Union[str, PosixPath]) -> str:
+    def _extract_datetime_from_log_dir(
+        self, log_dir: Union[str, PosixPath]
+    ) -> str:
         """Extracts datetime information from the log directory path."""
         return str(log_dir).split("/")[-1].split("_")[0]
 
     def _log_hyperparameters(
-        self, params: config.Params[str, Any], metrics: Dict[str, None], log_dir: str
+        self,
+        params: config.Params[str, Any],
+        metrics: Dict[str, None],
+        log_dir: str,
     ) -> None:
         """Logs hyperparameters and initial metrics to TensorBoard."""
         params = params.flattened_copy()
         params["datetime"] = self.datetime
-        self._add_hparams(hparam_dict=params, metric_dict=metrics, run_name=log_dir)
+        self._add_hparams(
+            hparam_dict=params, metric_dict=metrics, run_name=log_dir
+        )
 
     def step(self) -> None:
         """
@@ -89,7 +100,9 @@ class CustomSummaryWriter(SummaryWriter):
     def _sync_logs(self) -> None:
         """Synchronizes the logs with the remote directory."""
         # path = f'mkdir -p {self.remote_dir} && rsync'
-        os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}")
+        os.system(
+            f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}"
+        )
 
     def _add_hparams(
         self,
@@ -110,10 +123,16 @@ class CustomSummaryWriter(SummaryWriter):
         Raises:
             TypeError: If `hparam_dict` or `metric_dict` are not dictionaries.
         """
-        if not isinstance(hparam_dict, dict) or not isinstance(metric_dict, dict):
-            raise TypeError("hparam_dict and metric_dict should be dictionary.")
+        if not isinstance(hparam_dict, dict) or not isinstance(
+            metric_dict, dict
+        ):
+            raise TypeError(
+                "hparam_dict and metric_dict should be dictionary."
+            )
 
-        exp, ssi, sei = hparams(hparam_dict, metric_dict, hparam_domain_discrete)
+        exp, ssi, sei = hparams(
+            hparam_dict, metric_dict, hparam_domain_discrete
+        )
 
         self.file_writer.add_summary(exp)
         self.file_writer.add_summary(ssi)
@@ -135,13 +154,17 @@ def return_tensorboard_path() -> PosixPath:
     dvc_exp_name = config.get_env_variable("DVC_EXP_NAME")
     current_datetime = datetime.datetime.now().strftime("%Y%m%d-%H%M")
 
-    tensorboard_path = Path(f"{default_dir}/logs/tensorboard/{current_datetime}_{dvc_exp_name}")
+    tensorboard_path = Path(
+        f"{default_dir}/logs/tensorboard/{current_datetime}_{dvc_exp_name}"
+    )
     tensorboard_path.mkdir(parents=True, exist_ok=True)
 
     return tensorboard_path
 
 
-def copy_logs(source_dir: PosixPath, destination_dir: PosixPath, log_type: str) -> None:
+def copy_logs(
+    source_dir: PosixPath, destination_dir: PosixPath, log_type: str
+) -> None:
     """
     Copies logs from a source directory to a destination directory.
 
@@ -191,7 +214,9 @@ def copy_tensorboard_logs() -> None:
 
     tensorboard_logs_source = Path(f"{default_dir}/logs/tensorboard")
     tensorboard_logs_destination = Path(f"exp_logs/tensorboard/{dvc_exp_name}")
-    copy_logs(tensorboard_logs_source, tensorboard_logs_destination, "tensorboard")
+    copy_logs(
+        tensorboard_logs_source, tensorboard_logs_destination, "tensorboard"
+    )
 
 
 def main():

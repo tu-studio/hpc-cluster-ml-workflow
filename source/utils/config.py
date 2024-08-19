@@ -1,9 +1,11 @@
-import os
 import copy
-import torch
-from typing import Dict, Any, Generator, Tuple
-from ruamel.yaml import YAML
+import os
 from collections.abc import MutableMapping
+from typing import Any, Dict, Generator, Tuple
+
+import torch
+from ruamel.yaml import YAML
+
 
 def get_env_variable(var_name: str) -> str:
     """
@@ -25,23 +27,27 @@ def get_env_variable(var_name: str) -> str:
     """
     value = os.getenv(var_name)
     if var_name == "SLURM_JOB_ID" and value is None:
-        return None  
+        return None
     if value is None:
-        raise EnvironmentError(f"The environment variable {var_name} is required but not set.")
+        raise EnvironmentError(
+            f"The environment variable {var_name} is required but not set."
+        )
     return value
-    
+
+
 class Params(dict):
     """
-    A dictionary subclass that loads parameters from a YAML file and provides additional 
+    A dictionary subclass that loads parameters from a YAML file and provides additional
     functionality to flatten nested dictionaries.
 
     Args:
         yaml_file (str): The path to the YAML file containing the parameters. Defaults to 'params.yaml'.
-    
+
     Attributes:
         None (The parameters are stored in the dictionary itself, accessible via standard dict methods).
     """
-    def __init__(self, yaml_file: str = 'params.yaml'):
+
+    def __init__(self, yaml_file: str = "params.yaml"):
         params: Dict[str, Any] = Params._load_params_from_yaml(yaml_file)
         super().__init__(params)
 
@@ -51,15 +57,18 @@ class Params(dict):
         Initializes the Params object by loading parameters from the specified YAML file.
 
         Args:
-            yaml_file (str): The path to the YAML file to load parameters from. Defaults to 'params.yaml'.
-        """    
-        yaml = YAML(typ='safe')
-        with open(yaml_file, 'r') as file:
+            yaml_file (str): The path to the YAML file to load parameters from.
+                Defaults to 'params.yaml'.
+        """
+        yaml = YAML(typ="safe")
+        with open(yaml_file, "r") as file:
             params = yaml.load(file)
         return params
 
     @staticmethod
-    def _flatten_dict_gen(d: MutableMapping[str, Any], parent_key: str, sep: str) -> Generator[Tuple[str, Any], None, None]:
+    def _flatten_dict_gen(
+        d: MutableMapping[str, Any], parent_key: str, sep: str
+    ) -> Generator[Tuple[str, Any], None, None]:
         """
         A generator that recursively flattens a nested dictionary.
 
@@ -70,7 +79,7 @@ class Params(dict):
 
         Yields:
             Generator[Tuple[str, Any], None, None]: Pairs of flattened keys and their corresponding values.
-        """    
+        """
         for k, v in d.items():
             new_key = parent_key + sep + k if parent_key else k
             if isinstance(v, MutableMapping):
@@ -79,14 +88,18 @@ class Params(dict):
                 yield new_key, v
 
     @staticmethod
-    def _flatten_dict(d: MutableMapping[str, Any], parent_key: str = '', sep: str = '.') -> Dict[str, Any]:
+    def _flatten_dict(
+        d: MutableMapping[str, Any], parent_key: str = "", sep: str = "."
+    ) -> Dict[str, Any]:
         """
         Flattens a nested dictionary into a single level dictionary with concatenated keys.
 
         Args:
             d (MutableMapping[str, Any]): The dictionary to flatten.
-            parent_key (str): The base key for the current level of the dictionary. Defaults to ''.
-            sep (str): The separator to use between keys in the flattened dictionary. Defaults to '.'.
+            parent_key (str): The base key for the current level of the dictionary.
+                Defaults to ''.
+            sep (str): The separator to use between keys in the flattened dictionary.
+                Defaults to '.'.
 
         Returns:
             Dict[str, Any]: A flattened dictionary where nested keys are concatenated by the separator.
@@ -102,7 +115,7 @@ class Params(dict):
         """
         params_dict: Dict[str, Any] = copy.deepcopy(self)
         return self._flatten_dict(params_dict)
-    
+
 
 def prepare_device(request: str) -> torch.device:
     """
@@ -121,10 +134,10 @@ def prepare_device(request: str) -> torch.device:
         - If "mps" is requested but not available, the function defaults to "cpu".
         - If "cuda" is requested but not available, the function defaults to "cpu".
         - If the request is neither "mps" nor "cuda", the function defaults to "cpu".
-    
+
     Example:
         device = prepare_device("cuda")
-    """    
+    """
     if request == "mps":
         if torch.backends.mps.is_available():
             device = torch.device("mps")
@@ -163,25 +176,25 @@ def set_random_seeds(random_seed: int) -> None:
     Example:
         set_random_seeds(42)
     """
-    if 'random' in globals():
-        random.seed(random_seed)
+    if "random" in globals():
+        random.seed(random_seed)  # type: ignore
     else:
         print("The 'random' package is not imported, skipping random seed.")
 
-    if 'np' in globals():
-        np.random.seed(random_seed)
+    if "np" in globals():
+        np.random.seed(random_seed)  # type: ignore
     else:
         print("The 'numpy' package is not imported, skipping numpy seed.")
 
-    if 'torch' in globals():
-        torch.manual_seed(random_seed)
+    if "torch" in globals():
+        torch.manual_seed(random_seed)  # type: ignore
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(random_seed)
         if torch.backends.mps.is_available():
             torch.mps.manual_seed(random_seed)
     else:
         print("The 'torch' package is not imported, skipping torch seed.")
-    if 'scipy' in globals():
-        scipy.random.seed(random_seed)
+    if "scipy" in globals():
+        scipy.random.seed(random_seed)  # type: ignore
     else:
         print("The 'scipy' package is not imported, skipping scipy seed.")
