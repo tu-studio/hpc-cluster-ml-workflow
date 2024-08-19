@@ -10,6 +10,9 @@ export DEFAULT_DIR="$PWD"
 
 TUSTU_TMP_DIR=tmp
 
+# Create a trap to cd into the host directory on exit, error, or interruption (e.g., Ctrl+C)
+trap 'cd "$DEFAULT_DIR"' EXIT SIGINT SIGTERM
+
 # Create a temporary directory for the experiment
 echo "Checking directory existence..."
 if [ ! -d "$TUSTU_TMP_DIR" ]; then
