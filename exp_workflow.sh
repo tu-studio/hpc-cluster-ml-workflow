@@ -63,4 +63,5 @@ dvc exp push origin &&
 # Clean up the temporary sub-directory
 echo "Cleaning up..." &&
 cd .. &&
-rm -rf $UNIQUE_ID
+rm -rf $UNIQUE_ID &&
+cd .. 
