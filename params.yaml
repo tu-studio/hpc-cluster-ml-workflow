@@ -1,5 +1,5 @@
 general:
-  random_seed: 42
+  random_seed: 43
   input_size: 150
 preprocess:
   input_file: '/../data/raw/ts9_test1_in_FP32.wav'
