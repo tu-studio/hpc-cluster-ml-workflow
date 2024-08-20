@@ -25,7 +25,7 @@ As your requirements change, always update `requirements.txt` with your fixed ve
 pip freeze > requirements.txt
 ```
 
-Docker images are automatically rebuilt and pushed to Docker Hub when `requirements.txt`, `Dockerfile`, or `docker_image.yml` are updated by the github workflow. If you trigger an image build, ensure it is completed and pushed before proceeding.
+Docker images are automatically rebuilt and pushed to Docker Hub when `requirements.txt`, `Dockerfile`, or `docker_image.yml` are updated by the GitHub workflow. If you trigger an image build, ensure it is completed and pushed before proceeding.
 
 **Note**: On the HPC cluster, the Docker image is automatically pulled and converted to a Singularity image with the command `singularity pull docker://<your_image_name>` in the `slurm_job.sh` script.
 

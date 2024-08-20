@@ -46,7 +46,7 @@ In your Git repository open the file [global.env](./../global.env) and modify th
    ```
    > **Note**: If you choose a different virtual environment name, update it in [.gitignore](./../.gitignore).
 
-Save the python version of your virtual environment to the global environment file [global.env](./../global.env) (This is necessary for the Docker image build later):
+Save the python version of your virtual environment to the global environment file [global.env](./../global.env) (this is necessary for the Docker image build later):
 
 `TUSTU_PYTHON_VERSION`: The Python version required for your project (check with `python --version`).
 
@@ -202,6 +202,13 @@ Manually add your stages to the [dvc.yaml](../dvc.yaml) file:
 - `out:` Add output directories.
 - The last stage should be left as `save_logs`, which will copy the logs to the DVC experiment branch before the experiment ends and push to the remote.
 > **Note**: The stage scripts should be able to recreate the output directories, as DVC deletes them at the beginning of each stage.
+
+For reproducible results the script outputs should be deterministic. Use fixed random seeds for all random number generators of your libraries used as shown in:
+```python
+from utils import config
+config.set_random_seeds(random_seed)
+```
+> **Note**: This function only sets seeds for the `random`, `numpy`, `torch` and `scipy` libraries. Modify the function to add other devices as needed.
 
 ## 4 - TensorBoard Metrics
 
