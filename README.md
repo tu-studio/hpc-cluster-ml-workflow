@@ -1,22 +1,32 @@
+<!--
+Copyright 2024 tu-studio
+This file is licensed under the Apache License, Version 2.0.
+See the LICENSE file in the root of this project for details.
+-->
+
 # HPC-Cluster-ML-Workflow 
 
-This template provides a structured workflow designed for audio machine learning research on the [HPC Cluster of ZECM at TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc). Aimed at projects that require continuous management of multiple experiments over extended periods of time, this setup ensures high reproducibility of results. By integrating tools such as DVC, Docker, and TensorBoard, it also establishes a robust framework that facilitates collaboration and sharing of experiments.
+This template provides a structured workflow tailored for audio machine learning research on the [HPC Cluster of ZECM at TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc). It is specifically designed for projects that require continuous management of multiple experiments, ensuring high reproducibility and reliability of results. By incorporating tools such as DVC, Docker, and TensorBoard, the template not only enhances reproducibility but also provides a robust framework for effective collaboration and seamless sharing of experiments.
 
 ## Features
-- **Reproducible Experiments**: 
-  - Enables reproduction of results through comprehensive versioning of dependencies, pipeline definitions, and artifacts.
-  - Ensures consistency across different systems through containerized execution environments. 
-- **Resource Optimization**: Improves efficiency by avoiding unnecessary stage executions across experiments using a shared cache.
-- **Automation**: Streamlines workflows for builds, data pipelines, and remote syncing, minimizing manual intervention and enhancing productivity.
-- **HPC Integration**: 
-   - Extends DVC's native single-node parallel execution capabilities with a custom implementation that enables parallel DVC experiments across multiple nodes.
-   - Utilizes Singularity's Docker support to facilitate convenient image conversion, simplifying the creation and deployment of Singularity images in the HPC cluster.
-- **Tensorboard Integration**: Provides a comprehensive overview of DVC experiments within TensorBoard, enabling comparison and analysis of results, augmented by TensorBoard's capability to log audio samples.
-- **Real-time Monitoring**: Offers live tracking and visualization of experiment metrics, facilitating immediate insights and enabling the quick termination of flawed experiments.
 
+- **Reproducible Experiments**
+  - **Comprehensive Versioning**: Tracks dependencies, configurations, and artifacts to ensure experiments can be easily reproduced and shared.
+  - **Consistent Environments**: Uses containerization to maintain consistency across different systems.
+- **Resource Optimization**
+  - **Efficient Execution**: Reuses unchanged stages to avoid redundant computations, speeding up workflows and conserving resources.
+- **Automation**
+  - **Automated Workflows**: Reduces manual tasks through automated builds, data pipelines, and syncing, allowing you to focus on research.
+- **HPC Integration**
+  - **Parallel Execution**: Extends DVC for multi-node parallel experiments, optimizing HPC resource utilization.
+  - **Docker & Singularity Support**: Supports Docker for development, with automated conversion to Singularity for seamless HPC deployment.
+- **TensorBoard Integration**:
+  - **Unified Dashboard**: Provides visualization and comparison of DVC experiments with audio logging support.
+  - **Live Metrics**: Enables real-time monitoring and quick decisions on underperforming runs.
+  
 ## Overview
 
-The table below summarizes the key tools involved in the HPC-Cluster-ML-Workflow, detailing their primary roles within the workflow and providing links to their official documentation for further reference.
+The table below summarizes the key tools involved in the HPC-Cluster-ML-Workflow, detailing their primary roles and providing links to their official documentation for further reference.
 
 <table align="center" style="width: 60%; border-collapse: collapse;">
   <tr>
@@ -26,7 +36,7 @@ The table below summarizes the key tools involved in the HPC-Cluster-ML-Workflow
   </tr>
   <tr>
     <td><b>Git</b></td>
-    <td>Version control for code and configuration management.</td>
+    <td>Version control for code.</td>
     <td><a href="https://git-scm.com/doc">Git Docs</a></td>
   </tr>
   <tr>
@@ -36,12 +46,12 @@ The table below summarizes the key tools involved in the HPC-Cluster-ML-Workflow
   </tr>
   <tr>
     <td><b>TensorBoard</b></td>
-    <td>ML experiment visualization and monitoring.</td>
+    <td>DVC experiment visualization and monitoring.</td>
     <td><a href="https://www.tensorflow.org/tensorboard">TensorBoard Docs</a></td>
   </tr>
   <tr>
     <td><b>Docker</b></td>
-    <td>Containerization tool, used for conversion to Singularity images.</td>
+    <td>Containerization for development, converted to Singularity for HPC.</td>
     <td><a href="https://docs.docker.com">Docker Docs</a></td>
   </tr>
   <tr>
@@ -57,27 +67,27 @@ The table below summarizes the key tools involved in the HPC-Cluster-ML-Workflow
 </table>
 
 ### System Transfer
-The figure below offers a simplified overview of how data is transferred between systems in this setup. While some of the commands depicted are automated through the provided scripts, the visualization is intended for comprehension and not as a direct usage reference.
+The figure below offers a simplified overview of how data is transferred between systems. While some of the commands depicted are automated by the provided workflows, the visualization is intended for comprehension and not as a direct usage reference.
         <p align="center">
         <img src="docs/graphics/Data_Transfer_Simplified.png" alt="Simplified diagram of dependency transfer between systems" width="690">
         </p>
 
 ## Prerequisites
-- macOS or Linux operating system.
-- Access to the HPC Cluster.
+- macOS, Windows or Linux operating system.
+- Access to an HPC Cluster with SLURM-sheduler.
 - Local Python installation.
 - Familiarity with Git, DVC, and Docker.
 - Docker Hub account.
 
 ## Setup 
 
-This template offers a straightforward PyTorch example project that you can customize, reuse, or reference for your pipeline implementation. Follow the detailed setup instructions below to guide you through the configuration process.
+This template repository offers a simple PyTorch example project that you can customize, reuse, or reference for your pipeline implementation. Follow the detailed setup instructions below to guide you through the configuration process.
 
 - [Setup Instructions](docs/SETUP.md)
 
 ## Usage
 
-After completing the setup, you can begin using the project by following the user guide provided. This guide will assist you in understanding how to develop, initiate experiments, and monitor your training processes.
+Once the setup is complete, you can begin using the setup by referring to the User Guide provided. This guide will help you to understand how to develop, initiate experiments and monitor your training processes.
 
 - [User Guide](docs/USAGE.md)
 
@@ -88,8 +98,8 @@ After completing the setup, you can begin using the project by following the use
 
 ## License
 
-This project is licensed under the terms of the [MIT License](LICENSE.md). 
+This project is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE). 
 
 ## References
 
-**Faressc. (n.d.). *Guitar LSTM* [pytorch-version]. GitHub. [Link](https://github.com/faressc/GuitarLSTM/tree/main/pytorch-version)**
+**Schulz, F. [faressc]. (n.d.). *Guitar LSTM* [pytorch-version]. GitHub. [Link](https://github.com/faressc/GuitarLSTM/tree/main/pytorch-version)**

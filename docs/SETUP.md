@@ -1,10 +1,16 @@
+<!--
+Copyright 2024 tu-studio
+This file is licensed under the Apache License, Version 2.0.
+See the LICENSE file in the root of this project for details.
+-->
+
 # Setup Instructions
 
 **Table of Contents:**
 - [1 - Initial Setup](#1---initial-setup)
 - [2 - Docker Image](#2---docker-image)
 - [3 - DVC Experiment Pipeline](#3---dvc-experiment-pipeline)
-- [4 - Tensorboard Metrics](#4---tensorboard-metrics)
+- [4 - TensorBoard Metrics](#4---tensorboard-metrics)
 - [5 - Test and Debug Locally](#5---test-and-debug-locally)
 - [6 - Slurm Job Configuration](#6---slurm-job-configuration)
 - [7 - HPC Cluster Setup](#7---hpc-cluster-setup)
@@ -12,7 +18,7 @@
 
 ## 1 - Initial Setup
 
-This section guides you through local project setup. Use your local machine for development and debugging, reserving the cluster primarily for training and minor configurations.
+This section will guide you through your initial project setup. Use your local machine for development and debugging, and reserve the cluster primarily for training and minor configurations.
 
 ### Create your Git Repository from the Template
 
@@ -28,7 +34,7 @@ git clone git@github.com:<github_user>/<repository_name>.git
 
 In your Git repository open the file [global.env](./../global.env) and modify the following variable (the others are changed later):
 
-`TUSTU_PROJECT NAME`: Your Project Name
+`TUSTU_PROJECT_NAME`: Your Project Name
 
 ### Set up a Virtual Environment
 
@@ -50,13 +56,13 @@ Choose a [supported storage type](https://dvc.org/doc/command-reference/remote/a
 ```sh
 pip install dvc_webdav
 ```
-**Quick configuration**: Uses existing config file and only overwrites required parts.     
+**Quick configuration**: Uses existing [config](../.dvc/config) file and only overwrites required parts.     
 ```sh
 dvc remote add -d myremote webdavs://example.com/path/to/storage --force
 dvc remote modify --local myremote user 'yourusername'
 dvc remote modify --local myremote password 'yourpassword'
 ```
-**Full configuration**: Reinitializes DVC repository and adds all configuration from scratch.
+**Full configuration**: Reinitializes DVC repository and adds all configurations from scratch.
 ```sh
 rm -rf .dvc/
 dvc init 
@@ -72,14 +78,14 @@ dvc config cache.type symlink
 
 ### Configure Docker Registry  
 
-- **Sign Up for Docker Hub:** If you don't have an account, register at [Docker Hub](https://app.docker.com/signup?).
+- **Sign Up for Docker Hub:** If you do not have an account, register at [Docker Hub](https://app.docker.com/signup?).
 - **Configure GitHub Secrets:** In your GitHub repository, go to **Settings** → **Security** → **Secrets and variables** → **Actions** → **New repository secret**, and add secrets for:
    - `DOCKER_USERNAME`: Your Docker Hub username
    - `DOCKER_PASSWORD`: Your Docker Hub password
 - **Update Global Environment File:** Edit [global.env](./../global.env)  to set:
    - `TUSTU_DOCKERHUB_USERNAME`: Your Docker Hub username
 
-### Connect SSH Host for Tensorboard (Optional) 
+### Connect SSH Host for TensorBoard (Optional) 
 
 Open your SSH configuration (`~/.ssh/config`) and add your SSH host:
 ```text
@@ -113,7 +119,7 @@ In your Git repository open the file [global.env](./../global.env) and modify th
 
 ### Install and freeze dependencies
 
-Install all dependencies needed for your project in your local virtual environment:
+Install all the necessary dependencies for your project in your local virtual environment:
 
 ```sh
 source venv/bin/activate
@@ -128,9 +134,9 @@ pip freeze > requirements.txt
 
 ### Build the Docker Image
 
-For debugging your Docker image locally, install Docker for your operating system / distro. For Windows and macOS, you can install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+To debug your Docker image locally, install Docker for your operating system / distro. For Windows and macOS, you can install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
-To build your Docker image, use the following command in your project directory. The [Dockerfile](../Dockerfile) provided in the template will install the set Python version (cf. [Section 1](#set-up-a-virtual-environment)) and all dependencies from the requirements.txt file on a minimal debian image.
+To build your Docker image, use the following command in your project directory. The [Dockerfile](../Dockerfile) provided in the template will install the specified Python version (see [Section 1](#set-up-a-virtual-environment)) and all dependencies from the requirements.txt file on a minimal Debian image.
 
 ```sh
 docker build -t <your_image_name> .
@@ -138,7 +144,7 @@ docker build -t <your_image_name> .
 
 ### Test the Docker Image
 
-Run the Docker image locally in an interactive shell to test if everything is working as expected:
+Run the Docker image locally in an interactive shell to test that everything works as expected:
 
 ```sh
 docker run -it -rm <your_image_name> /bin/bash
@@ -146,9 +152,9 @@ docker run -it -rm <your_image_name> /bin/bash
 
 ### Automated Image Builds with GitHub Actions
 
-Once you have successfully tested your initial Docker image locally, you can use the build and push workflow with GitHub Actions. Remember to always fix the requirements versions you are using before pushing in case some requirements have changed. Also, when using the free docker/build-push action, there is a 14GB storage limit for free public repos for the runner ([About GitHub runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners)). The docker image must therefore not exceed a given size. The provided github workflow [docker_image.yml](../.github/workflows/docker_image.yml) will be triggered whenever the [Dockerfile](../Dockerfile), the requirements.txt or the workflow itself have changed and build and push the Docker image to your configured Docker registry.
+Once you have successfully tested your initial Docker image locally, you can use the build and push workflow with GitHub Actions. Make sure to lock the versions of your dependencies before pushing, to avoid problems caused by possible changes in requirements. Note that when using the free `docker/build-push-action`, there is a 14GB storage limit for free public repositories on GitHub runners ([About GitHub runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners)). Therefore, the Docker image must not exceed this size. The provided github workflow [docker_image.yml](../.github/workflows/docker_image.yml) will be triggered whenever the [Dockerfile](../Dockerfile), the [requirements.txt](../requirements.txt) or the workflow itself is modified, and it will build the Docker image and push it to your configured Docker registry.
 
-> **Info:** At the moment the images are only built on ubuntu-latest runners for the x86_64 architecture. If you need to build images for other architectures, change the workflow file accordingly.
+> **Info:** At the moment the images are only built on ubuntu-latest runners for the x86_64 architecture. If you need to build images for other architectures, modify the workflow file accordingly.
 
 ## 3 - DVC Experiment Pipeline
 
@@ -165,11 +171,11 @@ dvc add data/raw
 dvc push
 ```
 
-> **Info**: The files added with DVC should be Git-ignored, but adding with dvc will create .gitignore files automatically. What git tracks are references with a .dvc suffix (data/raw.dvc). Make sure you add and push the .dvc files to the Git remote at the end of this section.
+> **Info**: The files added with DVC should be Git-ignored, but adding with DVC will create .gitignore files automatically. What Git tracks are references with a .dvc suffix (e.g. data/raw.dvc). Make sure you add and push the .dvc files to the Git remote at the end of this section.
 
 ### Modularize your Codebase
 
-If you started with a Jupyter Notebook or a single python script, split it into separate Python scripts representing different stages (e.g.: preprocess.py, train.py, export.py, ...) and dependencies (e.g.: model.py, ...). This modular approach will enable DVC pipeline integration. Have a look at the example implementation in the [source](../source) directory.
+If your project started with a Jupyter Notebook or a single python script, split it into separate Python scripts that represent different stages of your pipeline (e.g.: preprocess.py, train.py, export.py, ...) and dependencies (e.g.: model.py, ...). This modular structure is necessary for integrating a DVC pipeline. You can find an example implementation in the [source](../source) directory. 
 
 ### Integrate Hyperparameter Configuration
 
@@ -195,17 +201,16 @@ Manually add your stages to the [dvc.yaml](../dvc.yaml) file:
 - `params:` Include the hyperparameters from [params.yaml](../params.yaml) that should launch the stage execution on a change.
 - `out:` Add output directories.
 - The last stage should be left as `save_logs`, which will copy the logs to the DVC experiment branch before the experiment ends and push to the remote.
-> **Note**: The stage scripts should be able to recreate the output directories, because DVC will delete them at the beginning of each stage.
+> **Note**: The stage scripts should be able to recreate the output directories, as DVC deletes them at the beginning of each stage.
 
-## 4 - Tensorboard Metrics
+## 4 - TensorBoard Metrics
 
-To log your machine learning metrics using TensorBoard and enable comparison of DVC experiments, follow the steps below:
+To log your machine learning metrics using TensorBoard, and to enable overview and comparison of DVC experiments, follow the steps below:
 
 ### Initialize TensorBoard Logging
-
-- In your training script, import the `logs` module from the `utils` package and create a log directory for the writer using `logs.return_tensorboard_path()`. This function generates a path in the main repository directory under `logs/tensorboard/<dvc_exp_name>` and returns the absolute path needed to instantiate the `CustomSummaryWriter`.
-- If you wish to display metrics in TensorBoard’s HParams plugin (which is useful for hyperparameter tuning), initialize a dictionary with the metric names you plan to log.
-- Next, create an object from the `logs.CustomSummaryWriter`, which extends the functionality of the standard TensorBoard `SummaryWriter` class for the easier usage of the workflow system of the template. Pass the `params` object (as defined in your training script see  [Integrate Hyperparameter Configuration](#integrate-hyperparameter-configuration)) to the `params` argument. This will automatically log the hyperparameters to the same TensorBoard log file, making them visible in TensorBoard.
+- In your training script, import the `logs` module from the `utils` package. Create a logs directory for TensorBoard logs calling `logs.return_tensorboard_path()`. This function generates a path under `logs/tensorboard/$DVC_EXP_NAME` within the main repository directory and returns the absolute path required to instantiate the `logs.CustomSummaryWriter`.
+- If you plan to use TensorBoard’s HParams plugin for hyperparameter tuning, initialize a dictionary with the names of the metrics you intend to log. This setup will allow you to easily monitor and compare hyperparameter performance.
+- Create an instance of `logs.CustomSummaryWriter`, which extends the standard TensorBoard `SummaryWriter` class to better support the workflow system of the template. When instantiating, pass the `params` object (as defined in your training script; see [Integrate Hyperparameter Configuration](#integrate-hyperparameter-configuration)) to the `params` argument. This ensures that the hyperparameters are automatically logged alongside other metrics in the same TensorBoard log file, making them accessible for visualization in TensorBoard.
 
 ```python
 # train.py
@@ -224,7 +229,7 @@ def main():
 
 For detailed information on how to write different types of log data, refer to the official [TensorBoard SummaryWriter Class Documentation](https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter).
 
-Below is an example on how to log scalar metrics and audio examples in the training loop. Ensure that the metric names used with `add_scalar` match those in the metrics dictionary initialized earlier, especially if you want them to appear in the HParams section of TensorBoard. If you want to log data inside of a function, pass the writer as an argument.
+Below is an example of how to log scalar metrics and audio examples in the training loop. Make sure that the metric names used with `add_scalar` match those in the previously initialised metrics dictionary, especially if you want them to appear in the HParams section of TensorBoard. If you want to log data within a function, pass the writer as an argument.
 
 ```python
 for t in range(epochs):
@@ -238,24 +243,21 @@ for t in range(epochs):
     writer.step() # optional for remote syncing (next section)
 ```
 
-> **Note:** The `writer.add_hparams` function has been overwritten to not write the hparams in a seperate logfile. It is called by the constructor if the params are set.
+> **Note:** The `writer.add_hparams` function has been overwritten to avoid writing the hparams to a separate logfile. It is called by the constructor when the params are set.
 
 ### Enable Remote Syncing (Optional)
 
-If you want to utilize the `CustomSummaryWriter`'s ability to transfer data to a remote TensorBoard host via SSH at regular intervals, follow these steps:
+If you want to use the `CustomSummaryWriter`'s ability to transfer data to a remote TensorBoard host via SSH at regular intervals, follow these steps:
 
-- **Configure SSH and Hostname:**
-   Ensure your SSH host is configured as described in [Connect SSH Host for Tensorboar (Optional)](#connect-ssh-host-for-tensorboard-optional).
-- **Set Sync Intervals:**
-   In your [global.env](./../global.env), set the `TUSTU_SYNC_INTERVAL` to a value greater than 0. This enables data transfer via `rsync` to your remote SSH TensorBoard host.
-- **Increment Steps:**
-   Add `writer.step()` in your epoch train loop to count epochs and trigger syncing at defined intervals.
+- Ensure your SSH host is configured as described in [Connect SSH Host for Tensorboar (Optional)](#connect-ssh-host-for-tensorboard-optional).
+- In your [global.env](./../global.env), set the `TUSTU_SYNC_INTERVAL` to a value greater than 0. This enables data transfer via `rsync` to your remote SSH TensorBoard host.
+- Add `writer.step()` in your epoch train loop to count epochs and trigger syncing at defined intervals.
 
-This process will create a directory (including parent directories) under `$TUSTU_TENSORBOARD_LOGS_DIR/<tustu_project_name>/logs/tensorboard/<dvc_exp_name>` on your SSH server, syncing the log file and updates to this directory. You can change the path in the [global.env](./../global.env) file by setting `TUSTU_TENSORBOARD_LOGS_DIR` to a different location.
+This process creates a directory (including parent directories) under `$TUSTU_TENSORBOARD_LOGS_DIR/$TUSTU_PROJECT_NAME/logs/tensorboard/$DVC_EXP_NAME` on your SSH server and synchronises  the log file and updates to this directory. You can change the path in the [global.env](./../global.env) file by setting `TUSTU_TENSORBOARD_LOGS_DIR` to a different location.
 
 ## 5 - Test and Debug Locally
 
-We recommend testing and debugging your DVC experiment pipeline locally before running it on the HPC Cluster. This process will help you identify and resolve any issues that may arise during the execution of the pipeline.
+We recommend that you test and debug your DVC experiment pipeline locally before running it on the HPC cluster. This process will help you identify and resolve any problems that may occur during pipeline execution.
 
 ### Run the DVC Experiment Pipeline natively
 
@@ -265,7 +267,7 @@ Execute the following command:
 ./exp_workflow.sh
 ```
 
-This script will run the experiment pipeline `dvc exp run` and execute some extra steps like importing the global environment variables and duplicating the repository in a temporary directory to avoid conflicts with the DVC cache when running multiple experiments simultaneously.
+This shell script runs the experiment pipeline (`dvc exp run`) and performs some extra steps such as importing the global environment variables and duplicating the repository into a temporary directory to avoid conflicts with the DVC cache when running multiple experiments simultaneously.
 
 ### Run the DVC Experiment Pipeline in a Docker Container
 
@@ -282,11 +284,11 @@ docker run --rm \
 
 ## 6 - Slurm Job Configuration
 
-This section covers SLURM Job setup for the HPC-Cluster. SLURM manages resource allocation, which we specify in a batch job script. Our goal is to run the DVC experiment pipeline within a Singularity Container on the nodes, pulled and converted from your DockerHub image. The [slurm_job.sh](../slurm_job.sh) template handles these processes, requiring minimal configuration.
+This section covers setting up SLURM jobs for the HPC cluster. SLURM manages resource allocation, which we will specify in a batch job script. Our goal is to run the DVC experiment pipeline inside a Singularity Container on the nodes that have been pulled and converted from your DockerHub image. The batch job script template [slurm_job.sh](../slurm_job.sh) handles these processes and requires minimal configuration.
 
 For single GPU nodes, modify these SBATCH directives in [slurm_job.sh](../slurm_job.sh):
 
-In example replace the project name, select memory usage, and set a time limit:
+In the example replace the project name, select memory usage, and set a time limit:
 
 ```bash
 #SBATCH -J your_project_name
@@ -302,7 +304,7 @@ In example replace the project name, select memory usage, and set a time limit:
 
 ## 7 - HPC Cluster Setup
 
-This section shows you how to set up your project on the HPC Cluster. It assumes prior configurations are already pushed to the Git remote, thus it focuses on reconfiguring git-ignored items and SSH keys. Additionally, it includes general filesystem and storage configurations that are not project-specific.
+This section shows you how to set up your project on the HPC Cluster. It assumes that previous configurations have already been pushed to the Git remote, so it focuses on reconfiguring Git ignored items and SSH keys. It also covers general file system and storage configurations that are not project specific.
 
 ### SSH into the HPC Cluster
 
@@ -323,7 +325,7 @@ mkdir <username>
 
 > **Info:** See [HPC Documentation](https://hpc.tu-berlin.de/doku.php?id=hpc:hardware:beegfs) for information about the filesystem.
 
-Set up a temporary directory on `/scratch` for having more space for temporary files. Then add the `TMPDIR` environment variable to your `.bashrc` so that singularity uses this directory for temporary files. These can get quite large, because singularity uses it for extracting the image and running the container.
+Set up a temporary directory on `/scratch` to have more space for temporary files. Then add the `TMPDIR` environment variable to your `.bashrc` so that singularity uses this directory for temporary files. These can get quite large as singularity uses them to extract the image and run the container.
 
 ```sh
 mkdir <username>/tmp
@@ -337,7 +339,7 @@ Restrict permissions on your subdirectory (Optional):
 chmod 700 <username>/
 ```
 
-Assuming you configured Git already on the HPC-Cluster, clone your Git repository to `/scratch/<username>`:
+Assuming you have already configured Git on the HPC cluster, clone your Git repository to `/scratch/<username>`:
 
 ```sh
 cd <username>
@@ -355,9 +357,9 @@ source venv/bin/activate
 pip install dvc
 ```
 
-> **Warning:** If you don't unload the Python Environment Module, the libraries won't be pip-installed in your virtual environment but in your user site directory!
+> **Warning:** If you don't unload the Python environment module, the libraries won't be pip-installed into your virtual environment but into your user site directory!
 
-Configure DVC remote if local configuration is needed for your remote:
+Configure DVC remote if local configuration is required for your remote:
 
 ```sh
 dvc remote modify --local myremote user 'yourusername'
@@ -375,9 +377,9 @@ You can run the DVC experiment pipeline on the HPC Cluster by submitting a singl
 sbatch slurm_job.sh
 ```
 
-The logs will be saved in the `logs` directory of your repository. You can monitor the job status with `squeue -u <username>` and check the logs with `cat logs/slurm-<job_id>.out`.
+The logs are stored in the `logs` directory of your repository. You can monitor the job status with `squeue -u <username>` and check the logs with `cat logs/slurm/slurm-<job_id>.out` or the tail with `tail -f logs/slurm/slurm-<job_id>.out`.
 
-You can also run multiple trainings with parameter grids or predefined sets, modify `multi_submission.py` and execute it:
+To run multiple submissions with parameter grids or predefined parameter sets, modify `multi_submission.py` and run it:
 
 ```sh
 python multi_submission.py

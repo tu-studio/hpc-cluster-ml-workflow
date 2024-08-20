@@ -1,3 +1,9 @@
+<!--
+Copyright 2024 tu-studio
+This file is licensed under the Apache License, Version 2.0.
+See the LICENSE file in the root of this project for details.
+-->
+
 # User Guide
 
 ## Adding data to DVC remote
@@ -9,7 +15,7 @@ dvc add data/raw
 dvc push
 ```
 
->**Note**: Only necessary if you want to track new data inputs that are not already declared in the `dvc.yaml` file as outputs of a stage.
+>**Note**: Only necessary if you want to track new data inputs that are not already declared in the [dvc.yaml](../dvc.yaml) file as outputs of a stage.
 
 ## Update Docker Image / Dependencies
 

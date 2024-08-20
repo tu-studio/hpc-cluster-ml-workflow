@@ -4,7 +4,10 @@ from source.model import NeuralNetwork
 from pathlib import Path
 
 def main():
+    # Load the hyperparameters from the params yaml file into a Dictionary
     params = config.Params()
+
+    # Load the parameters from the dictionary into variables
     input_size = params['general']['input_size']
     conv1d_strides = params['model']['conv1d_strides']
     conv1d_filters = params['model']['conv1d_filters']

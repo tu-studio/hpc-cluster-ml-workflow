@@ -1,3 +1,7 @@
+# Copyright 2024 tu-studio
+# This file is licensed under the Apache License, Version 2.0.
+# See the LICENSE file in the root of this project for details.
+
 # Use an official Debian runtime with fixed version as a parent image
 FROM debian:11-slim
 
