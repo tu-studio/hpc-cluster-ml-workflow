@@ -95,6 +95,7 @@ Once the setup is complete, you can begin using the setup by referring to the Us
 
 - [Michael Witte](https://github.com/michaelwitte)
 - [Fares Schulz](https://github.com/faressc)
+- [Maxime Hubert](https://github.com/jaimecomprendre)
 
 ## License
 
