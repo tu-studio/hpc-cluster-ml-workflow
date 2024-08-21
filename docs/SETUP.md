@@ -50,9 +50,9 @@ Go to your repository, create a virtual environment and install the required dep
 
 Save the python version of your virtual environment to the global environment file [global.env](./../global.env) (this is necessary for the Docker image build later):
 
-`TUSTU_PYTHON_VERSION`: The Python version for your project
-
 > **Info**: Check your current version with `python --version`.
+
+`TUSTU_PYTHON_VERSION`: The Python version for your project
 
 ### Configure your DVC Remote
 
@@ -140,7 +140,7 @@ pip freeze > requirements.txt
 
 To debug your Docker image locally, install Docker for your operating system / distro. For Windows and macOS, you can install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
-To build your Docker image, use the following command in your project directory. Substitute the placeholder `<your_image_name>` with a name for image: 
+To build your Docker image, use the following command in your project directory. Substitute the placeholder `<your_image_name>` with a name for your image: 
 
 ```sh
 docker build -t <your_image_name> .
@@ -214,12 +214,13 @@ Manually add your stages to the [dvc.yaml](../dvc.yaml) file:
 - The last stage should be left as `save_logs`, which will copy the logs to the DVC experiment branch before the experiment ends and is pushed to the remote.
 > **Note**: The stage scripts should be able to recreate the output directories, as DVC deletes them at the beginning of each stage.
 
-For reproducibility, the script outputs have to be deterministic. Therefore you should use fixed random seeds for all random number generators in your imported libraries as shown in:
+For reproducibility, it's essential that the script outputs remain deterministic. To achieve this, ensure that all random number generators in your imported libraries use fixed random seeds. You can do this by using our utility function as follows:
+
 ```python
 from utils import config
 config.set_random_seeds(random_seed)
 ```
-> **Note**: This function only sets seeds for the `random`, `numpy`, `torch` and `scipy` libraries. Modify the function to add other devices as needed.
+> **Note**: This function only sets seeds for the `random`, `numpy`, `torch` and `scipy` libraries. You can modify this function to include seed setting for any additional libraries or devices that your script relies on.
 
 ## 4 - TensorBoard Metrics
 
@@ -228,7 +229,7 @@ To log your machine learning metrics using TensorBoard, and to enable overview a
 ### Initialize TensorBoard Logging
 - In your training script, import the `logs` module from the `utils` package.
 - Create a logs directory for TensorBoard logs by calling `logs.return_tensorboard_path()`. 
-> **Info**: This function generates a path under `logs/tensorboard/$DVC_EXP_NAME` within the main repository directory and returns the absolute path required to instantiate the `logs.CustomSummaryWriter`.
+> **Info**: This function generates a path under `logs/tensorboard/<time_stamp>_<dvc_exp_name>` within the main repository directory and returns the absolute path required to instantiate the `logs.CustomSummaryWriter`.
 - If you plan to use TensorBoard’s HParams plugin for hyperparameter tuning, initialize a dictionary with the names of the metrics you intend to log. This setup will allow you to easily monitor and compare hyperparameter performance.
 - Create an instance of `logs.CustomSummaryWriter`, which extends the standard TensorBoard `SummaryWriter` class to better support the workflow system of the template. When instantiating, pass the `params` object (as defined in your training script; see [Integrate Hyperparameter Configuration](#integrate-hyperparameter-configuration)) to the `params` argument. This ensures that the hyperparameters are automatically logged along with other metrics in the same TensorBoard log file, making them available for visualization in TensorBoard.
 
@@ -273,7 +274,7 @@ If you want to use the `CustomSummaryWriter`'s ability to transfer data to a rem
 - In your [global.env](./../global.env), set the `TUSTU_SYNC_INTERVAL` to a value greater than 0. This enables data transfer via `rsync` to your remote SSH TensorBoard host.
 - Add `writer.step()` in your epoch train loop to count epochs and trigger syncing at defined intervals.
 
-This process creates a directory (including parent directories) under `<tustu_tensorboard_logs_dir>/<tustu_project_name>/logs/tensorboard/` on your SSH server and synchronises the log file directory and updates to this directory. You can change the base directory in the [global.env](./../global.env) file by setting `TUSTU_TENSORBOARD_LOGS_DIR` to a different location.
+This process creates a directory (including parent directories) under `<tustu_tensorboard_logs_dir>/<tustu_project_name>/logs/tensorboard/` on your SSH server and synchronises the log file and its updates to this directory. You can change the base directory in the [global.env](./../global.env) file by setting `TUSTU_TENSORBOARD_LOGS_DIR` to a different location.
 
 ## 5 - Test and Debug Locally
 
