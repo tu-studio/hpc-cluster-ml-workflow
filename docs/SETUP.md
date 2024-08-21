@@ -231,7 +231,7 @@ To log your machine learning metrics using TensorBoard, and to enable overview a
 - Create a logs directory for TensorBoard logs by calling `logs.return_tensorboard_path()`. 
 > **Info**: This function generates a path under `logs/tensorboard/<time_stamp>_<dvc_exp_name>` within the main repository directory and returns the absolute path required to instantiate the `logs.CustomSummaryWriter`.
 - If you plan to use TensorBoard’s HParams plugin for hyperparameter tuning, initialize a dictionary with the names of the metrics you intend to log. This setup will allow you to easily monitor and compare hyperparameter performance.
-- Create an instance of `logs.CustomSummaryWriter`, which extends the standard TensorBoard `SummaryWriter` class to better support the workflow system of the template. When instantiating, pass the `params` object (as defined in your training script; see [Integrate Hyperparameter Configuration](#integrate-hyperparameter-configuration)) to the `params` argument. This ensures that the hyperparameters are automatically logged along with other metrics in the same TensorBoard log file, making them available for visualization in TensorBoard.
+- Create an instance of `logs.CustomSummaryWriter`, which extends the standard TensorBoard `SummaryWriter` class to better support the workflow system of the template. When instantiating, pass the `Params` object (as defined in your training script; see [Integrate Hyperparameter Configuration](#integrate-hyperparameter-configuration)) to the `params` argument. This ensures that the hyperparameters are automatically logged along with other metrics in the same TensorBoard log file, making them available for visualization in TensorBoard.
 
 ```python
 # train.py
@@ -303,7 +303,7 @@ docker run --rm \
   /home/app/exp_workflow.sh
 ```
 
-## 6 - Slurm Job Configuration
+## 6 - SLURM Job Configuration
 
 This section covers setting up SLURM jobs for the HPC cluster. SLURM manages resource allocation for your task, which we will specify in a batch job script. Our goal is to run the DVC experiment pipeline inside a Singularity Container on the nodes that have been pulled and converted from your DockerHub image. The batch job script template [slurm_job.sh](../slurm_job.sh) handles these processes and requires minimal configuration.
 

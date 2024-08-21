@@ -17,6 +17,8 @@ dvc push
 
 >**Note**: Only necessary if you want to track new data inputs that are not already declared in the [dvc.yaml](../dvc.yaml) file as outputs of a stage.
 
+> **Info**: The files added with DVC should be Git-ignored, but adding with DVC will automatically create .gitignore files. What Git tracks are references with a .dvc suffix (e.g. data/raw.dvc). Make sure you add and push the .dvc files to the Git remote.
+
 ## Update Docker Image / Dependencies
 
 As your requirements change, always update [requirements.txt](../requirements.txt) with your fixed versions:
@@ -61,7 +63,7 @@ git pull # optionally pull the latest changes you have done locally
 
 > **Note**: If you make any changes to the code besides hyperparameter configuration on the cluster, commit and push them before running experiments.
 
-Execute Pipeline Jobs either individually or in parallel. To launch multiple trainings at once with parameter grids or predefined parameter sets, modify `multi_submission.py`:
+Launch pipeline jobs either individually or in parallel. To launch multiple trainings at once with parameter grids or predefined parameter sets, modify `multi_submission.py`:
 
 ```sh
 # submit a single Slurm job:
@@ -72,7 +74,7 @@ venv/bin/python multi_submission.py
 
 ## Monitoring and Logs
 
-### Slurm Job Monitoring
+### SLURM Job Monitoring
 
 Check the status of all jobs associated with your user account:
 
@@ -80,14 +82,14 @@ Check the status of all jobs associated with your user account:
 squeue -u <user_name>
 ```
 
-Monitor Slurm logs in real-time:
+Monitor SLURM logs in real-time:
 
 ```sh
 cd logs/slurm
 tail -f slurm-<slurm_job_id>.out
 ```
 
-To kill a single job using the SLURM job ID or user:
+To kill a single job using the SLURM job id or all jobs per user:
 
 ```sh
 # Per job id
@@ -103,6 +105,8 @@ To start TensorBoard remotely on the SSH Host and access it in your browser:
 ```sh
 tensorboard --logdir=Data/<tustu_project_name>/logs/tensorboard --path_prefix=/tb1
 ```
+
+> **Note**: For an overview of all DVC experiments, it is important to start TensorBoard on the collected logs folder tensorboard/, where all experiments are organized in subdirectories.
 
 Access TensorBoard via your browser at:
 
@@ -147,7 +151,7 @@ dvc exp pull origin
 # List experiments
 dvc exp show
 # Apply a specific experiment
-dvc exp apply <dvc_exp_name>.
+dvc exp apply <dvc_exp_name>
 ```
 
 > **Note**: By default, experiments are tied to the specific Git commit of their execution. Therefore the commands `dvc exp pull origin` and `dvc exp show` only work for experiments associated with the same commit used when the experiment was created. To pull and show experiments from a different or all commits, you can use specific flags as outlined in the [DVC documentation](https://dvc.org/doc/command-reference/experiments).
@@ -162,7 +166,7 @@ To clean up copies of repositories of failed experiments, use this command from 
 rm -rf tmp/
 ```
 
-For information on cleaning up the cache, refer to the [DVC Documentation](https://dvc.org/doc/command-reference/gc).
+For information on cleaning up the DVC cache, refer to the [DVC Documentation](https://dvc.org/doc/command-reference/gc).
 
 > **Note**: Be careful with this, as we are using a shared cache between parallel experiment runs.
 
