@@ -11,18 +11,18 @@ This template provides a structured workflow tailored for audio machine learning
 ## Features
 
 - **Reproducible Experiments**
-  - **Comprehensive Versioning**: Tracks dependencies, configurations, and artifacts to ensure experiments can be easily reproduced and shared.
-  - **Consistent Environments**: Uses containerization to maintain consistency across different systems.
+  - Tracks all dependencies, configurations, and artifacts to ensure experiments can be easily reproduced and shared.
+  - Uses containerization to maintain consistency across different systems.
 - **Resource Optimization**
-  - **Efficient Execution**: Reuses unchanged stages to avoid redundant computations, speeding up workflows and conserving resources.
+  - Reuses unchanged stages to avoid redundant computations, speeding up workflows and conserving resources.
 - **Automation**
-  - **Automated Workflows**: Reduces manual tasks through automated builds, data pipelines, and syncing, allowing you to focus on research.
+  - Reduces manual tasks through automated builds, data pipelines, and syncing, allowing you to focus on research.
 - **HPC Integration**
-  - **Parallel Execution**: Extends DVC for multi-node parallel experiments, optimizing HPC resource utilization.
-  - **Docker & Singularity Support**: Supports Docker for development, with automated conversion to Singularity for seamless HPC deployment.
+  - Extends DVC for multi-node parallel experiments, optimizing HPC resource utilization.
+  - Supports Docker for development, with automated conversion to Singularity for seamless HPC deployment.
 - **TensorBoard Integration**:
-  - **Unified Dashboard**: Provides visualization and comparison of DVC experiments with audio logging support.
-  - **Live Metrics**: Enables real-time monitoring and quick decisions on underperforming runs.
+  - Provides visualization and comparison of DVC experiments with audio logging support of TensorBoard.
+  - Enables real-time monitoring and quick decisions on underperforming runs.
   
 ## Overview
 
