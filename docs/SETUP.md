@@ -159,7 +159,7 @@ docker run -it -rm <your_image_name> /bin/bash
 
 ### Automated Image Builds with GitHub Actions
 
-- After testing your initial Docker image locally, use the GitHub Actions workflow for automatic builds. 
+After testing your initial Docker image locally, use the GitHub Actions workflow for automatic builds: 
 - Make sure your dependency versions are fixed in requirements.txt.
 - Push your changes to GitHub and the provided workflow [docker_image.yml](../.github/workflows/docker_image.yml) builds the Docker image and pushes it to your configured Docker registry.
 - It is triggered whenever the [Dockerfile](../Dockerfile), the [requirements.txt](../requirements.txt) or the workflow itself is modified.
