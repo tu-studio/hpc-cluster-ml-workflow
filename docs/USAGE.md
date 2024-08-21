@@ -6,7 +6,7 @@ See the LICENSE file in the root of this project for details.
 
 # User Guide
 
-## Adding data to DVC remote
+## Adding new data to your DVC remote
 
 To track and add new data inputs (e.g., `data/raw`):
 
@@ -19,21 +19,23 @@ dvc push
 
 ## Update Docker Image / Dependencies
 
-As your requirements change, always update `requirements.txt` with your fixed versions:
+As your requirements change, always update [requirements.txt](../requirements.txt) with your fixed versions:
 
 ```sh
 pip freeze > requirements.txt
 ```
 
-Docker images are automatically rebuilt and pushed to Docker Hub when `requirements.txt`, `Dockerfile`, or `docker_image.yml` are updated by the GitHub workflow. If you trigger an image build, ensure it is completed and pushed before proceeding.
+Docker images are automatically rebuilt and pushed to Docker Hub by the GitHub workflow when [requirements.txt](../requirements.txt), [Dockerfile](../Dockerfile), or [docker_image.yml](../.github/workflows/docker_image.yml) are updated and pushed to GitHub. If you trigger an image build, ensure it is completed and pushed to Docker Hub before proceeding.
 
-**Note**: On the HPC cluster, the Docker image is automatically pulled and converted to a Singularity image with the command `singularity pull docker://<your_image_name>` in the `slurm_job.sh` script.
+> **Note**: For the free `docker/build-push-action`, there is a 14GB storage limit for free public repositories on GitHub runners ([About GitHub runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners)). Therefore, the Docker image must not exceed this size.
+
+> **Info**: On the HPC cluster, the Docker image is automatically pulled and converted to a Singularity image with the command `singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:latest` in the `slurm_job.sh` script. 
 
 ## Launch ML Pipeline
 
 ### Locally natively or with Docker
 
-To run the entire pipeline locally, execute the following command:
+To run the entire pipeline locally, execute the following command with the appropriate image name substituted for the placeholder `<your_image_name>`:
 
 ```sh
 # natively
@@ -49,7 +51,7 @@ docker run --rm \
 
 ### On the HPC Cluster
 
-Log into the High-Performance Computing (HPC) cluster using your SSH config and key and navigate to your repository:
+Log into the High-Performance Computing (HPC) cluster using your SSH config and key and navigate to your repository. Substitute the appropriate names for the placeholders `<username>` and `<repository>`:
 
 ```sh
 ssh hpc
@@ -57,12 +59,14 @@ cd /scratch/<username>/<repository>
 git pull # optionally pull the latest changes you have done locally
 ```
 
-Execute Pipeline Jobs either individually or in parallel. To launch multiple trainings with parameter grids or predefined sets, modify `multi_submission.py`:
+> **Note**: If you make any changes to the code besides hyperparameter configuration on the cluster, commit and push them before running experiments.
+
+Execute Pipeline Jobs either individually or in parallel. To launch multiple trainings at once with parameter grids or predefined parameter sets, modify `multi_submission.py`:
 
 ```sh
 # submit a single Slurm job:
 sbatch slurm_job.sh
-# submit multiple Slurm jobs:
+# submit multiple Slurm jobs at once:
 venv/bin/python multi_submission.py
 ```
 
@@ -83,7 +87,7 @@ cd logs/slurm
 tail -f slurm-<slurm_job_id>.out
 ```
 
-To kill a single job using the Slurm job ID or user:
+To kill a single job using the SLURM job ID or user:
 
 ```sh
 # Per job id
@@ -108,7 +112,7 @@ Access TensorBoard via your browser at:
 
 ### Local Monitoring with TensorBoard
 
-Set up a cron job to rsync logs to your tensorboard logs and start TensorBoard to monitor experiments:
+Set up a cron job to rsync the logs from the cluster to your local logs directory and launch TensorBoard to monitor experiments:
 
 ```sh
 tensorboard --logdir=logs/tensorboard
@@ -124,9 +128,9 @@ localhost:6006
 
 ## DVC Experiment Retrieval
 
-Each time we run the pipeline, DVC creates a new experiment. These are saved as custom git references that can be retrieved and applied to your workspace. These references do not appear in the git log, but are stored in the `.git/refs/exps` directory and can be pushed to the remote git repository. This is done automatically at the end of the [exp_workflow.sh](../exp_workflow.sh) with `dvc exp push origin`. All outputs and dependencies are stored in the `.dvc/cache` directory and pushed to the remote dvc storage when the experiment is pushed. Since we create a new temporary copy of the repository for each pipeline run (and delete it at the end), the experiments will not automatically appear in the main repository.
+Each time we run the pipeline, DVC creates a new experiment. These are saved as custom Git references that can be retrieved and applied to your workspace. These references do not appear in the Git log, but are stored in the `.git/refs/exps` directory and can be pushed to the remote git repository. This is done automatically at the end of the [exp_workflow.sh](../exp_workflow.sh) with `dvc exp push origin`. All outputs and dependencies are stored in the `.dvc/cache` directory and pushed to the remote dvc storage when the experiment is pushed. Since we create a new temporary copy of the repository for each pipeline run (and delete it at the end), the experiments will not automatically appear in the main repository.
 
-To retrieve, view, and apply an experiment, do the following (either locally or on the HPC cluster)
+To retrieve, view, and apply an experiment, do the following (either locally or on the HPC cluster):
 
 ```sh
 # Get all experiments from remote
@@ -134,9 +138,31 @@ dvc exp pull origin
 # List experiments
 dvc exp show
 # Apply a specific experiment
-dvc exp apply <exp_name>.
+dvc exp apply <dvc_exp_name>.
 ```
 
-> **Note**: By default, experiments are bound to the git commit when they were run. Therefore the commands `dvc exp pull` and `show` will work on experiments from the same commit as when the experiment was created. To pull, show or apply experiments from a different commit, you can use flags defined in the [DVC documentation](https://dvc.org/doc/command-reference/experiments).
+> **Note**: By default, experiments are tied to the specific Git commit of their execution. Therefore the commands `dvc exp pull origin` and `dvc exp show` only work for experiments associated with the same commit used when the experiment was created. To pull and show experiments from a different or all commits, you can use specific flags as outlined in the [DVC documentation](https://dvc.org/doc/command-reference/experiments).
 
-> **Tip**: You can also get the git ref hash of the experiment from `dvc exp show` and do a git diff.
+> **Tip**: You can also get the Git ref hash of the experiment from `dvc exp show` and do a `git diff`.
+
+## Troubleshooting
+
+If the [exp_workflow.sh](../exp_workflow.sh) did not run through all steps, the temporary subdirectory in `tmp/` in the root of the repository, will not be deleted. If the `dvc exp push origin` failed, you can `cd` into the subdirectory in `tmp/` and manually try to push the experiment again:
+
+```sh
+cd tmp/<experiment_subdirectory>
+dvc exp push origin
+```
+
+## Clean Up
+
+To clean up copies of repositories of failed experiments, use this command from the root of your repository:
+
+```sh
+rm -rf tmp/
+```
+
+For information on cleaning up the cache, refer to the [DVC Documentation](https://dvc.org/doc/command-reference/gc).
+
+
+
