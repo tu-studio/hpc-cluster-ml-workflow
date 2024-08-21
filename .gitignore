@@ -11,6 +11,7 @@ venv
 
 # Ignore data files
 logs/*/*
+logs/local_rsync_output.log
 /models
 /exp_logs/*
 
