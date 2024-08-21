@@ -126,9 +126,18 @@ localhost:6006
 
 > **Tip**: You can also view TensorBoard logs in VSCode using the official extension.
 
+## Troubleshooting
+
+If the [exp_workflow.sh](../exp_workflow.sh) did not run through all steps, the temporary subdirectory in `tmp/` in the root of the repository, will not be deleted. If for example the `dvc exp push origin` failed, you can `cd` into the subdirectory in `tmp/` and manually try to push the experiment again:
+
+```sh
+cd tmp/<experiment_subdirectory>
+dvc exp push origin
+```
+
 ## DVC Experiment Retrieval
 
-Each time we run the pipeline, DVC creates a new experiment. These are saved as custom Git references that can be retrieved and applied to your workspace. These references do not appear in the Git log, but are stored in the `.git/refs/exps` directory and can be pushed to the remote git repository. This is done automatically at the end of the [exp_workflow.sh](../exp_workflow.sh) with `dvc exp push origin`. All outputs and dependencies are stored in the `.dvc/cache` directory and pushed to the remote dvc storage when the experiment is pushed. Since we create a new temporary copy of the repository for each pipeline run (and delete it at the end), the experiments will not automatically appear in the main repository.
+Each time we run the pipeline, DVC creates a new experiment. These are saved as custom Git references that can be retrieved and applied to your workspace. These references do not appear in the Git log, but are stored in the `.git/refs/exps` directory and can be pushed to the remote Git repository. This is done automatically at the end of the [exp_workflow.sh](../exp_workflow.sh) with `dvc exp push origin`. All outputs and dependencies are stored in the `.dvc/cache` directory and pushed to the remote DVC storage when the experiment is pushed. Since we create a new temporary copy of the repository for each pipeline run (and delete it at the end), the experiments will not automatically appear in the main repository.
 
 To retrieve, view, and apply an experiment, do the following (either locally or on the HPC cluster):
 
@@ -145,15 +154,6 @@ dvc exp apply <dvc_exp_name>.
 
 > **Tip**: You can also get the Git ref hash of the experiment from `dvc exp show` and do a `git diff`.
 
-## Troubleshooting
-
-If the [exp_workflow.sh](../exp_workflow.sh) did not run through all steps, the temporary subdirectory in `tmp/` in the root of the repository, will not be deleted. If the `dvc exp push origin` failed, you can `cd` into the subdirectory in `tmp/` and manually try to push the experiment again:
-
-```sh
-cd tmp/<experiment_subdirectory>
-dvc exp push origin
-```
-
 ## Clean Up
 
 To clean up copies of repositories of failed experiments, use this command from the root of your repository:
@@ -163,6 +163,9 @@ rm -rf tmp/
 ```
 
 For information on cleaning up the cache, refer to the [DVC Documentation](https://dvc.org/doc/command-reference/gc).
+
+> **Note**: Be careful with this, as we are using a shared cache between parallel experiment runs.
+
 
 
 

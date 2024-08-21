@@ -397,7 +397,7 @@ sbatch slurm_job.sh
 
 The logs are stored in the `logs` directory of your repository. You can monitor the job status with `squeue -u <username>` and check the logs with `cat logs/slurm/slurm-<job_id>.out` or the tail with `tail -f logs/slurm/slurm-<job_id>.out`.
 
-To run multiple submissions with parameter grids or predefined parameter sets, modify `multi_submission.py` and run:
+To run multiple submissions with a parameter grid or predefined parameter sets, modify [multi_submission.py](../multi_submission.py) and run:
 
 ```sh
 python multi_submission.py
