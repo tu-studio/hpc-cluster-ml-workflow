@@ -167,7 +167,6 @@ def copy_tensorboard_logs() -> str:
     tensorboard_logs_source = Path(f"{default_dir}/logs/tensorboard")
     tensorboard_logs_destination = Path(f"exp_logs/tensorboard")
     tensorboard_logs_destination.mkdir(parents=True, exist_ok=True)
-    dir_name = None
     for f in tensorboard_logs_source.iterdir():
         if f.is_dir() and f.name.endswith(dvc_exp_name):
             dir_name = f.name
@@ -177,7 +176,7 @@ def copy_tensorboard_logs() -> str:
             print(
                 f"TensorBoard log '{f.name}' copied to '{tensorboard_logs_destination / f.name}'"
             )
-            return dir_name
+            return f.name
 
 
 def copy_slurm_logs(dir_name) -> None:
@@ -196,7 +195,9 @@ def copy_slurm_logs(dir_name) -> None:
     default_dir = config.get_env_variable("DEFAULT_DIR")
     current_slurm_job_id = config.get_env_variable("SLURM_JOB_ID")
     dvc_exp_name = config.get_env_variable("DVC_EXP_NAME")
-
+    
+    if dir_name is None:
+        raise ValueError("dir_name is None.")
     if not dir_name.endswith(dvc_exp_name):
         raise ValueError(f"Directory '{dir_name}' does not end with '{dvc_exp_name}'")
 
