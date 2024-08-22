@@ -6,8 +6,8 @@ on:
       - 'Dockerfile'
       - 'requirements.txt'
       - '.github/workflows/docker_image.yml'
-    tags:
-      - 'v*.*.*'
+    # tags:
+    #   - 'v*.*.*'
   pull_request:
     paths:
       - 'Dockerfile'
