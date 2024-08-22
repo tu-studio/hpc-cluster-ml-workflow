@@ -209,7 +209,7 @@ def copy_slurm_logs(dir_name) -> None:
             for f in slurm_logs_source.iterdir():
                 if f.is_file() and f.name.endswith(current_slurm_job_id + ".out"):
                     shutil.copy(f, slurm_logs_destination)
-        print(f"SLURM log 'slurm-{current_slurm_job_id}.out' copied.")
+        print(f"SLURM log 'slurm-{current_slurm_job_id}.out' copied to {slurm_logs_destination / f.name}.")
     else:
         print("No SLURM_JOB_ID found. Skipping SLURM logs copying.")
 
