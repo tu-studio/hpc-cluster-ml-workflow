@@ -64,18 +64,14 @@ class CustomSummaryWriter(SummaryWriter):
 
     def _construct_remote_dir(self) -> str:
         """Constructs the remote directory path based on environment variables."""
-        tensorboard_host_dir = config.get_env_variable(
-            "TUSTU_TENSORBOARD_HOST_DIR"
-        )
+        tensorboard_host_dir = config.get_env_variable("TUSTU_TENSORBOARD_HOST_DIR")
         tensorboard_host = config.get_env_variable("TUSTU_TENSORBOARD_HOST")
         tensorboard_host_savepath = Path(
             f'{tensorboard_host_dir}/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard'
         )
         return f"{tensorboard_host}:{tensorboard_host_savepath}"
 
-    def _extract_datetime_from_log_dir(
-        self, log_dir: Union[str, PosixPath]
-    ) -> str:
+    def _extract_datetime_from_log_dir(self, log_dir: Union[str, PosixPath]) -> str:
         """Extracts datetime information from the log directory path."""
         return str(log_dir).split("/")[-1].split("_")[0]
 
@@ -88,9 +84,7 @@ class CustomSummaryWriter(SummaryWriter):
         """Logs hyperparameters and initial metrics to TensorBoard."""
         params = params.flattened_copy()
         params["datetime"] = self.datetime
-        self._add_hparams(
-            hparam_dict=params, metric_dict=metrics, run_name=log_dir
-        )
+        self._add_hparams(hparam_dict=params, metric_dict=metrics, run_name=log_dir)
 
     def step(self) -> None:
         """
@@ -105,9 +99,7 @@ class CustomSummaryWriter(SummaryWriter):
     def _sync_logs(self) -> None:
         """Synchronizes the logs with the remote directory."""
         # path = f'mkdir -p {self.remote_dir} && rsync'
-        os.system(
-            f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}"
-        )
+        os.system(f"rsync -rv --inplace --progress {self.log_dir} {self.remote_dir}")
 
     def _add_hparams(
         self,
@@ -128,16 +120,10 @@ class CustomSummaryWriter(SummaryWriter):
         Raises:
             TypeError: If `hparam_dict` or `metric_dict` are not dictionaries.
         """
-        if not isinstance(hparam_dict, dict) or not isinstance(
-            metric_dict, dict
-        ):
-            raise TypeError(
-                "hparam_dict and metric_dict should be dictionary."
-            )
+        if not isinstance(hparam_dict, dict) or not isinstance(metric_dict, dict):
+            raise TypeError("hparam_dict and metric_dict should be dictionary.")
 
-        exp, ssi, sei = hparams(
-            hparam_dict, metric_dict, hparam_domain_discrete
-        )
+        exp, ssi, sei = hparams(hparam_dict, metric_dict, hparam_domain_discrete)
 
         self.file_writer.add_summary(exp)
         self.file_writer.add_summary(ssi)
@@ -167,44 +153,56 @@ def return_tensorboard_path() -> PosixPath:
     return tensorboard_path
 
 
-def copy_logs(
-    source_dir: PosixPath, destination_dir: PosixPath, log_type: str
-) -> None:
+def copy_tensorboard_logs() -> None:
     """
-    Copies logs from a source directory to a destination directory.
+    Copies the TensorBoard logs specific to the current experiment from the host directory
+    to the temporary experiment directory.
 
-    Args:
-        source_dir (str): The directory where logs are stored.
-        destination_dir (str): The destination directory where logs will be copied.
-        log_type (str): Type of logs being copied (e.g., 'slurm', 'tensorboard').
+    Returns:
+        str: The name of the copied directory.
     """
-    source_path = Path(source_dir)
-    destination_path = Path(destination_dir)
-    destination_path.mkdir(parents=True, exist_ok=True)
+    default_dir = config.get_env_variable("DEFAULT_DIR")
+    dvc_exp_name = config.get_env_variable("DVC_EXP_NAME")
 
-    for file_path in source_path.iterdir():
-        if file_path.is_file():
-            shutil.copy(file_path, destination_path / file_path.name)
-        if file_path.is_dir():
-            shutil.copytree(file_path, destination_path / file_path.name)
+    tensorboard_logs_source = Path(f"{default_dir}/logs/tensorboard")
+    tensorboard_logs_destination = Path(f"exp_logs/tensorboard")
+    tensorboard_logs_destination.mkdir(parents=True, exist_ok=True)
+    dir_name = None
+    for f in tensorboard_logs_source.iterdir():
+        if f.is_dir() and f.name.endswith(dvc_exp_name):
+            dir_name = f.name
+            shutil.copytree(
+                f, tensorboard_logs_destination / f.name, dirs_exist_ok=True
+            )
+            print(
+                f"TensorBoard log '{f.name}' copied to '{tensorboard_logs_destination / f.name}'"
+            )
+            return dir_name
 
-    print(f"{log_type.capitalize()} logs copied to {destination_path}")
 
-
-def copy_slurm_logs() -> None:
+def copy_slurm_logs(dir_name) -> None:
     """
     Copies the SLURM logs specific to the current experiment from the host directory
     to the temporary experiment directory.
 
     If the SLURM_JOB_ID is not found, the copying process is skipped.
+
+    Args:
+        dir_name (str): The name of the directory to copy the SLURM logs to.
+
+    Raises:
+        ValueError: If the directory name does not end with the DVC experiment name.
     """
     default_dir = config.get_env_variable("DEFAULT_DIR")
     current_slurm_job_id = config.get_env_variable("SLURM_JOB_ID")
     dvc_exp_name = config.get_env_variable("DVC_EXP_NAME")
 
+    if not dir_name.endswith(dvc_exp_name):
+        raise ValueError(f"Directory '{dir_name}' does not end with '{dvc_exp_name}'")
+
     if current_slurm_job_id:
         slurm_logs_source = Path(f"{default_dir}/logs/slurm")
-        slurm_logs_destination = Path(f"exp_logs/slurm/{dvc_exp_name}")
+        slurm_logs_destination = Path(f"exp_logs/slurm/{dir_name}")
         slurm_logs_destination.mkdir(parents=True, exist_ok=True)
         if current_slurm_job_id is not None:
             for f in slurm_logs_source.iterdir():
@@ -215,26 +213,10 @@ def copy_slurm_logs() -> None:
         print("No SLURM_JOB_ID found. Skipping SLURM logs copying.")
 
 
-def copy_tensorboard_logs() -> None:
-    """
-    Copies the TensorBoard logs specific to the current experiment from the host directory
-    to the temporary experiment directory.
-    """
-    default_dir = config.get_env_variable("DEFAULT_DIR")
-    dvc_exp_name = config.get_env_variable("DVC_EXP_NAME")
-
-    tensorboard_logs_source = Path(f"{default_dir}/logs/tensorboard")
-    tensorboard_logs_destination = Path(f"exp_logs/tensorboard")
-    tensorboard_logs_destination.mkdir(parents=True, exist_ok=True)
-    for f in tensorboard_logs_source.iterdir():
-        if f.is_dir() and f.name.endswith(dvc_exp_name):
-            shutil.copytree(f, tensorboard_logs_destination)
-
-
 def main():
     """Main function to copy SLURM and TensorBoard logs."""
-    copy_slurm_logs()
-    copy_tensorboard_logs()
+    dir_name = copy_tensorboard_logs()
+    copy_slurm_logs(dir_name=dir_name)
 
 
 if __name__ == "__main__":
