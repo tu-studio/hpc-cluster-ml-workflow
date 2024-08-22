@@ -167,28 +167,28 @@ def return_tensorboard_path() -> PosixPath:
     return tensorboard_path
 
 
-def copy_logs(
-    source_dir: PosixPath, destination_dir: PosixPath, log_type: str
-) -> None:
-    """
-    Copies logs from a source directory to a destination directory.
+# def copy_logs(
+#     source_dir: PosixPath, destination_dir: PosixPath, log_type: str
+# ) -> None:
+#     """
+#     Copies logs from a source directory to a destination directory.
 
-    Args:
-        source_dir (str): The directory where logs are stored.
-        destination_dir (str): The destination directory where logs will be copied.
-        log_type (str): Type of logs being copied (e.g., 'slurm', 'tensorboard').
-    """
-    source_path = Path(source_dir)
-    destination_path = Path(destination_dir)
-    destination_path.mkdir(parents=True, exist_ok=True)
+#     Args:
+#         source_dir (str): The directory where logs are stored.
+#         destination_dir (str): The destination directory where logs will be copied.
+#         log_type (str): Type of logs being copied (e.g., 'slurm', 'tensorboard').
+#     """
+#     source_path = Path(source_dir)
+#     destination_path = Path(destination_dir)
+#     destination_path.mkdir(parents=True, exist_ok=True)
 
-    for file_path in source_path.iterdir():
-        if file_path.is_file():
-            shutil.copy(file_path, destination_path / file_path.name)
-        if file_path.is_dir():
-            shutil.copytree(file_path, destination_path / file_path.name)
+#     for file_path in source_path.iterdir():
+#         if file_path.is_file():
+#             shutil.copy(file_path, destination_path / file_path.name)
+#         if file_path.is_dir():
+#             shutil.copytree(file_path, destination_path / file_path.name)
 
-    print(f"{log_type.capitalize()} logs copied to {destination_path}")
+#     print(f"{log_type.capitalize()} logs copied to {destination_path}")
 
 
 def copy_slurm_logs() -> None:
@@ -228,7 +228,8 @@ def copy_tensorboard_logs() -> None:
     tensorboard_logs_destination.mkdir(parents=True, exist_ok=True)
     for f in tensorboard_logs_source.iterdir():
         if f.is_dir() and f.name.endswith(dvc_exp_name):
-            shutil.copytree(f, tensorboard_logs_destination)
+            shutil.copytree(f, tensorboard_logs_destination / f.name, dirs_exist_ok=True)
+            print(f"TensorBoard log '{f.name}' copied to '{tensorboard_logs_destination / f.name}'")
 
 
 def main():
