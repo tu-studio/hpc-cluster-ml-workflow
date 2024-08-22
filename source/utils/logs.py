@@ -205,10 +205,11 @@ def copy_slurm_logs() -> None:
     if current_slurm_job_id:
         slurm_logs_source = Path(f"{default_dir}/logs/slurm")
         slurm_logs_destination = Path(f"exp_logs/slurm/{dvc_exp_name}")
+        slurm_logs_destination.mkdir(parents=True, exist_ok=True)
         if current_slurm_job_id is not None:
             for f in slurm_logs_source.iterdir():
                 if f.is_file() and f.name.endswith(current_slurm_job_id + ".out"):
-                    copy_logs(slurm_logs_source, slurm_logs_destination, "slurm")
+                    shutil.copy(f, slurm_logs_destination)
         print(f"SLURM log 'slurm-{current_slurm_job_id}.out' copied.")
     else:
         print("No SLURM_JOB_ID found. Skipping SLURM logs copying.")
@@ -224,9 +225,10 @@ def copy_tensorboard_logs() -> None:
 
     tensorboard_logs_source = Path(f"{default_dir}/logs/tensorboard")
     tensorboard_logs_destination = Path(f"exp_logs/tensorboard")
+    tensorboard_logs_destination.mkdir(parents=True, exist_ok=True)
     for f in tensorboard_logs_source.iterdir():
         if f.is_dir() and f.name.endswith(dvc_exp_name):
-            copy_logs(f, tensorboard_logs_destination, "tensorboard")
+            shutil.copytree(f, tensorboard_logs_destination)
 
 
 def main():
