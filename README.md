@@ -5,19 +5,17 @@ See the LICENSE file in the root of this project for details.
 -->
 
 # HPC-Cluster-ML-Workflow 
-
 This template provides a structured workflow tailored for audio machine learning research on the [HPC Cluster of ZECM at TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc). It was developed for projects that require continuous management of multiple experiments to ensure high reproducibility and reliability of results. By incorporating tools such as DVC, Docker, and TensorBoard, the template not only enhances reproducibility but also provides a robust framework for effective collaboration and seamless sharing of experiments.
 
 ## Features
-
-- **Reproducible Experiments**
+- **Reproducible Experiments**:
   - Tracks all dependencies, configurations, and artifacts to ensure experiments can be easily reproduced and shared.
   - Uses containerization to maintain consistency across different systems.
-- **Resource Optimization**
+- **Resource Optimization**:
   - Reuses unchanged stages to avoid redundant computations, speeding up workflows and conserving resources.
-- **Automation**
+- **Automation**:
   - Reduces manual tasks through automated builds, data pipelines, and syncing, allowing you to focus on research.
-- **HPC Integration**
+- **HPC Integration**:
   - Extends DVC for multi-node parallel experiments, optimizing HPC resource utilization.
   - Supports Docker for development, with automated conversion to Singularity for seamless HPC deployment.
 - **TensorBoard Integration**:
@@ -25,7 +23,6 @@ This template provides a structured workflow tailored for audio machine learning
   - Enables real-time monitoring and quick decisions on underperforming runs.
   
 ## Overview
-
 The table below summarizes the key tools involved in the HPC-Cluster-ML-Workflow, detailing their primary roles and providing links to their official documentation for further reference.
 
 <table align="center" style="width: 60%; border-collapse: collapse;">
@@ -80,27 +77,22 @@ The figure below offers a simplified overview of how data is transferred between
 - Docker Hub account.
 
 ## Setup 
-
-This template repository offers a simple PyTorch example project that you can customize, reuse, or reference for your pipeline implementation. Follow the detailed setup instructions below to guide you through the configuration process.
+Follow the setup instructions below for step-by-step guidance on configuring this template repository, which offers a basic PyTorch project that you can customize, reuse, or reference for your pipeline implementation.
 
 - [Setup Instructions](docs/SETUP.md)
 
 ## Usage
-
 Once the setup is complete, you can begin using the setup by referring to the User Guide provided. This guide will help you to understand how to develop, initiate experiments and monitor your training processes.
 
 - [User Guide](docs/USAGE.md)
 
 ## Contributors
-
 - [Michael Witte](https://github.com/michaelwitte)
 - [Fares Schulz](https://github.com/faressc)
 - [Maxime Hubert](https://github.com/jaimecomprendre)
 
 ## License
-
 This project is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE). 
 
 ## References
-
 **Schulz, F. [faressc]. (n.d.). *Guitar LSTM* [pytorch-version]. GitHub. [Link](https://github.com/faressc/GuitarLSTM/tree/main/pytorch-version)**
