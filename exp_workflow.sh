@@ -14,20 +14,6 @@ export DEFAULT_DIR="$PWD"
 
 TUSTU_TMP_DIR=tmp
 
-# Return function that will be called on exit or error
-return_to_default_dir() {
-    # Disable the trap to prevent re-entry
-    trap - EXIT SIGINT SIGTERM
-    echo "Trap triggered: Returning to $DEFAULT_DIR"
-    if [[ "$PWD" != "$DEFAULT_DIR" ]]; then
-        cd "$DEFAULT_DIR" || {
-            echo "Failed to return to $DEFAULT_DIR"
-            exit 1
-        }
-    fi
-    echo "Return function completed."
-}
-
 # Create a new sub-directory in the temporary directory for the experiment
 echo "Creating temporary sub-directory..." &&
 # Generate a unique ID with the current timestamp, process ID, and hostname for the sub-directory
