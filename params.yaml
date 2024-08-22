@@ -14,5 +14,3 @@ train:
   learning_rate: 0.01
   epochs: 1
   device_request: 'mps'   
-
-
