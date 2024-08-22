@@ -195,7 +195,7 @@ def copy_slurm_logs(dir_name) -> None:
     default_dir = config.get_env_variable("DEFAULT_DIR")
     current_slurm_job_id = config.get_env_variable("SLURM_JOB_ID")
     dvc_exp_name = config.get_env_variable("DVC_EXP_NAME")
-    
+
     if dir_name is None:
         raise ValueError("dir_name is None.")
     if not dir_name.endswith(dvc_exp_name):

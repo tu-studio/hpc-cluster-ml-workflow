@@ -40,5 +40,7 @@ stages:
     - models/exports/
   save_logs:
     cmd: python3 -m source.utils.logs
+    deps:
+    - source/utils/logs.py
     outs:
     - exp_logs/
