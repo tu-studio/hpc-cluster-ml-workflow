@@ -7,12 +7,30 @@
 # Description: This script runs an experiment with DVC within a temporary directory copy and pushes the results to the DVC and Git remote.
 
 # Set environment variables defined in global.env
-export $(grep -v '^#' global.env | xargs)
+set -o allexport
+source global.env
+set +o allexport
 
 # Define DEFAULT_DIR in the host environment
 export DEFAULT_DIR="$PWD"
-
 TUSTU_TMP_DIR=tmp
+
+# Setup a global git configuration if beeing inside a docker container
+# Docker containers create a /.dockerenv file in the root directory
+if [ -f /.dockerenv ]; then
+    if [ -f local.env ]; then
+        source local.env;
+    fi
+    if [ -z "$TUSTU_GIT_USERNAME" ] || [ -z "$TUSTU_GIT_EMAIL" ]; then
+        echo "[ERROR] Please create a local.env with the vars:";
+        echo "TUSTU_GIT_USERNAME=MY NAME";
+        echo "TUSTU_GIT_EMAIL=myemail@domain.com";
+        exit 1;
+    fi
+    git config --global user.name "$TUSTU_GIT_USERNAME"
+    git config --global user.email "$TUSTU_GIT_EMAIL"
+    git config --global safe.directory "$PWD"
+fi
 
 # Create a new sub-directory in the temporary directory for the experiment
 echo "Creating temporary sub-directory..." &&
@@ -31,7 +49,8 @@ if [ -f ".dvc/config.local" ]; then
 fi;
 echo ".git";
 } | while read file; do
-    rsync -aR "$file" $TUSTU_EXP_TMP_DIR;
+    # --chown flag is needed for docker to avoid permission issues
+    rsync -aR --chown $(id -u):$(id -g) "$file" $TUSTU_EXP_TMP_DIR;
 done &&
 
 # Change the working directory to the temporary sub-directory

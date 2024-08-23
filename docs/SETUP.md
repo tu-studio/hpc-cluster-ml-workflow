@@ -292,15 +292,53 @@ This shell script runs the experiment pipeline (`dvc exp run`) and performs some
 
 ### Run the DVC Experiment Pipeline in a Docker Container
 
-To run the Docker container with repository, SSH and Git-gonfig bindings use the following command with the appropriate image name substituted for the placeholder `<your_image_name>`:
+In order to run the DVC experiment pipeline in a Docker container we need to first setup a docker volume containing our local ssh setup. Since the local ssh setup is not visible to the docker container, we will then mount the volume to the container. A simple bind mount will allways work, because the .ssh folder ownership is not changed.
+
+To create the Docker volume, use the following command:
+
+```sh
+docker volume create --name ssh-config
+```
+
+In order to copy the local ssh setup to the Docker volume, we are obliged to create a temporary container that binds the volume.
+
+```sh
+docker run -it --rm -v ssh-config:/root/.ssh -v $HOME/.ssh:/local-ssh alpine:latest
+# Inside the container
+cp -r /local-ssh/* /root/.ssh/
+# Copying the files will change the ownership to root
+# Check your the files
+ls -la /root/.ssh/
+```
+
+> **Info**: This will not change the ownership of the files on your local machine.
+
+Next as dvc needs the git username and email to be set, we will create a `local.env` file in the repository root directory with the following content:
+
+```env
+TUSTU_GIT_USERNAME="Your Name"
+TUSTU_GIT_EMAIL="name@domain.com"
+```
+
+> **Info**: This file is git-ignored and is read by the [exp_workflow.sh](./../exp_workflow.sh) script. It will then configure git with the provided username and email every time the script is run. Your local git configuration will not be changed, as this happens only if the [exp_workflow.sh](./../exp_workflow.sh) script is run from within a Docker container.
+
+We can now run the experiment within the docker container with repository and SSH volume mounted:
 
 ```sh
 docker run --rm \
   --mount type=bind,source="$(pwd)",target=/home/app \
-  --mount type=bind,source="$HOME/.ssh",target=/root/.ssh \
-  --mount type=bind,source="$HOME/.gitconfig",target=/root/.gitconfig \
+  --mount type=volume,source=ssh-config,target=/root/.ssh \
   <your_image_name> \
   /home/app/exp_workflow.sh
+```
+
+In case you want to interact with the container, you can run it in interactive mode. `docker run --help` shows you all available options.
+
+```sh
+docker run -it --rm \
+  --mount type=bind,source="$(pwd)",target=/home/app \
+  --mount type=volume,source=ssh-config,target=/root/.ssh \
+  <your_image_name>
 ```
 
 ## 6 - SLURM Job Configuration
@@ -405,3 +443,5 @@ python multi_submission.py
 ```
 
 For more information on running and monitoring jobs, refer to the [User Guide](./USAGE.md).
+
+> **Info**: Singularity is used for containerization on the cluster. In the [slurm_job.sh](./../slurm_job.sh) the image is pulled from DockerHub and converted to a Singularity image. Unlike docker, singularity by default binds the complete home directory of the executing user to the container. Also, when entering a singularity container, the user in a singularity container is the same as the user on the host system. Therefore, we do not get the same permission issues as with docker.

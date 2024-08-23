@@ -28,6 +28,6 @@ NOTES.md
 # Ignore singularity image
 *.sif
 
-
-
+# Ignore local environment vars
+local.env
 /exp_logs

@@ -45,8 +45,7 @@ To run the entire pipeline locally, execute the following command with the appro
 # with Docker
 docker run --rm \
   --mount type=bind,source="$(pwd)",target=/home/app \
-  --mount type=bind,source="$HOME/.ssh",target=/root/.ssh \
-  --mount type=bind,source="$HOME/.gitconfig",target=/root/.gitconfig \
+  --mount type=volume,source=ssh-config,target=/root/.ssh \
   <your_image_name> \
   /home/app/exp_workflow.sh
 ```
