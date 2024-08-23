@@ -5,7 +5,9 @@
 # See the LICENSE file in the root of this project for details.
 
 # Load the global environment variables
-export $(grep -v '^#' global.env | xargs)
+set -o allexport
+source global.env
+set +o allexport
 
 while true; do
     # Run the rsync command

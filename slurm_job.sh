@@ -18,8 +18,10 @@
 # Load necessary modules
 module load singularity/4.0.2
 
-# Set environment variables defined in global.env and local.env
-export $(grep -v '^#' global.env | xargs)
+# Set environment variables defined in global.env
+set -o allexport
+source global.env
+set +o allexport
 
 # Define DEFAULT_DIR in the host environment
 export DEFAULT_DIR="$PWD"
