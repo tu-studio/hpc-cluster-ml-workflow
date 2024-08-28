@@ -16,8 +16,10 @@ from typing import Any, Dict, Optional, Union
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.tensorboard.summary import hparams
 
-from source.utils import config
-
+if __name__ == "__main__":
+    import config
+else:
+    from utils import config
 
 class CustomSummaryWriter(SummaryWriter):
     """
@@ -69,6 +71,7 @@ class CustomSummaryWriter(SummaryWriter):
         tensorboard_host_savepath = Path(
             f'{tensorboard_host_dir}/{config.get_env_variable("TUSTU_PROJECT_NAME")}/logs/tensorboard'
         )
+        os.system(f"ssh {tensorboard_host} 'mkdir -p {tensorboard_host_savepath}'")
         return f"{tensorboard_host}:{tensorboard_host_savepath}"
 
     def _extract_datetime_from_log_dir(self, log_dir: Union[str, PosixPath]) -> str:
@@ -177,6 +180,8 @@ def copy_tensorboard_logs() -> str:
                 f"TensorBoard log '{f.name}' copied to '{tensorboard_logs_destination / f.name}'"
             )
             return f.name
+    print("No TensorBoard logs found. Skipping copying.")
+    return f"no_tensorboard_logs_{dvc_exp_name}"
 
 
 def copy_slurm_logs(dir_name) -> None:
@@ -197,8 +202,8 @@ def copy_slurm_logs(dir_name) -> None:
     dvc_exp_name = config.get_env_variable("DVC_EXP_NAME")
 
     if dir_name is None:
-        raise ValueError("dir_name is None.")
-    if not dir_name.endswith(dvc_exp_name):
+        raise ValueError("Directory name is None.")
+    elif not dir_name.endswith(dvc_exp_name):
         raise ValueError(f"Directory '{dir_name}' does not end with '{dvc_exp_name}'")
 
     if current_slurm_job_id:
