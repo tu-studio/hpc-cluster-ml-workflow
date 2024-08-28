@@ -1,8 +1,8 @@
 import torch
 import torchinfo
-from source.utils import logs, config
+from utils import logs, config
 from pathlib import Path
-from source.model import NeuralNetwork
+from model import NeuralNetwork
 
 def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
     size = len(dataloader.dataset)

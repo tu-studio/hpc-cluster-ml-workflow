@@ -1,6 +1,6 @@
 import torch
-from source.utils import config
-from source.model import NeuralNetwork
+from utils import config
+from model import NeuralNetwork
 from pathlib import Path
 
 def main():
