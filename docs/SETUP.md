@@ -440,7 +440,7 @@ module load python
 python3 -m venv venv
 module unload python
 source venv/bin/activate
-pip install dvc
+pip install dvc <dvc_storage_plugin> # e.g. dvc_webdav
 ```
 
 > **Warning:** If you don't unload the Python environment module, the libraries won't be pip-installed into your virtual environment but into your user site directory!
