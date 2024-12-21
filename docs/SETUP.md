@@ -57,16 +57,23 @@ Save the python version of your virtual environment to the global environment fi
 ### Configure your DVC Remote
 
 Choose a [supported storage type](https://dvc.org/doc/command-reference/remote/add#supported-storage-types) and install the required DVC plugin (e.g., for WebDAV):
+
+#### WebDAV
+
 ```sh
 pip install dvc_webdav
 ```
-**Quick configuration**: Uses existing [config](../.dvc/config) file and overwrites only required parts.     
+
+**Quick configuration**: Uses existing [config](../.dvc/config) file and overwrites only required parts.
+
 ```sh
 dvc remote add -d myremote webdavs://example.com/path/to/storage --force
 dvc remote modify --local myremote user 'yourusername'
 dvc remote modify --local myremote password 'yourpassword'
 ```
+
 **Full configuration**: Reinitializes DVC repository and adds all configurations from scratch.
+
 ```sh
 rm -rf .dvc/
 dvc init 
@@ -77,8 +84,23 @@ dvc remote modify myremote timeout 600
 dvc config cache.shared group
 dvc config cache.type symlink
 ```
+
 > **Info:** For detailed information regarding other storage types, refer to the [DVC documentation](https://dvc.org/doc/command-reference/remote).
 
+#### SSH
+
+```sh
+pip install dvc_ssh
+dvc remote add -d myremote ssh://<ssh-alias>:/path/to/storage --force
+# optional:
+dvc remote modify --local myremote keyfile /path/to/keyfile
+# and (if needed)
+dvc remote modify myremote ask_passphrase true
+# or
+dvc remote modify --local myremote passphrase mypassphrase
+```
+
+> **Note**: If you encounter an error while pushing or pulling from the ssh remote with this error code: `ERROR: unexpected error - SSHClientConfig.__init__() missing 2 required positional arguments: 'host' and 'port'`, you need to downgrade the `asyncssh` packjage to version 2.18.0. This is a known [issue](https://github.com/iterative/dvc/issues/10656) that should be fixed soon.
 
 ### Configure Docker Registry  
 
@@ -154,7 +176,7 @@ docker build -t <your_image_name> .
 Run the Docker image locally in an interactive shell to test that everything works as expected:
 
 ```sh
-docker run -it -rm <your_image_name> /bin/bash
+docker run -it --rm <your_image_name> /bin/bash
 ```
 
 ### Automated Image Builds with GitHub Actions
@@ -309,6 +331,11 @@ cp -r /local-ssh/* /root/.ssh/
 # Copying the files will change the ownership to root
 # Check your the files
 ls -la /root/.ssh/
+
+# Optional - in case you have a config file in your dotfiles something similar to this might be needed as well
+docker run -it --rm -v ssh-config:/root/.dotfiles/ssh/.ssh -v $HOME/.ssh:/local-ssh alpine:latest
+# Inside the container
+cp -r /local-ssh/* /root/.ssh/
 ```
 
 > **Info**: This will not change the ownership of the files on your local machine.
@@ -402,6 +429,8 @@ Assuming you have already configured Git on the HPC cluster, clone your Git repo
 cd <username>
 git clone git@github.com:<github_user>/<repository_name>.git
 ```
+
+> **Info:** On the hpc cluster, the first time you log in a ssh key is generated for you (`~/.ssh/id_rsa`). You can use this key to access your git repository.
 
 Set up a virtual environment:
 
