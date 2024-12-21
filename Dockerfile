@@ -42,7 +42,8 @@ RUN . /tmp/global.env \
     # Delete the unzipped directory and downloaded archive to save space
     && rm -rf Python-${TUSTU_PYTHON_VERSION} Python-${TUSTU_PYTHON_VERSION}.tgz \
     # Create symlink for python3
-    && ln -s /usr/local/bin/python${TUSTU_PYTHON_VERSION%.*} /usr/local/bin/python3
+    && ln -s /usr/local/bin/python${TUSTU_PYTHON_VERSION%.*} /usr/local/bin/python3 \
+    && ln -s /usr/local/bin/python${TUSTU_PYTHON_VERSION%.*} /usr/local/bin/python
 
 # Set the working directory
 WORKDIR /home/app
