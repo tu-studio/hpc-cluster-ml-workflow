@@ -374,12 +374,13 @@ docker run -it --rm \
 
 This section covers setting up SLURM jobs for the HPC cluster. SLURM manages resource allocation for your task, which we will specify in a batch job script. Our goal is to run the DVC experiment pipeline inside a Singularity Container on the nodes that have been pulled and converted from your DockerHub image. The batch job script template [slurm_job.sh](../slurm_job.sh) handles these processes and requires minimal configuration.
 
-For single GPU nodes, modify the SBATCH directives for your project name, memory usage and time limit shown in the example below in [slurm_job.sh](../slurm_job.sh):
+For single GPU nodes, modify the SBATCH directives for your project name, memory usage and time limit shown in the example below in [slurm_job.sh](../slurm_job.sh). Also add your email address to receive notifications about the job status:
 
 ```bash
-#SBATCH -J your_project_name
+#SBATCH -J <your_project_name>
 #SBATCH --mem=100GB
 #SBATCH --time=10:00:00
+#SBATCH --mail-user=<your-email-address>
 ```
 
 > **Tip**: For initial testing, consider using lower time and memory settings to get higher priority in the queue.
@@ -459,12 +460,6 @@ Connect Tensorboard Host (Optional):
 Repeat Steps 1-4 of the Section [Connect SSH Host for Tensorboard (Optional)](#connect-ssh-host-for-tensorboard-optional)
 
 ## 8 - Test and Debug on the HPC Cluster
-
-First set your email address for SLURM notifications in the [slurm_job.sh](../slurm_job.sh) script:
-
-```sh
-#SBATCH --mail-user=<your-email-address>
-```
 
 You can run the DVC experiment pipeline on the HPC Cluster by submitting a single SLURM job:
 
