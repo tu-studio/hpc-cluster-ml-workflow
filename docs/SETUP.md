@@ -458,6 +458,12 @@ Repeat Steps 1-4 of the Section [Connect SSH Host for Tensorboard (Optional)](#c
 
 ## 8 - Test and Debug on the HPC Cluster
 
+First set your email address for SLURM notifications in the [slurm_job.sh](../slurm_job.sh) script:
+
+```sh
+#SBATCH --mail-user=<your-email-address>
+```
+
 You can run the DVC experiment pipeline on the HPC Cluster by submitting a single SLURM job:
 
 ```sh

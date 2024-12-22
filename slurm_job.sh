@@ -4,7 +4,11 @@
 # This file is licensed under the Apache License, Version 2.0.
 # See the LICENSE file in the root of this project for details.
 
+# Job name and logs
 #SBATCH -J tustu
+#SBATCH --output=./logs/slurm/slurm-%j.out
+
+# Resources needed
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-core=1
@@ -13,7 +17,10 @@
 #SBATCH --mem=100GB
 #SBATCH --time=10:00:00
 #SBATCH --partition=gpu
-#SBATCH --output=./logs/slurm/slurm-%j.out
+
+# Get email notifications for job status
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=<your-email-address>
 
 # Default variable values
 rebuild_container=false
