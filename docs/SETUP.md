@@ -410,6 +410,12 @@ cd /scratch
 mkdir <username>
 ```
 
+Update the global environment file [global.env](./../global.env) with the path to your HPC scratch directory:
+
+```env
+TUSTU_HPC_DIR=/scratch/<username>
+```
+
 > **Info:** See [HPC Documentation](https://hpc.tu-berlin.de/doku.php?id=hpc:hardware:beegfs) for general information about the filesystem on [HPC Cluster - ZECM, TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc).
 
 Set up a temporary directory on `/scratch` to get more space for temporary files. Then add the `TMPDIR` environment variable to your `.bashrc` so that singularity and other applications use this directory for temporary files. These can get quite large as singularity uses them to extract the image and run the container. Then change also the cache directory from singularity with the `SINGULARITY_CACHEDIR` environment variable.
