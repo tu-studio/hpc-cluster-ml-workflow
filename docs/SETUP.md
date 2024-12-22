@@ -38,11 +38,11 @@ In your Git repository open the file [global.env](./../global.env) and modify th
 
 ### Set up a Virtual Environment
 
-Go to your repository, create a virtual environment and install the required dependencies:
+Go to your repository, create a virtual environment with the python version of your choice and install the required dependencies:
 
    ```sh
    cd <repository_name>
-   python3 -m venv venv
+   python3.xx -m venv venv
    source venv/bin/activate
    pip install dvc torch tensorboard 
    ```
