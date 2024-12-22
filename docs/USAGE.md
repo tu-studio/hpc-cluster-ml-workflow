@@ -31,7 +31,13 @@ Docker images are automatically rebuilt and pushed to Docker Hub by the GitHub w
 
 > **Note**: For the free `docker/build-push-action`, there is a 14GB storage limit for free public repositories on GitHub runners ([About GitHub runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners)). Therefore, the Docker image must not exceed this size.
 
-On the HPC cluster, the Docker image is then automatically pulled and converted to a Singularity image with the command `singularity build $container_build_flags $TUSTU_PROJECT_NAME-image_latest$container_extension docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:latest` in the [slurm_job.sh](../slurm_job.sh) script, when the no image is found. If you want to force the update of the Singularity image, you can delete the existing image on the cluster or use the flag `--rebuild-container` when submitting the job.
+On the HPC cluster, the Docker image is then automatically pulled and converted to a Singularity image when running the [slurm_job.sh](../slurm_job.sh) and no image is found within the repository.
+
+```sh
+sbatch slurm_job.sh
+```
+
+ If you want to force the update of the Singularity image, you can use the flag `--rebuild-container` or delete the existing image on the cluster when submitting the job.
 
 ```sh
 sbatch slurm_job.sh --rebuild-container
@@ -41,7 +47,7 @@ sbatch slurm_job.sh --rebuild-container
 
 ### Locally natively or with Docker
 
-To run the entire pipeline locally, execute the following command with the appropriate image name substituted for the placeholder `<your_image_name>`:
+To run the entire pipeline locally or locally within a docker container, execute the following commands:
 
 ```sh
 # natively
@@ -64,15 +70,13 @@ cd /scratch/<username>/<repository>
 git pull # optionally pull the latest changes you have done locally
 ```
 
-> **Note**: If you make any changes to the code besides hyperparameter configuration on the cluster, commit and push them before running experiments.
-
 Launch pipeline jobs either individually or in parallel. To launch multiple trainings at once with parameter grids or predefined parameter sets, modify `multi_submission.py`:
 
 ```sh
 # submit a single Slurm job:
-sbatch slurm_job.sh <args_for_slurm_job.sh>
+sbatch slurm_job.sh # optional args for slurm_job.sh
 # submit multiple Slurm jobs at once:
-venv/bin/python multi_submission.py <args_for_slurm_job.sh>
+venv/bin/python multi_submission.py # optional args for slurm_job.sh
 ```
 
 ## Monitoring and Logs
