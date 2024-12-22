@@ -31,7 +31,11 @@ Docker images are automatically rebuilt and pushed to Docker Hub by the GitHub w
 
 > **Note**: For the free `docker/build-push-action`, there is a 14GB storage limit for free public repositories on GitHub runners ([About GitHub runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners)). Therefore, the Docker image must not exceed this size.
 
-> **Info**: On the HPC cluster, the Docker image is automatically pulled and converted to a Singularity image with the command `singularity pull docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:latest` in the `slurm_job.sh` script. 
+On the HPC cluster, the Docker image is then automatically pulled and converted to a Singularity image with the command `singularity build $container_build_flags $TUSTU_PROJECT_NAME-image_latest$container_extension docker://$TUSTU_DOCKERHUB_USERNAME/$TUSTU_PROJECT_NAME-image:latest` in the [slurm_job.sh](../slurm_job.sh) script, when the no image is found. If you want to force the update of the Singularity image, you can delete the existing image on the cluster or use the flag `--rebuild-container` when submitting the job.
+
+```sh
+sbatch slurm_job.sh --rebuild-container
+```
 
 ## Launch ML Pipeline
 
@@ -66,9 +70,9 @@ Launch pipeline jobs either individually or in parallel. To launch multiple trai
 
 ```sh
 # submit a single Slurm job:
-sbatch slurm_job.sh
+sbatch slurm_job.sh <args_for_slurm_job.sh>
 # submit multiple Slurm jobs at once:
-venv/bin/python multi_submission.py
+venv/bin/python multi_submission.py <args_for_slurm_job.sh>
 ```
 
 ## Monitoring and Logs
@@ -97,25 +101,15 @@ scancel <slurm_job_id>
 scancel -u <user_name>
 ```
 
-### Remote Monitoring with TensorBoard
-
-To start TensorBoard remotely on the SSH Host and access it in your browser:
-
-```sh
-tensorboard --logdir=Data/<tustu_project_name>/logs/tensorboard --path_prefix=/tb1
-```
-
-> **Note**: For an overview of all DVC experiments, it is important to start TensorBoard on the collected logs folder tensorboard/, where all experiments are organized in subdirectories.
-
-Access TensorBoard via your browser at:
-
-```text
-<your_domain>/tb1
-```
-
 ### Local Monitoring with TensorBoard
 
-Set up a cron job to rsync the logs from the cluster to your local logs directory and launch TensorBoard to monitor experiments:
+Use the [sync_logs.sh](../sync_logs.sh) script to sync logs on your local machine in the `logs/` directory every 30 seconds:
+
+```sh
+./sync_logs.sh
+```
+
+Then open a new terminal, launch TensorBoard to monitor experiments:
 
 ```sh
 tensorboard --logdir=logs/tensorboard
@@ -128,6 +122,22 @@ localhost:6006
 ```
 
 > **Tip**: You can also view TensorBoard logs in VSCode using the official extension.
+
+### Remote Monitoring with TensorBoard
+
+To start TensorBoard remotely on the SSH Host and access it in your browser:
+
+```sh
+tensorboard --logdir=<TUSTU_TENSORBOARD_HOST_DIR>/<TUSTU_PROJECT_NAME>/logs/tensorboard --path_prefix=/tb1
+```
+
+> **Note**: For an overview of all DVC experiments, it is important to start TensorBoard on the collected logs folder tensorboard/, where all experiments are organized in subdirectories.
+
+Access TensorBoard via your browser at:
+
+```text
+<your_domain>/tb1
+```
 
 ## Troubleshooting
 

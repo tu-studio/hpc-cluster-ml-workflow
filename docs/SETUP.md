@@ -409,11 +409,12 @@ mkdir <username>
 
 > **Info:** See [HPC Documentation](https://hpc.tu-berlin.de/doku.php?id=hpc:hardware:beegfs) for general information about the filesystem on [HPC Cluster - ZECM, TU Berlin](https://www.tu.berlin/campusmanagement/angebot/high-performance-computing-hpc).
 
-Set up a temporary directory on `/scratch` to get more space for temporary files. Then add the `TMPDIR` environment variable to your `.bashrc` so that singularity uses this directory for temporary files. These can get quite large as singularity uses them to extract the image and run the container.
+Set up a temporary directory on `/scratch` to get more space for temporary files. Then add the `TMPDIR` environment variable to your `.bashrc` so that singularity and other applications use this directory for temporary files. These can get quite large as singularity uses them to extract the image and run the container. Then change also the cache directory from singularity with the `SINGULARITY_CACHEDIR` environment variable.
 
 ```sh
 mkdir <username>/tmp
 echo 'export TMPDIR=/scratch/<username>/tmp' >> ~/.bashrc
+echo 'export SINGULARITY_CACHEDIR=/scratch/<username>/.singularity' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -463,7 +464,19 @@ You can run the DVC experiment pipeline on the HPC Cluster by submitting a singl
 sbatch slurm_job.sh
 ```
 
-The logs are stored in the `logs` directory of your repository. You can monitor the job status with `squeue -u <username>` and check the logs with `cat logs/slurm/slurm-<job_id>.out` or the tail with `tail -f logs/slurm/slurm-<job_id>.out`.
+The logs are stored in the `logs` directory of your repository. You can monitor the job status with `squeue -u <username>` and check the logs with `cat logs/slurm/slurm-<job_id>.out` or follow the tail with `tail -f logs/slurm/slurm-<job_id>.out`.
+
+The first time you run a job, the Singularity image is pulled from DockerHub and converted to a Singularity image. This process can take some time, but it is only done once. The image is then saved in the repository directory on the HPC cluster and can be reused for subsequent jobs. If you update the Docker image, can force the image to be pulled again by adding the flag `--rebuild-image`.
+
+```sh
+sbatch slurm_job.sh --rebuild-image
+```
+
+You can checkout all the available options of the `slurm_job.sh` script by running:
+
+```sh
+slurm_job.sh --help
+```
 
 To run multiple submissions with a parameter grid or predefined parameter sets, modify [multi_submission.py](../multi_submission.py) and run:
 
@@ -471,6 +484,10 @@ To run multiple submissions with a parameter grid or predefined parameter sets, 
 python multi_submission.py
 ```
 
-For more information on running and monitoring jobs, refer to the [User Guide](./USAGE.md).
+For more information on running and monitoring jobs, refer to the [User Guide](./USAGE.md). Flags that are passed to the multi_submission.py script are forwarded to the slurm_job.sh script. So you could run this command to submit multiple jobs that will all force the image to be rebuilt:
+
+```sh
+python multi_submission.py --rebuild-image
+```
 
 > **Info**: Singularity is used for containerization on the cluster. In the [slurm_job.sh](./../slurm_job.sh) the image is pulled from DockerHub and converted to a Singularity image. Unlike docker, singularity by default binds the complete home directory of the executing user to the container. Also, when entering a singularity container, the user in a singularity container is the same as the user on the host system. Therefore, we do not get the same permission issues as with docker.
