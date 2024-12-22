@@ -201,6 +201,8 @@ Add data to your experiment pipeline (e.g., raw data) and push it to your DVC re
 
 ```sh
 dvc add data/raw
+# follow the instructions and add the .dvc file to git
+git add data/raw.dvc
 dvc push
 ```
 
