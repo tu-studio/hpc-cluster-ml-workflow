@@ -22,12 +22,10 @@ def main():
 
     # Export the model
     example = torch.rand(1, 1, input_size)
-    output_file_path = Path('models/exports/model.onnx') 
+    output_file_path = Path('models/exports/model.pth')
     output_file_path.parent.mkdir(parents=True, exist_ok=True)
-    torch.onnx.export(model, example, output_file_path, export_params=True, opset_version=17, do_constant_folding=True,
-                      input_names=['input'], output_names=['output'],
-                      dynamic_axes={'input': {0: 'batch_size'}, 'output': {0: 'batch_size'}})
-    print("Model exported to ONNX format.")
+    torch.save(model, output_file_path)
+    print("Model exported to .pth format.")
 
 if __name__ == "__main__":
     main()
