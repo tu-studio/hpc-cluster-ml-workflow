@@ -3,7 +3,7 @@
 # See the LICENSE file in the root of this project for details.
 
 # Use an official Debian runtime with fixed version as a parent image
-FROM debian:11-slim
+FROM debian:12-slim
 
 # Install necessary packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
