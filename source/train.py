@@ -4,6 +4,9 @@ from utils import logs, config
 from pathlib import Path
 from model import NeuralNetwork
 
+from omegaconf import OmegaConf
+from hydra.utils import instantiate
+
 def train_epoch(dataloader, model, loss_fn, optimizer, device, writer, epoch):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
@@ -52,29 +55,30 @@ def generate_audio_examples(model, device, dataloader):
     return prediction, target
 
 def main():
+    
     # Load the hyperparameters from the params yaml file into a Dictionary
-    params = config.Params()
+    cfg = OmegaConf.load("params.yaml")
 
     # Load the parameters from the dictionary into variables
-    input_size = params['general']['input_size']
-    random_seed = params['general']['random_seed']
-    epochs = params['train']['epochs']
-    batch_size = params['train']['batch_size']
-    learning_rate = params['train']['learning_rate']
-    device_request = params['train']['device_request']
-    conv1d_strides = params['model']['conv1d_strides']
-    conv1d_filters = params['model']['conv1d_filters']
-    hidden_units = params['model']['hidden_units']
+    # input_size = params['general']['input_size']
+    # random_seed = params['general']['random_seed']
+    # epochs = params['train']['epochs']
+    # batch_size = params['train']['batch_size']
+    # learning_rate = params['train']['learning_rate']
+    # device_request = params['train']['device_request']
+    # conv1d_strides = params['model']['conv1d_strides']
+    # conv1d_filters = params['model']['conv1d_filters']
+    # hidden_units = params['model']['hidden_units']
 
     # Create a SummaryWriter object to write the tensorboard logs
     tensorboard_path = logs.return_tensorboard_path()
     metrics = {'Epoch_Loss/train': None, 'Epoch_Loss/test': None, 'Batch_Loss/train': None}
-    writer = logs.CustomSummaryWriter(log_dir=tensorboard_path, params=params, metrics=metrics)
+    writer = logs.CustomSummaryWriter(log_dir=tensorboard_path, params=cfg, metrics=metrics)
 
     # Set a random seed for reproducibility across all devices. Add more devices if needed
-    config.set_random_seeds(random_seed)
+    config.set_random_seeds(cfg.train.random_seed)
     # Prepare the requested device for training. Use cpu if the requested device is not available 
-    device = config.prepare_device(device_request)
+    device = config.prepare_device(cfg.train.device_request)
 
     # Load preprocessed data from the input file into the training and testing tensors
     input_file_path = Path('data/processed/data.pt')
@@ -85,26 +89,26 @@ def main():
     y_ordered_testing = data['y_ordered_testing']
 
     # Create the model
-    model = NeuralNetwork(conv1d_filters, conv1d_strides, hidden_units).to(device)
-    summary = torchinfo.summary(model, (1, 1, input_size), device=device)
+    model = instantiate(cfg.model)
+    summary = torchinfo.summary(model, (1, 1, cfg.train.input_size), device=device)
     print(summary)
 
     # Add the model graph to the tensorboard logs
-    sample_inputs = torch.randn(1, 1, input_size) 
+    sample_inputs = torch.randn(1, 1, cfg.train.input_size) 
     writer.add_graph(model, sample_inputs.to(device))
 
     # Define the loss function and the optimizer
     loss_fn = torch.nn.MSELoss(reduction='mean')
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.train.learning_rate)
 
     # Create the dataloaders
     training_dataset = torch.utils.data.TensorDataset(X_ordered_training, y_ordered_training)
-    training_dataloader = torch.utils.data.DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
+    training_dataloader = torch.utils.data.DataLoader(training_dataset, batch_size=cfg.train.batch_size, shuffle=True)
     testing_dataset = torch.utils.data.TensorDataset(X_ordered_testing, y_ordered_testing)
-    testing_dataloader = torch.utils.data.DataLoader(testing_dataset, batch_size=batch_size, shuffle=False)
+    testing_dataloader = torch.utils.data.DataLoader(testing_dataset, batch_size=cfg.train.batch_size, shuffle=False)
 
     # Training loop
-    for t in range(epochs):
+    for t in range(cfg.train.epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         epoch_loss_train = train_epoch(training_dataloader, model, loss_fn, optimizer, device, writer, epoch=t)
         epoch_loss_test = test_epoch(testing_dataloader, model, loss_fn, device, writer)

@@ -3,8 +3,7 @@
 [cache]
     shared = group
     type = symlink
+[hydra]
+    enabled = True
 ['remote "myremote"']
-    url = webdavs://tubcloud.tu-berlin.de/remote.php/dav/files/<folder-path>
-    # or for ssh
-    # url = ssh://<ssh-alias>:</path/to/remote/directory>
-    timeout = 600
+    url = ssh://marckh:/home/chef/ml-projects/hpc-cluster-pipeline

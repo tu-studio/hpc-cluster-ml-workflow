@@ -1,0 +1,4 @@
+_target_: NeuralNetwork
+conv1d_strides: 12
+conv1d_filters: 16
+hidden_units: 36

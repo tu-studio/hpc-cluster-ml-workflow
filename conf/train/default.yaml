@@ -1,0 +1,5 @@
+batch_size: 4096 
+learning_rate: 0.01
+epochs: 1
+device_request: 'cuda'
+random_seed: ${RANDOM_SEED}

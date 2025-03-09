@@ -1,16 +1,19 @@
-general:
-  random_seed: 42
-  input_size: 150
 preprocess:
-  input_file: '/../data/raw/ts9_test1_in_FP32.wav'
-  target_file: '/../data/raw/ts9_test1_out_FP32.wav'
+  input_file: /../data/raw/ts9_test1_in_FP32.wav
+  target_file: /../data/raw/ts9_test1_out_FP32.wav
+  data_percentage: 0.05
   test_split: 0.2
+  input_size: 150
 model:
+  _target_: NeuralNetwork
   conv1d_strides: 12
   conv1d_filters: 16
   hidden_units: 36
 train:
-  batch_size: 4096 
+  batch_size: 4096
   learning_rate: 0.01
   epochs: 1
-  device_request: 'cuda'   
+  device_request: cuda
+  random_seed: 42
+RANDOM_SEED: 42
+INPUT_SIZE: 150

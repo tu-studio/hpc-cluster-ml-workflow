@@ -1,0 +1,5 @@
+input_file: '/../data/raw/ts9_test1_in_FP32.wav'
+target_file: '/../data/raw/ts9_test1_out_FP32.wav'
+data_percentage: 0.05
+test_split: 0.2
+input_size: ${INPUT_SIZE}
